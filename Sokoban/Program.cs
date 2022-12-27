@@ -34,22 +34,31 @@ while (true)
     // ---------------------ProcessInput-----------
     ConsoleKey key = Console.ReadKey().Key;
     // ---------------------Update-----------------
-    
+
+
+    if (boxX == (playerX + 1) && boxY == playerY)
+    {
+        boxX += 1;
+    }
+    if ((playerX - 1) == boxX && playerY == boxY)
+    {
+        boxX -= 1;
+    }
+
     // 오른쪽 화살표키를 눌렀을 때
     if (key == ConsoleKey.RightArrow)
     {
         // 오른쪽으로 이동 => 누를때마다 1씩 이동한다.
         playerX = Math.Min(playerX + 1, 15);
 
-        // box가 player와 똑같아 질때 오른쪽으로 한칸씩 움직인다.
-        if (playerX == boxX && playerY == boxY)
-        {
-            boxX += 1;
-        }
+        
+        
     }
     if (key == ConsoleKey.LeftArrow)
     {
         playerX = Math.Max(0, playerX - 1);
+
+       
     }
     if (key == ConsoleKey.DownArrow)
     {
@@ -61,9 +70,13 @@ while (true)
     }
 
     //self 박스 update
+
+    // box가 player와 똑같아 질때 오른쪽으로 한칸씩 움직인다.
+
+
+
     
-    
-    
+
 
 }
 
