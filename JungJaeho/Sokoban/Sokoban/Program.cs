@@ -8,26 +8,28 @@ Console.Clear();                                    // 콘솔창 클리어
 /*-------------------------------------------------*/
 
 
+ConsoleColor DefaultForegroundColor = Console.ForegroundColor;
+int mapMinWidth = 0;
+int mapMinHeight = 0;
+int mapMaxWidth = 35;
+int mapMaxHeight = 10;
+char wallIcon = 'Π';
+ConsoleColor wallColor = ConsoleColor.Red;
 
-int mapWidth = 35;
-int mapHeight = 10;
 
 #region Player
-int playerX = 0;
-int playerY = 0;
-int prevPlayerX = 0;
-int prevPlayerY = 0;
-
+int playerX = 2;
+int playerY = 2;
+ConsoleColor playerColor = ConsoleColor.DarkCyan;
 
 char player = 'Д';
 #endregion
 
 #region Box
-int prevBoxPosX = 0;
-int prevBoxPosY = 0;
 int boxPosX = 5;
 int boxPosY = 5;
 char box = '▥'; //▥ Д
+ConsoleColor boxColor = ConsoleColor.Black;
 #endregion
 
 
@@ -36,37 +38,58 @@ while (true)
 {
     Console.Clear();
     /*---------------------- Render ---------------------- */
+    Console.ForegroundColor = wallColor;
+    for (int i = 0; i <= mapMaxWidth; i++)
+    {
+        Console.SetCursorPosition(i, mapMinHeight);
+        Console.Write(wallIcon);
+        Console.SetCursorPosition(i, mapMaxHeight);
+        Console.Write(wallIcon);
+    }
+    for (int i = 0; i <= mapMaxHeight; i++)
+    {
+        Console.SetCursorPosition(mapMinWidth, i);
+        Console.Write(wallIcon);
+        Console.SetCursorPosition(mapMaxWidth, i);
+        Console.Write(wallIcon);
+    }
+
     Console.SetCursorPosition(playerX, playerY);
+    Console.ForegroundColor = playerColor;
     Console.Write(player);
+
     Console.SetCursorPosition(boxPosX, boxPosY);
+    Console.ForegroundColor = boxColor;
     Console.Write(box);
+
+    Console.ForegroundColor = DefaultForegroundColor;
     /*------------------- ProcessInput ------------------- */
     ConsoleKey key = Console.ReadKey().Key;
 
 
     /*---------------------- Update ---------------------- */
     
-    prevPlayerX = playerX;
-    prevPlayerY = playerY;
-    prevBoxPosX = boxPosX;
-    prevBoxPosY = boxPosY;
+    int prevPlayerX = playerX;
+    int prevPlayerY = playerY;
+    int prevBoxPosX = boxPosX;
+    int prevBoxPosY = boxPosY;
 
     // Player
     if (key == ConsoleKey.RightArrow)
     {
-        playerX = Math.Min(playerX + 1, mapWidth);
+        playerX = Math.Min(playerX + 1, mapMaxWidth - 1);
     }
     if (key == ConsoleKey.LeftArrow)
     {
-        playerX = Math.Max(playerX - 1, 0);
+        playerX = Math.Max(playerX - 1, mapMinWidth + 1);
     }
     if (key == ConsoleKey.DownArrow)
     {
-        playerY = Math.Min(playerY + 1, mapHeight);
+        playerY = Math.Min(playerY + 1, mapMaxHeight - 1);
     }
     if (key == ConsoleKey.UpArrow)
     {
-        playerY = Math.Max(playerY - 1, 0);
+        playerY = Math.Max(playerY - 1, mapMinHeight + 1);
     }
 
     // BOX
@@ -74,7 +97,7 @@ while (true)
     {
         boxPosX += playerX - prevPlayerX;
         boxPosY += playerY - prevPlayerY;
-        if (boxPosX > mapWidth || boxPosY > mapHeight || boxPosY < 0 || boxPosX < 0)
+        if (boxPosX > mapMaxWidth-1 || boxPosY > mapMaxHeight-1 || boxPosY < mapMinHeight+1 || boxPosX < mapMinWidth+1)
         {
             boxPosX = prevBoxPosX;
             boxPosY = prevBoxPosY;
