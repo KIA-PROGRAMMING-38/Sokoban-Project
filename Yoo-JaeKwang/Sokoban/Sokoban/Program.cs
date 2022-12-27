@@ -10,6 +10,8 @@ int playerX = 0;
 int playerY = 0;
 int boxX = 15;
 int boxY = 10;
+int doxX = 10;
+int doxY = 5;
 
 // 게임 루프 == 프레임(Frame)
 while (true)
@@ -22,7 +24,10 @@ while (true)
     Console.Write("P");
     // 박스 출력하기
     Console.SetCursorPosition(boxX, boxY);
-    Console.WriteLine("B");
+    Console.Write("B");
+    // 박스 2번 출력하기
+    Console.SetCursorPosition(doxX, doxY);
+    Console.Write("D");
     // -------------------------------------- ProcessInput ------------------------------------------------
     ConsoleKey playerKey = Console.ReadKey().Key; // ConsoleKeyInfo keyInfo = Console.ReadKey(); ConsoleKey key = keyInfo.Key;
     // -------------------------------------- Update ------------------------------------------------
@@ -35,6 +40,14 @@ while (true)
                 continue;
             }
             boxY = Math.Max(0, boxY - 1);
+        }
+        if (playerX == doxX && playerY == doxY + 1)
+        {
+            if (playerY == 1 && doxY == 0)
+            {
+                continue;
+            }
+            doxY = Math.Max(0, doxY - 1);
         }
         playerY = Math.Max(0, playerY - 1); // 위로 이동
     }
@@ -49,7 +62,15 @@ while (true)
             }
             boxY = Math.Min(boxY + 1, 20);
         }
-            playerY = Math.Min(playerY + 1, 20); // 아래로 이동
+        if (playerX == doxX && playerY == doxY - 1)
+        {
+            if (playerY == 19 && doxY == 20)
+            {
+                continue;
+            }
+            doxY = Math.Min(doxY + 1, 20);
+        }
+        playerY = Math.Min(playerY + 1, 20); // 아래로 이동
     }
 
     if (playerKey == ConsoleKey.LeftArrow) // 왼쪽 화살표키를 눌렀을 때
@@ -62,7 +83,15 @@ while (true)
             }
             boxX = Math.Max(0, boxX - 1);
         }
-            playerX = Math.Max(0, playerX - 1); // 왼쪽으로 이동
+        if (playerX == doxX + 1 && playerY == doxY)
+        {
+            if (playerX == 1 && doxX == 0)
+            {
+                continue;
+            }
+            doxX = Math.Max(0, doxX - 1);
+        }
+        playerX = Math.Max(0, playerX - 1); // 왼쪽으로 이동
     }
 
     if (playerKey == ConsoleKey.RightArrow) // 오른쪽 화살표키를 눌렀을 때
@@ -75,6 +104,14 @@ while (true)
             }
             boxX = Math.Min(boxX + 1, 30);
         }
-            playerX = Math.Min(playerX + 1, 30); // 오른쪽으로 이동
+        if (playerX == doxX - 1 && playerY == doxY)
+        {
+            if (playerX == 29 && doxX == 30)
+            {
+                continue;
+            }
+            doxX = Math.Min(doxX + 1, 30);
+        }
+        playerX = Math.Min(playerX + 1, 30); // 오른쪽으로 이동
     }
 }
