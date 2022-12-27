@@ -1,4 +1,4 @@
-﻿// 초기세팅
+﻿#region 초기세팅
 Console.ResetColor();                               // 컬러 초기화
 Console.CursorVisible = false;                      // 커서 비활성화
 Console.Title = "던전앤파이터";                     // 타이틀 설정
@@ -6,8 +6,10 @@ Console.BackgroundColor = ConsoleColor.DarkGray;    // 배경색 설정
 Console.ForegroundColor = ConsoleColor.DarkCyan;    // 전경색 설정
 Console.Clear();                                    // 콘솔창 클리어
 /*-------------------------------------------------*/
+#endregion
 
 
+#region 맵세팅
 ConsoleColor DefaultForegroundColor = Console.ForegroundColor;
 int mapMinWidth = 0;
 int mapMinHeight = 0;
@@ -15,6 +17,7 @@ int mapMaxWidth = 35;
 int mapMaxHeight = 10;
 char wallIcon = 'Π';
 ConsoleColor wallColor = ConsoleColor.Red;
+#endregion
 
 
 #region Player
@@ -37,8 +40,12 @@ ConsoleColor boxColor = ConsoleColor.Black;
 while (true)
 {
     Console.Clear();
+
+    #region Render
     /*---------------------- Render ---------------------- */
     Console.ForegroundColor = wallColor;
+
+    // 벽
     for (int i = 0; i <= mapMaxWidth; i++)
     {
         Console.SetCursorPosition(i, mapMinHeight);
@@ -63,12 +70,16 @@ while (true)
     Console.Write(box);
 
     Console.ForegroundColor = DefaultForegroundColor;
+    #endregion
+
+    #region ProcessInput
     /*------------------- ProcessInput ------------------- */
     ConsoleKey key = Console.ReadKey().Key;
+    #endregion
 
-
+    #region Update
     /*---------------------- Update ---------------------- */
-    
+
     int prevPlayerX = playerX;
     int prevPlayerY = playerY;
     int prevBoxPosX = boxPosX;
@@ -97,6 +108,7 @@ while (true)
     {
         boxPosX += playerX - prevPlayerX;
         boxPosY += playerY - prevPlayerY;
+        // 박스 범위 나갈 때
         if (boxPosX > mapMaxWidth-1 || boxPosY > mapMaxHeight-1 || boxPosY < mapMinHeight+1 || boxPosX < mapMinWidth+1)
         {
             boxPosX = prevBoxPosX;
@@ -105,5 +117,7 @@ while (true)
             playerY = prevPlayerY;
         }
     }
+
+    #endregion
 
 }
