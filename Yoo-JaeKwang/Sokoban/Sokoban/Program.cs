@@ -35,6 +35,14 @@ while (true)
     {
         if(playerX == boxX && playerY == boxY + 1)
         {
+            if(boxX == doxX && boxY == doxY + 1)
+            {
+                if(playerY == 2 && boxY == 1 && doxY ==0)
+                {
+                    continue;
+                }
+                doxY = Math.Max(0, doxY - 1);
+            }
             if(playerY == 1 && boxY == 0)
             {
                 continue;
@@ -43,10 +51,19 @@ while (true)
         }
         if (playerX == doxX && playerY == doxY + 1)
         {
+            if (doxX == boxX && doxY == boxY + 1)
+            {
+                if (playerY == 2 && doxY == 1 && boxY == 0)
+                {
+                    continue;
+                }
+                boxY = Math.Max(0, boxY - 1);
+            }
             if (playerY == 1 && doxY == 0)
             {
                 continue;
             }
+
             doxY = Math.Max(0, doxY - 1);
         }
         playerY = Math.Max(0, playerY - 1); // 위로 이동
