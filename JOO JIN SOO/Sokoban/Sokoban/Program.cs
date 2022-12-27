@@ -9,12 +9,12 @@ Console.ForegroundColor = ConsoleColor.Yellow;     // 글꼴색을 설정한다
 Console.Clear();                                   // 출력된 모든 내용을 지운다
 
 // 플레이어 좌표 설정은 바깥에 해야한다
-int playerX = 0;
-int playerY = 0;
+int playerAX = 0;
+int playerAY = 0;
 
 // 박스 구현
-int boxX = 5;
-int boxY = 3;
+int boxX = 10;
+int boxY = 6;
 
 // 게임 루프 == 프레임(Frame)
 while (true)
@@ -23,9 +23,10 @@ while (true)
 
     //-------------------------------------- Render -------------------------------------------------
     // 플레이어 출력하기
-    Console.SetCursorPosition(playerX, playerY);
-    Console.Write("P");
+    Console.SetCursorPosition(playerAX, playerAY);
+    Console.Write("A");
 
+    // 박스 출력하기
     Console.SetCursorPosition(boxX, boxY);
     Console.Write("O");
 
@@ -35,49 +36,63 @@ while (true)
     // 이것은 ConsoleKey inputKey = Console.ReadKey().Key; 와 같다
 
     //-------------------------------------- Update -------------------------------------------------
-    // 오른쪽 화살표키를 눌렀을 때
-    if (key == ConsoleKey.RightArrow && playerX < 31)
+    if (key == ConsoleKey.RightArrow)
     {
-        // 오른쪽으로 이동
-        // playerX = Math.Min(playerX + 1, 30);
-        playerX += 1;
+        playerAX = Math.Min(playerAX + 1, 30);
         
-        if (playerX == boxX && playerY == boxY)
+        if (playerAX == boxX && playerAY == boxY)
         {
-            boxX += 1;
+            boxX = Math.Min(boxX + 1, 30);
+
+            if (boxX == 30)
+            {
+                playerAX = 29;
+            }
         }
     }
     
-    if (key == ConsoleKey.LeftArrow && playerX > -1)
+    if (key == ConsoleKey.LeftArrow && playerAX > 0)
     {
-        // playerX = Math.Max(0, playerX - 1);
-        playerX -= 1;
+        playerAX = Math.Max(0, playerAX - 1);
 
-        if (playerX == boxX && playerY == boxY)
+        if (playerAX == boxX && playerAY == boxY)
         {
-            boxX -= 1;
+            boxX = Math.Max(0, boxX - 1);
+
+            if (boxX == 0)
+            {
+                playerAX = 1;
+            }
         }
     }
     
-    if (key == ConsoleKey.DownArrow)
+    if (key == ConsoleKey.DownArrow && playerAY < 20)
     {
-        // playerY = Math.Min(playerY + 1, 30);
-        playerY += 1;
+        playerAY = Math.Min(playerAY + 1, 20);
 
-        if (playerX == boxX && playerY == boxY)
+        if (playerAX == boxX && playerAY == boxY)
         {
-            boxY += 1;
+            boxY = Math.Min(playerAY + 1, 20);
+
+            if (boxY == 20)
+            {
+                playerAY = 19;
+            }
         }
     }
     
-    if (key == ConsoleKey.UpArrow)
+    if (key == ConsoleKey.UpArrow && playerAY > 0)
     {
-        // playerY = Math.Max(0, playerY - 1);
-        playerY -= 1;
+        playerAY = Math.Max(0, playerAY - 1);
 
-        if (playerX == boxX && playerY == boxY)
+        if (playerAX == boxX && playerAY == boxY)
         {
-            boxY -= 1;
+            boxY = Math.Max(0, playerAY - 1);
+
+            if (boxY == 0)
+            {
+                playerAY = 1;
+            }
         }
     }
 }
