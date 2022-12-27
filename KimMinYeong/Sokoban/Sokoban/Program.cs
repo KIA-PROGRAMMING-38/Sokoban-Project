@@ -62,11 +62,36 @@ while (true)
         //}
 
         // 오른쪽으로 이동
-        playerX = Math.Min(playerX + 1, 15); 
+        // playerX = Math.Min(playerX + 1, 15);
+
+        if(playerX == boxX - 1 && playerY == boxY)
+        {
+            boxX = Math.Min(boxX + 1, 15);
+        }
+        playerX = Math.Min(playerX + 1, 15);
+    }
+
+    if (key == ConsoleKey.LeftArrow)
+    {
+        //playerX -= 1;
+
+        //if(playerX == boxX + 1 && playerY == boxY)
+        //{
+        //    boxX = boxX > 0 ? boxX - 1 : boxX;
+        //}
+
+        // playerX = Math.Max(0, playerX - 1);
+
+        if(playerX == boxX +1 && playerY == boxY)
+        {
+            boxX = Math.Max(0, boxX - 1);
+        }
+
+        playerX = Math.Max(0, playerX - 1);
     }
 
     // 키 입력 구현할 때는 보통 if else 말고 if만 사용해서 각 키에 대한 동작을 구현한다.
-    if(key == ConsoleKey.UpArrow)
+    if (key == ConsoleKey.UpArrow)
     {
         //playerY -= 1;
 
@@ -74,6 +99,13 @@ while (true)
         //{
         //    boxY = boxY > 1 ? boxY - 1 : boxY;
         //}
+
+        // playerY = Math.Max(0, playerY - 1);
+
+        if(playerY == boxY + 1 && playerX == boxX)
+        {
+            boxY = Math.Max(0, boxY - 1);
+        }
 
         playerY = Math.Max(0, playerY - 1);
     }
@@ -87,19 +119,18 @@ while (true)
         //    boxY = boxY < 10 ? boxY + 1 : boxY;
         //}
 
+        // playerY = Math.Min(playerY + 1, 10);
+
+        if(playerY == boxY - 1 && playerX == boxX)
+        {
+            boxY = Math.Min(boxY + 1, 10);
+        }
+
         playerY = Math.Min(playerY + 1, 10);
-    }
 
-    if(key == ConsoleKey.LeftArrow)
-    {
-        //playerX -= 1;
-
-        //if(playerX == boxX + 1 && playerY == boxY)
-        //{
-        //    boxX = boxX > 0 ? boxX - 1 : boxX;
-        //}
-
-        playerX = Math.Max(0, playerX - 1);
+        // 처음에 플레이어 좌표를 박스 if문보다 위에 작성했는데, 그렇게 하면 바뀐 거에 대해서 검사를 해서
+        // 우리가 보이는 화면에서 기대하는 동작이 안나온다 (생각해보면 그럼)
+        // 들어가는 수가 뭔지 보고 해야됨
     }
 
 
