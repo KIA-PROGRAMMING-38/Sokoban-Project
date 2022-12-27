@@ -6,8 +6,8 @@ Console.BackgroundColor = ConsoleColor.Magenta;         // 배경색을 설정�
 Console.ForegroundColor = ConsoleColor.Yellow;         // 글꼴색을 설정한다.
 Console.Clear();                                       // 출력된 모든 내용을 지운다.
 
-int playerX = 2;
-int playerY = 2;
+int playerX = 0;
+int playerY = 0;
 int boxX = 15;
 int boxY = 10;
 
@@ -30,13 +30,13 @@ while (true)
     {
         if(playerX == boxX && playerY == boxY + 1)
         {
-            if(playerY == 3 && boxY == 2)
+            if(playerY == 1 && boxY == 0)
             {
                 continue;
             }
-            boxY = Math.Max(2, boxY - 1);
+            boxY = Math.Max(0, boxY - 1);
         }
-        playerY = Math.Max(2, playerY - 1); // 위로 이동
+        playerY = Math.Max(0, playerY - 1); // 위로 이동
     }
 
     if (playerKey == ConsoleKey.DownArrow) // 아래쪽 화살표키를 눌렀을 때
@@ -56,13 +56,13 @@ while (true)
     {
         if (playerX == boxX + 1 && playerY == boxY)
         {
-            if (playerX == 3 && boxX == 2)
+            if (playerX == 1 && boxX == 0)
             {
                 continue;
             }
-            boxX = Math.Max(2, boxX - 1);
+            boxX = Math.Max(0, boxX - 1);
         }
-            playerX = Math.Max(2, playerX - 1); // 왼쪽으로 이동
+            playerX = Math.Max(0, playerX - 1); // 왼쪽으로 이동
     }
 
     if (playerKey == ConsoleKey.RightArrow) // 오른쪽 화살표키를 눌렀을 때
