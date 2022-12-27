@@ -2,7 +2,7 @@
 Console.ResetColor();                               // 컬러 초기화
 Console.CursorVisible = false;                      // 커서 비활성화
 Console.Title = "던전앤파이터";                     // 타이틀 설정
-Console.BackgroundColor = ConsoleColor.DarkGray;        // 배경색 설정
+Console.BackgroundColor = ConsoleColor.DarkGray;    // 배경색 설정
 Console.ForegroundColor = ConsoleColor.DarkCyan;    // 전경색 설정
 Console.Clear();                                    // 콘솔창 클리어
 /*-------------------------------------------------*/
@@ -30,7 +30,7 @@ int boxPosY = 5;
 char box = '▥'; //▥ Д
 #endregion
 
-// 힌트
+
 // 게임 루프 == 프레임(Frame)
 while (true)
 {
@@ -50,6 +50,8 @@ while (true)
     prevPlayerY = playerY;
     prevBoxPosX = boxPosX;
     prevBoxPosY = boxPosY;
+
+    // Player
     if (key == ConsoleKey.RightArrow)
     {
         playerX = Math.Min(playerX + 1, mapWidth);
