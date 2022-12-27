@@ -26,7 +26,7 @@ while (true)
     // -----------------------------------------------------Render-----------------------------------------------------
     // 플레이어 출력하기
     Console.SetCursorPosition(playerX, playerY);
-    Console.Write("E");
+    Console.Write("P");
 
     // 박스 출력하기
     Console.SetCursorPosition(boxX, boxY);
@@ -60,12 +60,20 @@ while (true)
     if (key == ConsoleKey.UpArrow)
     {
         playerY = Math.Max(0, playerY - 1);
+        if (playerY == boxY && playerX == boxX)
+        {
+            boxY = playerY - 1;
+        }
     }
 
 
     if (key == ConsoleKey.LeftArrow)
     {
         playerX = Math.Max(0, playerX - 1);
+        if (playerX == boxX && playerY == boxY)
+        {
+            boxX = playerX - 1;
+        }
     }
 
 }
