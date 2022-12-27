@@ -28,6 +28,10 @@ class Program
         int mapWidth = 25;
         int mapHeight = 20;
 
+        short[,] mapDatas = new short[mapHeight, mapWidth];
+
+        //mapDatas[]
+
         while(true)
         {
             // ------------------------------------------------------------------ Render.. ------------------------------------------------------------------
@@ -46,14 +50,12 @@ class Program
             ConsoleKey inputKey = Console.ReadKey().Key;
 
             // ------------------------------------------------------------------ Update.. ------------------------------------------------------------------
-            // 오른쪽 화살표키를 눌렀을 때 오른쪽으로 이동..
+            // 이동 입력 값 처리..
             int moveDirX = 0;
             int moveDirY = 0;
 
-            // 오른쪽 왼쪽 이동 처리..
-            if( inputKey == ConsoleKey.RightArrow || inputKey == ConsoleKey.LeftArrow)
+            if ( inputKey == ConsoleKey.RightArrow || inputKey == ConsoleKey.LeftArrow)
                 moveDirX = (int)inputKey - 38;
-            // 위 아래(Like EXID) 이동 처리..
             if (inputKey == ConsoleKey.DownArrow || inputKey == ConsoleKey.UpArrow)
                 moveDirY = (int)inputKey - 39;
 
