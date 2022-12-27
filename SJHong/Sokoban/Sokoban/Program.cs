@@ -1,5 +1,5 @@
 ﻿using System;
-    class Program
+class Program
 {
     static void Main()
     {
@@ -16,6 +16,8 @@
         int boxX = 5;
         int boxY = 5;
 
+        int goalX = 12;
+        int goalY = 7;
         while (true)
         {
             Console.Clear();
@@ -25,6 +27,7 @@
             Console.SetCursorPosition(playerX, playerY);
             Console.Write("P");
             Console.SetCursorPosition(boxX, boxY);
+
 
             Console.Write("N");
 
@@ -36,46 +39,70 @@
             //----------------------- Update ----------------------
             //오른쪽 화살표를 눌렀을 때
 
-                if (Key == ConsoleKey.RightArrow)
+            if (Key == ConsoleKey.RightArrow)
+            {
+                playerX = Math.Min(playerX + 1, 15);
+                if (playerX == boxX && playerY == boxY)
                 {
-
-                    playerX = Math.Min(playerX + 1, 15);
-                        if (playerX == boxX && playerY == boxY)
-                        {
-                            boxX += 1;
-                        }
-                
+                    if (boxX < 15)
+                    {
+                        boxX += 1;
+                    }
+                    else if (boxX == 15)
+                    {
+                        playerX -= 1;
+                    }
                 }
-                if (Key == ConsoleKey.LeftArrow)
+
+            }
+            if (Key == ConsoleKey.LeftArrow)
+            {
+                playerX = Math.Max(0, playerX - 1);
+                if (playerX == boxX && playerY == boxY)
                 {
-                    playerX = Math.Max(0, playerX - 1);
-                    if (playerX == boxX && playerY == boxY)
+                    if (boxX > 0)
                     {
                         boxX -= 1;
                     }
+                    else if (boxX == 0)
+                    {
+                        playerX += 1;
+                    }
                 }
+            }
 
-                if (Key == ConsoleKey.DownArrow)
-                {
+            if (Key == ConsoleKey.DownArrow)
+            {
                 playerY = Math.Min(playerY + 1, 15);
                 if (playerX == boxX && playerY == boxY)
+                {
+                    if (boxY < 15)
                     {
-                    boxY += 1;
+                        boxY += 1;
+                    }
+                    else if (boxY == 15)
+                    {
+                        playerY -= 1;
                     }
                 }
+            }
 
 
-                if (Key == ConsoleKey.UpArrow)
-                {
+            if (Key == ConsoleKey.UpArrow)
+            {
                 playerY = Math.Max(0, playerY - 1);
                 if (playerX == boxX && playerY == boxY)
+                {
+                    if (boxY > 0)
                     {
-                    boxY -= 1;
+                        boxY -= 1;
+                    }
+                    else if (boxY == 0)
+                    {
+                        playerY += 1;
                     }
                 }
-
-
-            //오른쪽 이동
+            }
 
         }
     }
