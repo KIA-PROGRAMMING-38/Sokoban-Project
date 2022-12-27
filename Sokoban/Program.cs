@@ -11,9 +11,9 @@ Console.Clear(); // 출력된 모든 내용을 지운다.
 int playerX = 0;
 int playerY = 0;
 
-//self
-int boxX = 1;
-int boxY = 0;
+//박스 좌표 설정
+int boxX = 5;
+int boxY = 5;
 
 // map 설정 => 가로 15(가로가 조금 더 짧아서 더 길게 설정해주는것) 세로 10
 
@@ -27,7 +27,7 @@ while (true)
     Console.SetCursorPosition(playerX, playerY);
     Console.Write("H");
 
-    // self
+    // 박스 출력하기
     Console.SetCursorPosition(boxX, boxY);
     Console.Write("O");
 
@@ -39,7 +39,13 @@ while (true)
     if (key == ConsoleKey.RightArrow)
     {
         // 오른쪽으로 이동 => 누를때마다 1씩 이동한다.
-        playerX = Math.Min(playerX + 1, 14);
+        playerX = Math.Min(playerX + 1, 15);
+
+        // box가 player와 똑같아 질때 오른쪽으로 한칸씩 움직인다.
+        if (playerX == boxX && playerY == boxY)
+        {
+            boxX += 1;
+        }
     }
     if (key == ConsoleKey.LeftArrow)
     {
@@ -56,10 +62,8 @@ while (true)
 
     //self 박스 update
     
-    if (playerX == boxX)
-    {
-        boxX = Math.Min(boxX + 1, 15);
-    }
+    
+    
 
 }
 
