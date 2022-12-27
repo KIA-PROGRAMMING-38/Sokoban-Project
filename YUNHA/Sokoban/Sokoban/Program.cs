@@ -6,4 +6,59 @@ Console.BackgroundColor = ConsoleColor.DarkBlue;        // 배경색을 설정�
 Console.ForegroundColor = ConsoleColor.Yellow;          // 글꼴색을 설정한다.
 Console.Clear();                                        // 출력된 모든 내용을 지운다.
 
+// 플레이어 좌표 설정
+int playerX = 0, playerY = 0;
+int boxX = 5, boxY = 5;
 
+
+// 가로 15, 세로 10
+// 게임 루프 == 프레임(Frame)
+while (true)
+{
+    // 이전 프레임을 지운다.
+    Console.Clear();
+
+    // -------------------------------------Render------------------------------------- 
+    // 플레이어 출력하기
+    Console.SetCursorPosition(playerX, playerY);
+    Console.Write("K");
+    Console.SetCursorPosition(boxX, boxY);
+    Console.Write("B");
+
+
+    // ----------------------------------ProcessInput---------------------------------- 
+    ConsoleKey key = Console.ReadKey().Key;
+
+
+    // -------------------------------------Update------------------------------------- 
+    // 오른쪽 키를 눌렀을 때
+    if (key == ConsoleKey.RightArrow)
+    {
+        // 오른쪽으로 이동
+        playerX = Math.Min(playerX + 1, 15);
+
+    }
+    // 아래쪽 키를 눌렀을 때
+    if (key == ConsoleKey.DownArrow)
+    {
+        // 아래로 이동
+        playerY = Math.Min(playerY + 1, 10);
+
+    }
+    // 왼쪽 키를 눌렀을 때
+    if (key == ConsoleKey.LeftArrow)
+    {
+        // 왼쪽으로 이동
+        playerX = Math.Max(0, playerX - 1);
+
+    }
+    // 위쪽 키를 눌렀을 때
+    if (key == ConsoleKey.UpArrow)
+    {
+        // 위로 이동
+        playerY = Math.Max(0, playerY - 1);
+
+    }
+
+
+}
