@@ -1,12 +1,13 @@
 ﻿using System;
-
-namespace Sokoban
-{
     class Program
+{
+    static void Main()
     {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello World!");
-        }
+        Console.ResetColor();
+        Console.CursorVisible = false;
+        Console.Title = "소코반";
+        Console.BackgroundColor = ConsoleColor.DarkCyan;
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.Clear();
     }
 }
