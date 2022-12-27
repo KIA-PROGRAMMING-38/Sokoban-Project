@@ -10,7 +10,6 @@ Console.Clear();                                        // 출력된 모든 내�
 int playerX = 0, playerY = 0;
 int boxX = 5, boxY = 5;
 
-
 // 가로 15, 세로 10
 // 게임 루프 == 프레임(Frame)
 while (true)
@@ -35,29 +34,60 @@ while (true)
     if (key == ConsoleKey.RightArrow)
     {
         // 오른쪽으로 이동
-        playerX = Math.Min(playerX + 1, 15);
+        if(playerX == boxX - 1 && playerY == boxY)
+        {
+            playerX = Math.Min(playerX + 1, 14);
+            boxX = Math.Min(boxX + 1, 15);
+        }
+        else
+        {
+            playerX = Math.Min(playerX + 1, 15);
+        }
 
     }
     // 아래쪽 키를 눌렀을 때
     if (key == ConsoleKey.DownArrow)
     {
         // 아래로 이동
-        playerY = Math.Min(playerY + 1, 10);
+        if(playerY == boxY - 1 && playerX == boxX)
+        {
+            playerY = Math.Min(playerY + 1, 9);
+            boxY = Math.Min(boxY + 1, 10);
+        }
+        else
+        {
+            playerY = Math.Min(playerY + 1, 10);
+        }
 
     }
     // 왼쪽 키를 눌렀을 때
     if (key == ConsoleKey.LeftArrow)
     {
         // 왼쪽으로 이동
-        playerX = Math.Max(0, playerX - 1);
+        if(playerX == boxX + 1 && playerY == boxY)
+        {
+            playerX = Math.Max(1, playerX - 1);
+            boxX = Math.Max(0, boxX - 1);
+        }
+        else
+        {
+            playerX = Math.Max(0, playerX - 1);
+        }
 
     }
     // 위쪽 키를 눌렀을 때
     if (key == ConsoleKey.UpArrow)
     {
         // 위로 이동
-        playerY = Math.Max(0, playerY - 1);
-
+        if(playerY == boxY + 1 && playerX == boxX)
+        {
+            playerY = Math.Max(1, playerY - 1);
+            boxY = Math.Max(0, boxY - 1);
+        }
+        else
+        {
+            playerY = Math.Max(0, playerY - 1);
+        }
     }
 
 
