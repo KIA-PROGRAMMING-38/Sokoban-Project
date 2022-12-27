@@ -1,5 +1,5 @@
 ﻿// 초기
-using System.Data;
+using System.Runtime.CompilerServices;
 
 Console.ResetColor();                              // 컬러를 초기화한다.
 Console.CursorVisible = false;                     // 커서를 숨긴다.
@@ -8,35 +8,64 @@ Console.BackgroundColor = ConsoleColor.DarkGreen;  // 배경을 설정한다.
 Console.ForegroundColor = ConsoleColor.Black;      //글꼴을 설정한다.
 Console.Clear();                                   // 출려된 모든 내용을 지운다.
 
+int playerX = 0;
+int playerY = 0;
+
+int boxX = 1;
+int boxY = 1;
 
 
-//int x = 10;
-//int y = 5;
-//Console.SetCursorPosition(x, y);
-//Console.Write("W");
-
-ConsoleKeyInfo keyInfo = Console.ReadKey();
-Console.WriteLine(keyInfo.Key);
-
-//Console.ReadLine();  // Block 멈추면 안됨 
+// 가로 15 새로 10
+// 게임 루프 == 프레임(Frame)
+while (true)
+{
+    // 이전 프레임을 지운다.
+    Console.Clear();
 
 
+    // -----------------------------------------------------Render-----------------------------------------------------
+    // 플레이어 출력하기
+    Console.SetCursorPosition(playerX, playerY);
+    Console.Write("E");
+
+    // 박스 출력하기
+    Console.SetCursorPosition(boxX, boxY);
+    Console.Write("B");
+
+    // --------------------------------------------------ProcessINput--------------------------------------------------
+    ConsoleKey key = Console.ReadKey().Key;
 
 
+    // -----------------------------------------------------Update-----------------------------------------------------
+    // 오른쪽 화살표키를 눌렀을 때
+    if (key == ConsoleKey.RightArrow)
+    {
+        playerX = Math.Min(playerX + 1, 15);
+        if (playerX == boxX && playerY == boxY)
+        {
+            boxX = playerX + 1;
+        }
+    }
+
+    if (key == ConsoleKey.DownArrow)
+    {
+        playerY = Math.Min(playerY + 1, 15);
+        if (playerY == boxY && playerX == boxX)
+        {
+            boxY = playerY + 1;
+        }
+    }
 
 
+    if (key == ConsoleKey.UpArrow)
+    {
+        playerY = Math.Max(0, playerY - 1);
+    }
 
 
+    if (key == ConsoleKey.LeftArrow)
+    {
+        playerX = Math.Max(0, playerX - 1);
+    }
 
-
-//while (true)
-
-    //ProcessInput();
-   // Update();
-    //Render();
-
-//Console.WriteLine("나은수 바봉");
-
-
-
-// Console.WriteLine("{0, 11", "P");  // ("           P");
+}
