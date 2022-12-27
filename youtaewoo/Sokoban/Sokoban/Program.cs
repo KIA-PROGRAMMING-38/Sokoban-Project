@@ -6,11 +6,14 @@ Console.BackgroundColor = ConsoleColor.DarkGreen; // 배경색을 설정한다.
 Console.ForegroundColor = ConsoleColor.White; //글꼴색을 설정한다.
 Console.Clear(); // 출력된 모든 내용을 지운다.
 
-
+// 플레이어 좌표 설정
 int PlayerX = 0;
 int PlayerY = 0; // 얘는 바깥에다 해줘야한다. while문 안에 있으면 이동이 안된다.
+
+// 박스 좌표 설정
 int BoxX = 5;
 int BoxY = 10;
+
 // 게임 루프 == 프레임(frame)
 while (true)
 {
@@ -26,20 +29,6 @@ while (true)
     Console.SetCursorPosition(BoxX, BoxY);
     Console.Write("O");
 
-    // 벽 만들기
-    string[,] wall = new string[30, 15];
-    int wallindexX = 0;
-    int wallindexY = 0;
-    if (wallindexX == 30 || wallindexY == 15)
-    {
-        wall[wallindexX, wallindexY] = "W";
-        Console.WriteLine(wall);
-    }
-    else
-        wall[wallindexX, wallindexY] = "";
-        
-
-
     //------------------------------ProcessInput-----------------------------
     ConsoleKey key = Console.ReadKey().Key;
 
@@ -48,36 +37,47 @@ while (true)
     if (key == ConsoleKey.RightArrow && PlayerX < 30)
     {
         //오른쪽으로 이동
-        PlayerX += 1;
-        if (PlayerX == BoxX && PlayerY == BoxY)
+        
+        if (PlayerX == BoxX - 1 && PlayerY == BoxY)
         {
-            BoxX = PlayerX + 1;
+            PlayerX = Math.Min(PlayerX + 1, 29);
+            BoxX = Math.Min(PlayerX + 1, 30);
         }
+        else
+            PlayerX = Math.Min(PlayerX + 1, 30);
     }
     if (key == ConsoleKey.LeftArrow && PlayerX > 0) 
     {
-        PlayerX -= 1;
-        if (PlayerX == BoxX && PlayerY == BoxY)
+        
+        if (PlayerX == BoxX + 1 && PlayerY == BoxY)
         {
-            BoxX = PlayerX - 1;
+            PlayerX = Math.Max(1, PlayerX - 1);
+            BoxX = Math.Max(0, PlayerX - 1);
         }
+        else
+            PlayerX = Math.Max(0, PlayerX - 1);
     }
     if (key == ConsoleKey.DownArrow && PlayerY < 15)
     {
-        PlayerY += 1;
-        if (PlayerX == BoxX && PlayerY == BoxY)
+        
+        if (PlayerX == BoxX && PlayerY == BoxY - 1)
         {
-            BoxY = PlayerY + 1;
+            PlayerY = Math.Min(PlayerY + 1, 14);
+            BoxY = Math.Min(PlayerY + 1, 15);
         }
+        else
+            PlayerY = Math.Min(PlayerY + 1, 15);
     }
     if (key == ConsoleKey.UpArrow && PlayerY > 0) 
     {
-        PlayerY -= 1;
-        if (PlayerX == BoxX && PlayerY == BoxY)
+        
+        if (PlayerX == BoxX && PlayerY == BoxY + 1 )
         {
-            BoxY = PlayerY - 1;
+            PlayerY = Math.Max(1, PlayerY - 1);
+            BoxY = Math.Max(0, PlayerY - 1);
         }
-    }
-    
+        else
+            PlayerY = Math.Max(0, PlayerY - 1);
+    }   
 
 }
