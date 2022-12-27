@@ -37,7 +37,7 @@ while(true)
 
 
     // ------------------------------------------ Update -----------------------------------------------
-    // 오른쪽 화살표 키를 눌렀을때, 오른쪽으로 이동
+    
     if (key == ConsoleKey.RightArrow)
     {
         // 오른쪽으로 이동
@@ -47,8 +47,17 @@ while(true)
         if(boxX == playerX && boxY==playerY)
         {
             boxX = playerX + 1;
-           
+
+            if(20<boxX)
+            {
+                boxX = boxX - 1;
+                playerX = boxX - 1;
+                
+            }
+            
         }
+
+        
 
     }
     
@@ -60,6 +69,13 @@ while(true)
         {
             boxX = playerX -1;
 
+            if (boxX < 0)
+            {
+                boxX = boxX + 1;
+                playerX = boxX + 1;
+
+            }
+
         }
     }
 
@@ -70,6 +86,14 @@ while(true)
         if (boxX == playerX && boxY == playerY)
         {
             boxY = playerY + 1;
+
+            if (15 < boxY)
+            {
+                boxY = boxY - 1;
+                playerY = boxY - 1;
+
+            }
+
         }
     }
 
@@ -80,6 +104,13 @@ while(true)
         if (boxX == playerX && boxY == playerY)
         {
             boxY = playerY - 1;
+
+            if (boxY < 0)
+            {
+                boxY = boxY + 1;
+                playerY = boxY + 1;
+
+            }
         }
     }
 
