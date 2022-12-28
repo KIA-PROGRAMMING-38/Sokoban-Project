@@ -96,6 +96,7 @@ namespace KMH_Sokoban
 
             while (true)
             {
+                #region Render
                 // ------------------------------------------------------------------ Render.. ------------------------------------------------------------------
                 // 이전 프레임 지우기..
                 Console.Clear();
@@ -119,7 +120,6 @@ namespace KMH_Sokoban
                     Console.SetCursorPosition(i, MAP_RANGE_MAX_Y - 1);
                     Console.Write('-');
                 }
-
                 for (int i = MAP_RANGE_MIN_Y - 1; i < MAP_RANGE_MAX_Y; ++i)
                 {
                     Console.SetCursorPosition(MAP_RANGE_MIN_X - 1, i);
@@ -127,6 +127,7 @@ namespace KMH_Sokoban
                     Console.SetCursorPosition(MAP_RANGE_MAX_X - 1, i);
                     Console.Write('I');
                 }
+                #endregion
 
                 // --------------------------------------------------------------- ProcessInput.. ---------------------------------------------------------------
                 ConsoleKey inputKey = Console.ReadKey().Key;
