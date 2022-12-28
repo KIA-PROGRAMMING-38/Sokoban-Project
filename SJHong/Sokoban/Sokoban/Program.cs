@@ -74,28 +74,40 @@ class Program
                         {
                             playerX = 14;
                         }
-                        boxX = Math.Min(boxX + 1, 15);
+                        else
+                        {
+                            ++boxX;
+                        }
                         break;
                     case 2:
                         if(boxX == 0)
                         {
                             playerX = 1;
                         }
-                        boxX = Math.Max(boxX - 1, 0);
+                        else
+                        {
+                            --boxX;
+                        }
                         break;
                     case 3:
                         if(boxY == 15)
                         {
                             playerY = 14;
                         }
-                        boxY = Math.Min(boxY + 1, 15);
+                        else
+                        {
+                            ++boxY;
+                        }
                         break;
                     case 4:
                         if(boxY == 0)
                         {
                             playerY = 1;
                         }
-                        boxY = Math.Max(boxY - 1, 0);
+                        else
+                        {
+                            --boxY;
+                        }
                         break;
                     default:
                         Console.Clear();
