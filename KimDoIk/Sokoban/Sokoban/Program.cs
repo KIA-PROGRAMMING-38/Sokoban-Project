@@ -1,5 +1,34 @@
 ﻿namespace Sokoban
 {
+    //열거형
+    //const int DIRECTION_LEFT = 1;
+    //const int DIRECTION_RIGHT = 2;
+    //const int DIRECTION_UP = 3;
+    //const int DIRECTION_DOWN = 4;
+    enum Direction
+    {   none,
+        Left = 1,
+        Right = 2,
+        Up = 3,
+        Down = 4
+    }
+
+    //const int LIMIT_X = 15;
+    //const int LIMIT_Y = 10;
+    //const int LIMIT_YY = 0;
+    //const int LIMIT_XX = 0;
+    enum Limit
+    {
+        none,
+        Map_Max_X = 15,
+        Map_Min_x = 0,
+        Map_Max_Y = 10,
+        Map_Min_y = 0
+
+    }
+
+
+
     class Program
     {
         static void Main()
@@ -24,11 +53,12 @@
             int playerX = PLAYERX_START;
             int playerY = PLAYERY_START;
 
-            const int DIRECTION_LEFT = 1;
-            const int DIRECTION_RIGHT = 2;
-            const int DIRECTION_UP = 3;
-            const int DIRECTION_DOWN = 4;
-            int playerDirection = 0;
+            //const int DIRECTION_LEFT = 1;
+            //const int DIRECTION_RIGHT = 2;
+            //const int DIRECTION_UP = 3;
+            //const int DIRECTION_DOWN = 4;
+            //int playerDirection = 0;
+            Direction playerDirection = Direction.none;
 
             //플레이어의 기호
             const string PLAYER = "P";
@@ -45,10 +75,11 @@
             int BoxY = BOXY_START;
 
             // MAP 제한선 설정
-            const int LIMIT_X = 15;
-            const int LIMIT_Y = 10;
-            const int LIMIT_YY = 0;
-            const int LIMIT_XX = 0;
+            //const int LIMIT_X = 15;
+            //const int LIMIT_Y = 10;
+            //const int LIMIT_YY = 0;
+            //const int LIMIT_XX = 0;
+            Limit Map = Limit.none;
 
 
 
@@ -78,27 +109,27 @@
                 //오른쪽 화살표 키를 눌렀을 때
                 if (Key == ConsoleKey.RightArrow)
                 {
-                    playerX = Math.Min(playerX + 1, LIMIT_X); // Math.Min(A,B) A와 B중 더 작은 놈을 고르겠다.(동일 값 포함)
-                    playerDirection = DIRECTION_RIGHT;
-
+                    playerX = Math.Min(playerX + 1, (int)Limit.Map_Max_X); // Math.Min(A,B) A와 B중 더 작은 놈을 고르겠다.(동일 값 포함)
+                    playerDirection = Direction.Right;
+                   
                 }
 
                 if (Key == ConsoleKey.LeftArrow)
                 {
-                    playerX = Math.Max(0, playerX - 1); // Math.Max(A, B) A와 B중 더 큰놈을 고르겠다.
-                    playerDirection = DIRECTION_LEFT;
+                    playerX = Math.Max((int)Limit.Map_Min_x, playerX - 1); // Math.Max(A, B) A와 B중 더 큰놈을 고르겠다.
+                    playerDirection = Direction.Left;
                 }
 
                 if (Key == ConsoleKey.UpArrow)
                 {
-                    playerY = Math.Max(0, playerY - 1);
-                    playerDirection = DIRECTION_UP;
+                    playerY = Math.Max((int)Limit.Map_Min_y, playerY - 1);
+                    playerDirection = Direction.Up;
                 }
 
                 if (Key == ConsoleKey.DownArrow)
                 {
-                    playerY = Math.Min(playerY + 1, LIMIT_Y);
-                    playerDirection = DIRECTION_DOWN;
+                    playerY = Math.Min(playerY + 1, (int)Limit.Map_Max_Y);
+                    playerDirection = Direction.Down;
 
 
                 }
@@ -111,10 +142,10 @@
                     // 플레이어가 어느 방향에서 왔는지에 따라 박스의 위치가 달라진다.
                     switch (playerDirection)
                     {
-                        case DIRECTION_LEFT: // 플레이어가 왼족으로 이동 중
-                            if (BoxX == LIMIT_XX) // 박스가 왼쪽 끝에 있다면?
+                        case Direction.Left: // 플레이어가 왼족으로 이동 중
+                            if (BoxX == (int)Limit.Map_Min_x) // 박스가 왼쪽 끝에 있다면?
                             {
-                                playerX = LIMIT_XX + 1;
+                                playerX = (int)Limit.Map_Min_x + 1;
                             }
                             else
                             {
@@ -123,10 +154,10 @@
 
                             break;
 
-                        case DIRECTION_RIGHT: // 플레이어가 오른쪽으로 이동중
-                            if (BoxX == LIMIT_Y)
+                        case Direction.Right: // 플레이어가 오른쪽으로 이동중
+                            if (BoxX == (int)Limit.Map_Max_X)
                             {
-                                playerX = LIMIT_Y - 1;
+                                playerX = (int)Limit.Map_Max_X - 1;
                             }
                             else
                             {
@@ -134,10 +165,10 @@
                             }
                             break;
 
-                        case DIRECTION_UP:// 플레이어가 위쪽으로 이동중
-                            if (BoxY == LIMIT_YY)
+                        case Direction.Up:// 플레이어가 위쪽으로 이동중
+                            if (BoxY == (int)Limit.Map_Min_y)
                             {
-                                playerY = LIMIT_YY + 1;
+                                playerY = (int)Limit.Map_Min_y + 1;
                             }
                             else
                             {
@@ -145,10 +176,10 @@
                             }
                             break;
 
-                        case DIRECTION_DOWN:// 플레이어가 아래쪽으로 이동중
-                            if (BoxY == LIMIT_Y)
+                        case Direction.Down:// 플레이어가 아래쪽으로 이동중
+                            if (BoxY == (int)Limit.Map_Max_Y)
                             {
-                                playerY = LIMIT_Y - 1;
+                                playerY = (int)Limit.Map_Max_Y - 1;
                             }
                             else
                             {
