@@ -6,12 +6,26 @@ Console.BackgroundColor = ConsoleColor.Magenta;         // 배경색을 설정�
 Console.ForegroundColor = ConsoleColor.Yellow;         // 글꼴색을 설정한다.
 Console.Clear();                                       // 출력된 모든 내용을 지운다.
 
-int playerX = 0;
-int playerY = 0;
-int playerDirection = 0; // 1 : Up, 2 : Down, 3 : Left, 4 : Right
 
-int boxX = 10;
-int boxY = 5;
+const int DIRECTION_UP = 1;
+const int DIRECTION_DOWN = 2;
+const int DIRECTION_LEFT = 3;
+const int DIRECTION_RIGHT = 4;
+const int MAP_HEIGHT_MAX = 20;
+const int MAP_HEIGHT_MIN = 0;
+const int MAP_WIDTH_MAX = 30;
+const int MAP_WIDTH_MIN = 0;
+const string PLAYER_SYMBOL = "P";
+const string BOX_SYMBOL = "B";
+const int PLAYER_INITIAL_X_COORDINATE = 3;
+const int PLAYER_INITIAL_Y_COORDINATE = 2;
+const int BOX_INITIAL_X_COORDINATE = 10;
+const int BOX_INITIAL_Y_COORDINATE = 5;
+int playerX = PLAYER_INITIAL_X_COORDINATE;
+int playerY = PLAYER_INITIAL_Y_COORDINATE;
+int boxX = BOX_INITIAL_X_COORDINATE;
+int boxY = BOX_INITIAL_Y_COORDINATE;
+int playerDirection = default;
 
 // 게임 루프 == 프레임(Frame)
 while (true)
@@ -20,72 +34,72 @@ while (true)
 
     // -------------------------------------- Render ------------------------------------------------
     Console.SetCursorPosition(playerX, playerY);
-    Console.Write("P");
+    Console.Write(PLAYER_SYMBOL);
     Console.SetCursorPosition(boxX, boxY);
-    Console.Write("B");
+    Console.Write(BOX_SYMBOL);
     // -------------------------------------- ProcessInput ------------------------------------------------
     ConsoleKey playerKey = Console.ReadKey().Key; // ConsoleKeyInfo keyInfo = Console.ReadKey(); ConsoleKey key = keyInfo.Key;
     // -------------------------------------- Update ------------------------------------------------
     // 플레이어
     if (playerKey == ConsoleKey.UpArrow)
     {
-        playerY = Math.Max(0, playerY - 1);
-        playerDirection = 1;
+        playerY = Math.Max(MAP_HEIGHT_MIN, playerY - 1);
+        playerDirection = DIRECTION_UP;
     }
     if (playerKey == ConsoleKey.DownArrow)
     {
-        playerY = Math.Min(playerY + 1, 20);
-        playerDirection = 2;
+        playerY = Math.Min(playerY + 1, MAP_HEIGHT_MAX);
+        playerDirection = DIRECTION_DOWN;
     }
     if (playerKey == ConsoleKey.LeftArrow)
     {
-        playerX = Math.Max(0, playerX - 1);
-        playerDirection = 3;
+        playerX = Math.Max(MAP_WIDTH_MIN, playerX - 1);
+        playerDirection = DIRECTION_LEFT;
     }
     if (playerKey == ConsoleKey.RightArrow)
     {
-        playerX = Math.Min(playerX + 1, 30);
-        playerDirection = 4;
+        playerX = Math.Min(playerX + 1, MAP_WIDTH_MAX);
+        playerDirection = DIRECTION_RIGHT;
     }
     // 박스
     if (playerX == boxX && playerY == boxY)
     {
         switch (playerDirection)
         {
-            case 1:
-                if (boxY == 0)
+            case DIRECTION_UP:
+                if (boxY == MAP_HEIGHT_MIN)
                 {
-                    playerY = 1;
+                    playerY = MAP_HEIGHT_MIN + 1;
                 }
                 else
                 {
                     --boxY;
                 }
                 break;
-            case 2:
-                if (boxY == 20)
+            case DIRECTION_DOWN:
+                if (boxY == MAP_HEIGHT_MAX)
                 {
-                    playerY = 19;
+                    playerY = MAP_HEIGHT_MAX - 1;
                 }
                 else
                 {
                     ++boxY;
                 }
                 break;
-            case 3:
-                if (boxX == 0)
+            case DIRECTION_LEFT:
+                if (boxX == MAP_WIDTH_MIN)
                 {
-                    playerX = 1;
+                    playerX = MAP_WIDTH_MIN + 1;
                 }
                 else
                 {
                     --boxX;
                 }
                 break;
-            case 4:
-                if (boxX == 30)
+            case DIRECTION_RIGHT:
+                if (boxX == MAP_WIDTH_MAX)
                 {
-                    playerX = 29;
+                    playerX = MAP_WIDTH_MAX - 1;
                 }
                 else
                 {
@@ -95,42 +109,8 @@ while (true)
             default:
                 Console.Clear();
                 Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
+
                 return;
-
         }
-        
-        //if (playerDirection == 1)
-        //{
-        //    if (playerY == 0 && boxY == 0)
-        //    {
-        //        ++playerY;
-        //    }
-        //    boxY = Math.Max(0, boxY - 1);
-        //}
-        //if (playerDirection == 2)
-        //{
-        //    if (playerY == 20 && boxY == 20)
-        //    {
-        //        --playerY;
-        //    }
-        //    boxY = Math.Min(boxY + 1, 20);
-        //}
-        //if (playerDirection == 3)
-        //{
-        //    if (playerX == 0 && boxX == 0)
-        //    {
-        //        ++playerX;
-        //    }
-        //    boxX = Math.Max(0, boxX - 1);
-        //}
-        //if (playerDirection == 4)
-        //{
-        //    if (playerX == 30 && boxX == 30)
-        //    {
-        //        --playerX;
-        //    }
-        //    boxX = Math.Min(boxX + 1, 30);
-        //}
     }
-
 }
