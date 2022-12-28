@@ -9,19 +9,47 @@ Console.Clear(); // 출력된 모든 내용을 지운다
 
 
 
-// == && || , = == 
+// 기호상수
+// 맵의 가로범위, 세로범위 - O
+// 플레이어 기호(string literal) - O
+// 박스의 기호(string literal) - O
+// 플레이어 이동방향 - O
+// 플레이어의 초기좌표 - O
+// 박스의 초기좌표 - O
+
+
+const int MAP_MIN_X = 0;
+const int MAP_MIN_Y = 0;
+const int MAP_MAX_X = 15; // 맵의 가로범위
+const int MAP_MAX_Y = 10; // 맵의 세로범위
+
+const string Player = "R"; // 플레이어 기호
+const string Box = "B"; // 박스 기호
+
+const int player_Direction = 0;
+int playerDirection = player_Direction; // 0: None, 1: 왼쪽으로 이동중이였다(Left), 2: Right, 3: Up, 4: Down
+
+const int DirectionLeft = 1; // 플레이어 왼쪽 이동방향
+const int DirectionRight = 2; // 플레이어 오른쪽 이동방향
+const int DirectionUp = 3; // 플레이어 위쪽 이동방향
+const int DirectionDown = 4; // 플레이어 아래쪽 이동방향
 
 
 
+const int player_X = 0; // 플레이어 X 초기좌표
+int playerX = player_X; 
 
-int playerX = 0;
-int playerY = 0;
-int playerDirection = 0; // 0: None, 1: 왼쪽으로 이동중이였다(Left), 2: Right, 3: Up, 4: Down
-// 이동 방향 => 
+const int player_Y = 0; // 플레이어 Y 초기좌표
+int playerY = player_Y;
 
-int boxX = 2;
-int boxY = 2;
-// 가로 15, 세로 10
+
+const int Box_X = 2; // 플레이어 X 초기좌표
+int boxX = Box_X;
+
+const int Box_Y = 3; // 플레이어 Y 초기좌표
+int boxY = Box_Y;
+
+// 가로 15, 세로 15
 
 // 게임 루프 == 프레임(Frame)
 while (true)
@@ -33,11 +61,11 @@ while (true)
     // 플레이어 출력하기
 
     Console.SetCursorPosition(playerX, playerY);
-    Console.Write("R");
+    Console.Write($"{Player}");
 
 
     Console.SetCursorPosition(boxX, boxY);
-    Console.Write("B");
+    Console.Write($"{Box}");
 
 
     // ------------------------------------------ ProcessInput -----------------------------------------
@@ -51,26 +79,26 @@ while (true)
     if (key == ConsoleKey.RightArrow)
     {
         // 오른쪽으로 이동
-        playerX = Math.Min(playerX + 1, 15);
-        playerDirection= 2;
+        playerX = Math.Min(playerX + 1, MAP_MAX_X);
+        playerDirection= DirectionRight;
     }
 
     if (key == ConsoleKey.LeftArrow)
     {
-        playerX = Math.Max(0, playerX - 1);
-        playerDirection= 1;
+        playerX = Math.Max(MAP_MIN_X, playerX - 1);
+        playerDirection= DirectionLeft;
     }
 
     if (key == ConsoleKey.DownArrow)
     {
-        playerY = Math.Min(playerY + 1, 15);
-        playerDirection= 4;
+        playerY = Math.Min(playerY + 1, MAP_MAX_Y);
+        playerDirection= DirectionDown;
     }
     
     if (key == ConsoleKey.UpArrow)
     {
-        playerY = Math.Max(0, playerY - 1);
-        playerDirection= 3;
+        playerY = Math.Max(MAP_MIN_Y, playerY - 1);
+        playerDirection= DirectionUp;
     }
     
 
@@ -86,20 +114,21 @@ while (true)
         // 플레이어가 온 방향에 따라서 박스의 위치가 달라짐. 1)왼쪽으로 이동중일떄 2)오른쪽으로 이동중일때 3)위로 이동중 4)아래로 이동중
         switch(playerDirection)
         {
-            case 1: // 왼쪽으로 이동중일때
-                if (boxX == 0) // 박스가 왼쪽 끝에 있다면?
+            case DirectionLeft: // 왼쪽으로 이동중일때
+                if (boxX == MAP_MIN_X) // 박스가 왼쪽 끝에 있다면?
                 {
-                    playerX = 1;
+                    playerX = MAP_MIN_X + 1;
                 }
                 else
                 {
                     boxX = boxX - 1;
                 }
                 break;
-            case 2: // 오른쪽으로 이동중일 때
-                if(boxX==15)
+
+            case DirectionRight: // 오른쪽으로 이동중일 때
+                if(boxX==MAP_MAX_X)
                 {
-                    playerX = 14;
+                    playerX = MAP_MAX_X - 1;
                 }
                 else
                 {
@@ -107,26 +136,29 @@ while (true)
                 }
                 
                 break;
-            case 3: // 위로 이동중일때
-                if(boxY == 0)
+
+            case DirectionUp: // 위로 이동중일때
+                if(boxY == MAP_MIN_Y)
                 {
-                    playerY = 1;
+                    playerY = MAP_MIN_Y + 1;
                 }
                 else
                 {
                     boxY = boxY - 1;
                 }
                 break;
-            case 4: // 아래로 이동중 일때
-                if(boxY == 15)
+
+            case DirectionDown: // 아래로 이동중 일때
+                if(boxY == MAP_MAX_Y)
                 {
-                    playerY = 14;
+                    playerY = MAP_MAX_Y -1;
                 }
                 else
                 {
                     boxY = boxY + 1;
                 }
                 break;
+
             default:
                 Console.Clear();
                 Console.WriteLine($"플레이어의 이동방향이 잘못되었습니다. {playerDirection}");
