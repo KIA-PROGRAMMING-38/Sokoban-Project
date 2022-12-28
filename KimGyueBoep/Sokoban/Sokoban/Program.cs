@@ -1,5 +1,13 @@
 ﻿namespace Sokoban
 {
+    // 열거형
+    enum PLAYER_Direction
+    {
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN
+    }
     class Program
     {
         static void Main()
@@ -20,10 +28,10 @@
             const int MAP_MAX_Y = 10;
 
             // 플레이어의 이동 방향
-            const int DIRECTION_LEFT = 1;
-            const int DIRECTION_RIGHT = 2;
-            const int DIRECTION_UP = 3;
-            const int DIRECTION_DOWN = 4;
+            // const int DIRECTION_LEFT = 1;
+            // const int DIRECTION_RIGHT = 2;
+            // const int DIRECTION_UP = 3;
+            // const int DIRECTION_DOWN = 4;
 
             // 플레이어의 초기 좌표
             const int INITIAL_PLAYER_X = 0;
@@ -38,14 +46,18 @@
             const string BOX_STRING = "O";
 
             // 플레이어 좌표 설정
+            PLAYER_Direction playerDirection = PLAYER_Direction.LEFT;
             int playerX = INITIAL_PLAYER_X;
             int playerY = INITIAL_PLAYER_Y;
 
             // 박스 좌표 설정
             int box_X = INITIAL_BOX_X;
             int box_Y = INITIAL_BOX_Y;
-            int playerDirection = 0; // 0 : NONE, 1 : Left, 2 : Right, 3 : Up, 4 : Down
 
+
+            // int playerDirection = 0; // 0 : NONE, 1 : Left, 2 : Right, 3 : Up, 4 : Down
+
+            
 
             // 가로 15, 세로 10
             // 게임 루프 == 프레임(Frame)
@@ -72,25 +84,26 @@
                 {
                     // 오른쪽으로 이동
                     playerX = Math.Min(playerX + 1, MAP_MAX_X);
-                    playerDirection = DIRECTION_RIGHT;
+                    playerDirection = PLAYER_Direction.RIGHT;
+                    //playerDirection = DIRECTION_RIGHT;
                 }
                 if (key == ConsoleKey.LeftArrow)
                 {
                     // 왼쪽
                     playerX = Math.Max(MAP_MIN_X, playerX - 1);
-                    playerDirection = DIRECTION_LEFT;
+                    playerDirection = PLAYER_Direction.LEFT;
                 }
                 if (key == ConsoleKey.DownArrow)
                 {
                     // 아래쪽
                     playerY = Math.Min(playerY + 1, MAP_MAX_Y);
-                    playerDirection = DIRECTION_DOWN;
+                    playerDirection = PLAYER_Direction.DOWN;
                 }
                 if (key == ConsoleKey.UpArrow)
                 {
                     // 위쪽
                     playerY = Math.Max(MAP_MIN_Y, playerY - 1);
-                    playerDirection = DIRECTION_UP;
+                    playerDirection = PLAYER_Direction.UP;
                 }
 
                 // 박스 업데이트
@@ -136,7 +149,7 @@
                 {
                     switch (playerDirection)
                     {
-                        case 1: // 왼쪽
+                        case PLAYER_Direction.LEFT: // 왼쪽
                             if (box_X == MAP_MIN_X)
                             {
                                 playerX = 1;
@@ -146,7 +159,7 @@
                                 box_X = box_X - 1;
                             }
                             break;
-                        case 2: // 오른쪽
+                        case PLAYER_Direction.RIGHT: // 오른쪽
                             if (box_X == MAP_MAX_X)
                             {
                                 playerX = MAP_MAX_X - 1;
@@ -156,7 +169,7 @@
                                 box_X = box_X + 1;
                             }
                             break;
-                        case 3: // 위
+                        case PLAYER_Direction.UP: // 위
                             if (box_Y == MAP_MIN_Y)
                             {
                                 playerY = 1;
@@ -166,7 +179,7 @@
                                 box_Y = box_Y - 1;
                             }
                             break;
-                        case 4: // 아래
+                        case PLAYER_Direction.DOWN: // 아래
                             if (box_Y == MAP_MAX_Y)
                             {
                                 playerY = MAP_MAX_Y - 1;
