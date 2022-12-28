@@ -38,41 +38,60 @@ while (true)
 
     // -----------------------------------------------------Update-----------------------------------------------------
     // 오른쪽 화살표키를 눌렀을 때
-    if (key == ConsoleKey.RightArrow)
+    if (key == ConsoleKey.RightArrow)  // →
     {
         playerX = Math.Min(playerX + 1, 15);
         if (playerX == boxX && playerY == boxY)
         {
             boxX = playerX + 1;
+            if (boxX > 15)
+            {
+                boxX = boxX - 1;
+                playerX = boxX - 1;
+            }
         }
     }
 
-    if (key == ConsoleKey.DownArrow)
+    if (key == ConsoleKey.DownArrow)  // ↓
     {
         playerY = Math.Min(playerY + 1, 15);
         if (playerY == boxY && playerX == boxX)
         {
             boxY = playerY + 1;
+            if (boxY > 15)
+            {
+                boxY = boxY - 1;
+                playerY = playerY - 1;
+            }
         }
     }
 
-
-    if (key == ConsoleKey.UpArrow)
+    if (key == ConsoleKey.UpArrow)  // ↑
     {
         playerY = Math.Max(0, playerY - 1);
         if (playerY == boxY && playerX == boxX)
         {
             boxY = playerY - 1;
+            if (boxY < 0)
+            {
+                boxY = boxY + 1;
+                playerY = playerY + 1;
+            }
         }
     }
 
-
-    if (key == ConsoleKey.LeftArrow)
+    if (key == ConsoleKey.LeftArrow)  // ←
     {
         playerX = Math.Max(0, playerX - 1);
         if (playerX == boxX && playerY == boxY)
         {
             boxX = playerX - 1;
+            if(boxX < 0)
+            {
+                boxX = boxX + 1;
+                playerX = playerX + 1;
+            }
+            
         }
     }
 
