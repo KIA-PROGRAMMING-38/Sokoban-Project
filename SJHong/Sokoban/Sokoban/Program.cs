@@ -12,6 +12,7 @@ class Program
 
         int playerX = 0;
         int playerY = 0;
+        int playerDirection = 0; 
 
         int boxX = 5;
         int boxY = 5;
@@ -27,83 +28,89 @@ class Program
             Console.SetCursorPosition(playerX, playerY);
             Console.Write("P");
             Console.SetCursorPosition(boxX, boxY);
-
-
             Console.Write("N");
-
+            Console.SetCursorPosition(goalX, goalY);
+            Console.Write("G");
             //------------------------ProcessInput-----------------
 
             ConsoleKey Key = Console.ReadKey().Key;
 
 
             //----------------------- Update ----------------------
-            //오른쪽 화살표를 눌렀을 때
 
             if (Key == ConsoleKey.RightArrow)
             {
                 playerX = Math.Min(playerX + 1, 15);
-                if (playerX == boxX && playerY == boxY)
-                {
-                    if (boxX < 15)
-                    {
-                        boxX += 1;
-                    }
-                    else if (boxX == 15)
-                    {
-                        playerX -= 1;
-                    }
-                }
+                playerDirection = 1;
 
             }
+
             if (Key == ConsoleKey.LeftArrow)
             {
                 playerX = Math.Max(0, playerX - 1);
-                if (playerX == boxX && playerY == boxY)
-                {
-                    if (boxX > 0)
-                    {
-                        boxX -= 1;
-                    }
-                    else if (boxX == 0)
-                    {
-                        playerX += 1;
-                    }
-                }
+                playerDirection = 2;
+
             }
 
             if (Key == ConsoleKey.DownArrow)
             {
                 playerY = Math.Min(playerY + 1, 15);
-                if (playerX == boxX && playerY == boxY)
-                {
-                    if (boxY < 15)
-                    {
-                        boxY += 1;
-                    }
-                    else if (boxY == 15)
-                    {
-                        playerY -= 1;
-                    }
-                }
-            }
+                playerDirection = 3;
 
+            }
 
             if (Key == ConsoleKey.UpArrow)
             {
                 playerY = Math.Max(0, playerY - 1);
-                if (playerX == boxX && playerY == boxY)
-                {
-                    if (boxY > 0)
-                    {
-                        boxY -= 1;
-                    }
-                    else if (boxY == 0)
-                    {
-                        playerY += 1;
-                    }
-                }
-            }
+                playerDirection = 4;
 
+            }
+            if (boxX == playerX && boxY == playerY)
+            {
+                switch(playerDirection)
+                {
+                    case 1:
+                        if(boxX == 15)
+                        {
+                            playerX = 14;
+                        }
+                        boxX = Math.Min(boxX + 1, 15);
+                        break;
+                    case 2:
+                        if(boxX == 0)
+                        {
+                            playerX = 1;
+                        }
+                        boxX = Math.Max(boxX - 1, 0);
+                        break;
+                    case 3:
+                        if(boxY == 15)
+                        {
+                            playerY = 14;
+                        }
+                        boxY = Math.Min(boxY + 1, 15);
+                        break;
+                    case 4:
+                        if(boxY == 0)
+                        {
+                            playerY = 1;
+                        }
+                        boxY = Math.Max(boxY - 1, 0);
+                        break;
+                    default:
+                        Console.Clear();
+                        Console.WriteLine($"[Error] 플레이어의 이동방향이 잘못되었습니다. {playerDirection}");
+                        
+                        return;
+                }
+
+            }
+            if (boxX == goalX && boxY == goalY)
+            {
+                Console.Clear();
+                Console.WriteLine("Game Clear!");
+                break;
+            }
         }
     }
 }
