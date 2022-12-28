@@ -1,8 +1,8 @@
 ﻿#region 초기세팅
 Console.ResetColor();                               // 컬러 초기화
 Console.CursorVisible = false;                      // 커서 비활성화
-Console.Title = "던전앤파이터";                     // 타이틀 설정
-Console.BackgroundColor = ConsoleColor.DarkGray;    // 배경색 설정
+Console.Title = "소코반";                     // 타이틀 설정
+Console.BackgroundColor = ConsoleColor.Black;    // 배경색 설정
 Console.ForegroundColor = ConsoleColor.DarkCyan;    // 전경색 설정
 Console.Clear();                                    // 콘솔창 클리어
 /*-------------------------------------------------*/
@@ -10,30 +10,39 @@ Console.Clear();                                    // 콘솔창 클리어
 
 
 #region 맵세팅
-ConsoleColor DefaultForegroundColor = Console.ForegroundColor;
-int mapMinWidth = 0;
-int mapMinHeight = 0;
-int mapMaxWidth = 35;
-int mapMaxHeight = 10;
-char wallIcon = 'Π';
-ConsoleColor wallColor = ConsoleColor.Red;
+ConsoleColor defaultForegroundColor = Console.ForegroundColor;
+const char WALL_ICON = 'Π';
+const ConsoleColor WALL_COLOR = ConsoleColor.Red;
+const int WallOffset = 0;
+const int MAP_MIN_X = 0;
+const int MAP_MIN_Y = 0;
+const int MAP_MAX_X = 35;
+const int MAP_MAX_Y = 10;
 #endregion
 
-
 #region Player
-int playerX = 2;
-int playerY = 2;
-ConsoleColor playerColor = ConsoleColor.DarkCyan;
-
-char player = 'Д';
+Direction playerDir = Direction.Default;
+const int INITIAL_PLAYER_X = 2;
+const int INITIAL_PLAYER_Y = 2;
+const ConsoleColor PLAYER_COLOR = ConsoleColor.DarkCyan;
+const char PLAYER_ICON = 'X';
+int playerX = INITIAL_PLAYER_X;
+int playerY = INITIAL_PLAYER_Y;
+int prevPlayerX = 0;
+int prevPlayerY = 0;
 #endregion
 
 #region Box
-int boxPosX = 5;
-int boxPosY = 5;
-char box = '▥'; //▥ Д
-ConsoleColor boxColor = ConsoleColor.Black;
+const int INITIAL_BOX_X = 5;
+const int INITIAL_BOX_Y = 3;
+const char BOX_ICON = 'O'; //▥ Д
+const ConsoleColor BOX_COLOR = ConsoleColor.White;
+int[] boxPosX = {INITIAL_BOX_X, INITIAL_BOX_X+3 , INITIAL_BOX_X+5 };
+int[] boxPosY = { INITIAL_BOX_Y,INITIAL_BOX_Y+3, INITIAL_BOX_Y+4};
+int prevBoxPosX = 0;
+int prevBoxPosY = 0;
 #endregion
+
 
 
 // 게임 루프 == 프레임(Frame)
@@ -43,81 +52,131 @@ while (true)
 
     #region Render
     /*---------------------- Render ---------------------- */
-    Console.ForegroundColor = wallColor;
+    Console.ForegroundColor = WALL_COLOR;
 
     // 벽
-    for (int i = 0; i <= mapMaxWidth; i++)
+    for (int i = 0; i <= MAP_MAX_X; i++)
     {
-        Console.SetCursorPosition(i, mapMinHeight);
-        Console.Write(wallIcon);
-        Console.SetCursorPosition(i, mapMaxHeight);
-        Console.Write(wallIcon);
+        Console.SetCursorPosition(i, MAP_MIN_Y);
+        Console.Write(WALL_ICON);
+        Console.SetCursorPosition(i, MAP_MAX_Y);
+        Console.Write(WALL_ICON);
     }
-    for (int i = 0; i <= mapMaxHeight; i++)
+    for (int i = 0; i <= MAP_MAX_Y; i++)
     {
-        Console.SetCursorPosition(mapMinWidth, i);
-        Console.Write(wallIcon);
-        Console.SetCursorPosition(mapMaxWidth, i);
-        Console.Write(wallIcon);
+        Console.SetCursorPosition(MAP_MIN_X, i);
+        Console.Write(WALL_ICON);
+        Console.SetCursorPosition(MAP_MAX_X, i);
+        Console.Write(WALL_ICON);
     }
 
     Console.SetCursorPosition(playerX, playerY);
-    Console.ForegroundColor = playerColor;
-    Console.Write(player);
+    Console.ForegroundColor = PLAYER_COLOR;
+    Console.Write(PLAYER_ICON);
 
-    Console.SetCursorPosition(boxPosX, boxPosY);
-    Console.ForegroundColor = boxColor;
-    Console.Write(box);
+    for (int i = 0; i < boxPosX.Length; ++i)
+    {
+        Console.SetCursorPosition(boxPosX[i], boxPosY[i]);
+        Console.ForegroundColor = BOX_COLOR;
+        Console.Write(BOX_ICON);
+    }
 
-    Console.ForegroundColor = DefaultForegroundColor;
+    Console.ForegroundColor = defaultForegroundColor;
     #endregion
 
     #region ProcessInput
     /*------------------- ProcessInput ------------------- */
     ConsoleKey key = Console.ReadKey().Key;
+    switch (key)
+    {
+        case ConsoleKey.RightArrow:
+            playerDir = Direction.Right;
+            break;
+        case ConsoleKey.LeftArrow:
+            playerDir = Direction.Left;
+            break;
+        case ConsoleKey.UpArrow:
+            playerDir = Direction.Up;
+            break;
+        case ConsoleKey.DownArrow:
+            playerDir = Direction.Down;
+            break;
+    }
     #endregion
 
     #region Update
     /*---------------------- Update ---------------------- */
 
-    int prevPlayerX = playerX;
-    int prevPlayerY = playerY;
-    int prevBoxPosX = boxPosX;
-    int prevBoxPosY = boxPosY;
 
     // Player
-    if (key == ConsoleKey.RightArrow)
+    prevPlayerX = playerX;
+    prevPlayerY = playerY;
+
+    switch (playerDir)
     {
-        playerX = Math.Min(playerX + 1, mapMaxWidth - 1);
-    }
-    if (key == ConsoleKey.LeftArrow)
-    {
-        playerX = Math.Max(playerX - 1, mapMinWidth + 1);
-    }
-    if (key == ConsoleKey.DownArrow)
-    {
-        playerY = Math.Min(playerY + 1, mapMaxHeight - 1);
-    }
-    if (key == ConsoleKey.UpArrow)
-    {
-        playerY = Math.Max(playerY - 1, mapMinHeight + 1);
+        case Direction.Left:
+            playerX = Math.Max(playerX - 1, MAP_MIN_X + WallOffset);
+            break;
+        case Direction.Right:
+            playerX = Math.Min(playerX + 1, MAP_MAX_X - WallOffset);
+            break;
+        case Direction.Up:
+            playerY = Math.Max(playerY - 1, MAP_MIN_Y + WallOffset);
+            break;
+        case Direction.Down:
+            playerY = Math.Min(playerY + 1, MAP_MAX_Y - WallOffset);
+            break;
     }
 
     // BOX
-    if (playerX == boxPosX && playerY == boxPosY)
+    for (int i = 0; i < boxPosX.Length; i++)
     {
-        boxPosX += playerX - prevPlayerX;
-        boxPosY += playerY - prevPlayerY;
-        // 박스 범위 나갈 때
-        if (boxPosX > mapMaxWidth-1 || boxPosY > mapMaxHeight-1 || boxPosY < mapMinHeight+1 || boxPosX < mapMinWidth+1)
+        prevBoxPosX = boxPosX[i];
+        prevBoxPosY = boxPosY[i];
+
+        if (playerX == boxPosX[i] && playerY == boxPosY[i])
         {
-            boxPosX = prevBoxPosX;
-            boxPosY = prevBoxPosY;
-            playerX = prevPlayerX;
-            playerY = prevPlayerY;
+            // 방향
+            boxPosX[i] += playerX - prevPlayerX;
+            boxPosY[i] += playerY - prevPlayerY;
+
+
+            // 박스 범위 나갈 때
+            if (boxPosX[i] > MAP_MAX_X - WallOffset || boxPosY[i] > MAP_MAX_Y - WallOffset || boxPosY[i] < MAP_MIN_Y + WallOffset || boxPosX[i] < MAP_MIN_X + WallOffset)
+            {
+                boxPosX[i] = prevBoxPosX;
+                boxPosY[i] = prevBoxPosY;
+                playerX = prevPlayerX;
+                playerY = prevPlayerY;
+            }
+            // 박스앞에 박스 있으면
+            for (int j = 0; j < boxPosX.Length; j++)
+            {
+                if (i == j) continue;
+                if (boxPosX[j] == boxPosX[i] && boxPosY[j] == boxPosY[i])
+                {
+                    boxPosX[i] = prevBoxPosX;
+                    boxPosY[i] = prevBoxPosY;
+                    playerX = prevPlayerX;
+                    playerY = prevPlayerY;
+                    break;
+                }
+            }
         }
+
+
+        // 다른 장애물들과 비교
+        //
+        //
+        #endregion
     }
+}
 
-    #endregion
-
+enum Direction
+{
+    Default,
+    Left,
+    Right,
+    Up,
+    Down,
 }
