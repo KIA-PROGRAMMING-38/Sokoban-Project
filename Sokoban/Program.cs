@@ -40,17 +40,7 @@ while (true)
     {
         playerX = Math.Max(0, playerX - 1);
         playerDirection = 1;
-        //if (boxX > 0)
-        //{
-        //    if (playerX == boxX && playerY == boxY)
-        //    {
-        //        boxX -= 1;
-        //    }
-        //}
-        //else if (playerX == boxX && playerY == boxY)
-        //{
-        //    playerX += 1;
-        //}
+       
     }
 
     // 오른쪽 화살표키를 눌렀을 때
@@ -59,52 +49,21 @@ while (true)
         // 오른쪽으로 이동 => 누를때마다 1씩 이동한다.
         playerX = Math.Min(playerX + 1, 15);
         playerDirection = 2;
-        //if (boxX < 15)
-        //{
-        //    if (playerX == boxX && playerY == boxY)
-        //    {
-        //        boxX += 1;
-        //    }
-        //}
-        //else if (playerX == boxX && playerY == boxY)
-        //{
-
-        //    playerX -= 1;
-        //}
+   
     }
 
     if (key == ConsoleKey.UpArrow)
     {
         playerY = Math.Max(0, playerY - 1);
         playerDirection = 3;
-        //if (boxY > 0)
-        //{
-        //    if (playerX == boxX && playerY == boxY)
-        //    {
-        //        boxY -= 1;
-        //    }
-        //}
-        //else if (playerX == boxX && playerY == boxY)
-        //{
-        //    playerY += 1;
-        //}
+     
     }
 
     if (key == ConsoleKey.DownArrow)
     {
         playerY = Math.Min(playerY + 1, 10);
         playerDirection = 4;
-        //if (boxY < 10)
-        //{
-        //    if (playerX == boxX && playerY == boxY)
-        //    {
-        //        boxY += 1;
-        //    }
-        //}
-        //else if (playerX == boxX && playerY == boxY)
-        //{
-        //    playerY -= 1;
-        //}
+     
     }
 
     //박스 update
@@ -151,6 +110,10 @@ while (true)
                 {
                     boxY += 1;
                 }
+                break;
+            default:
+                Console.Clear();
+                Console.WriteLine($"[Error]{playerDirection}");
                 break;
         }
     }
