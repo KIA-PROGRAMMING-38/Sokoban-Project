@@ -21,6 +21,7 @@ Console.Clear();  // 출력된 모든 내용을 지운다.
 
 int playerX = 0;
 int playerY = 0;
+int playerDirection = 0;  // 0: None(기본값), 1: left, 2: right, 3: up, 4: down 방향으로 움직였다고 설정
 
 int boxX = 5;
 int boxY = 3;
@@ -51,6 +52,9 @@ while (true)
     // -------------------------------- Update ----------------------------------
     // 오른쪽 화살표 키를 눌렀을 때 오른쪽으로 이동
     // 오르쪽 화살표 키를 눌렀을 때
+    // 앞, 옆 뒤에 뭐가 있을 때 플레이어 이동 따로 구현
+    // 키가 들어왔을 때 앞 옆 뒤에 있는게 P라면 이동하도록 구현
+
     if(key == ConsoleKey.RightArrow)
     {
         // 오른쪽으로 이동, 콘솔 범위를 벗어나면 예외 발생
@@ -62,13 +66,22 @@ while (true)
         //}
 
         // 오른쪽으로 이동
-        // playerX = Math.Min(playerX + 1, 15);
-
-        if(playerX == boxX - 1 && playerY == boxY)
-        {
-            boxX = Math.Min(boxX + 1, 15);
-        }
         playerX = Math.Min(playerX + 1, 15);
+        playerDirection = 2;
+
+        //if(playerX == boxX - 1 && playerY == boxY)
+        //{
+        //    boxX = Math.Min(boxX + 1, 15);
+        //}
+
+        //if(playerX == boxX - 1 && playerX == 14)
+        //{
+
+        //}
+        //else
+        //{
+        //    playerX = Math.Min(playerX + 1, 15);
+        //}
     }
 
     if (key == ConsoleKey.LeftArrow)
@@ -82,12 +95,13 @@ while (true)
 
         // playerX = Math.Max(0, playerX - 1);
 
-        if(playerX == boxX +1 && playerY == boxY)
-        {
-            boxX = Math.Max(0, boxX - 1);
-        }
+        //if(playerX == boxX +1 && playerY == boxY)
+        //{
+        //    boxX = Math.Max(0, boxX - 1);
+        //}
 
         playerX = Math.Max(0, playerX - 1);
+        playerDirection = 1;
     }
 
     // 키 입력 구현할 때는 보통 if else 말고 if만 사용해서 각 키에 대한 동작을 구현한다.
@@ -102,12 +116,13 @@ while (true)
 
         // playerY = Math.Max(0, playerY - 1);
 
-        if(playerY == boxY + 1 && playerX == boxX)
-        {
-            boxY = Math.Max(0, boxY - 1);
-        }
+        //if(playerY == boxY + 1 && playerX == boxX)
+        //{
+        //    boxY = Math.Max(0, boxY - 1);
+        //}
 
         playerY = Math.Max(0, playerY - 1);
+        playerDirection = 3;
     }
 
     if(key == ConsoleKey.DownArrow)
@@ -121,17 +136,82 @@ while (true)
 
         // playerY = Math.Min(playerY + 1, 10);
 
-        if(playerY == boxY - 1 && playerX == boxX)
-        {
-            boxY = Math.Min(boxY + 1, 10);
-        }
+        //if(playerY == boxY - 1 && playerX == boxX)
+        //{
+        //    boxY = Math.Min(boxY + 1, 10);
+        //}
 
         playerY = Math.Min(playerY + 1, 10);
+        playerDirection = 4;
 
         // 처음에 플레이어 좌표를 박스 if문보다 위에 작성했는데, 그렇게 하면 바뀐 거에 대해서 검사를 해서
         // 우리가 보이는 화면에서 기대하는 동작이 안나온다 (생각해보면 그럼)
         // 들어가는 수가 뭔지 보고 해야됨
     }
 
+    // 박스 업데이트는 플레이어 업데이트랑 분리해야 유지보수가 수월해짐(확장성)
+    // 여러 이동이 한번에 일어날 경우, 두 움직임에 대한 동작을 따로 작성 (하나의 움직임이 끝난 후 다른 움직임)
+    // 플레이어가 이동한 후 박스에 대한 이동
+    if (playerX == boxX && playerY == boxY)  // 플레이어가 이동하고나니 박스가 있네
+    {
+        // 플레이어가 이동했을 때, 박스가 있으면 움직여주는 것으로 박스를 미는 것을 구현
+        // 플레이어가 어느 방향에서 왔는지에 대한 정보가 필요, 따라서 플레이어 이동방향을 저장할 playerDirection 데이터 생성
+        // 이동 방향을 입력한 키로 인식하는 경우, 후에 플레이어가 작동 키를 바꾸는 경우 적용되지 않기 때문에 보통 키와 동작을 연결시키지 않는다
+        // 따라서 playerDirection 이라는 데이터로 처리하는 것이다 (입력한 방향키로 처리하는 것이 아니라)
+        // 주어진 데이터만 사용하는 것이 아니라, 추가로 필요한 데이터를 직접 정의하여 사용할 수 있어야 한다.
+        
+        switch (playerDirection)
+        {
+            case 1: // 플레이어가 왼쪽으로 이동 중
+                if (boxX == 0) // 박스가 왼쪽 끝에 있다면
+                {
+                    playerX = 1;
+                }
+                else
+                {
+                    boxX = boxX - 1;
+                }
+                
+                break;
+            case 2:  // 플레이어가 오른쪽으로 이동 중
+                if(boxX == 15)
+                {
+                    playerX = 14;
+                }
+                else
+                {
+                    boxX = boxX + 1;
+                }
+                
+                break;
+            case 3:  // 플레이어가 위쪽으로 이동 중
+                if(boxY == 0)
+                {
+                    playerY = 1;
+                }
+                else
+                {
+                    boxY = boxY - 1;
+                }
+                
+                break;
+            case 4:  // 플레이어가 아래로 이동 중
+                if (boxY == 10)
+                {
+                    playerY = 9;
+                }
+                else
+                {
+                    boxY = boxY + 1;
+                }
+
+                break;
+            default:  // 이 경우는 우리가 설정한 조건이 아니기에 오류로 판정, 이처럼 보통 defualt는 오류 처리에 사용
+                Console.Clear();
+                Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다. {playerDirection}");
+
+                return;
+        }
+    }
 
 }
