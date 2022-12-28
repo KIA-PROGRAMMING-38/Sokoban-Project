@@ -6,12 +6,12 @@ Console.BackgroundColor = ConsoleColor.Red; // 배경색을 설정한다.
 Console.ForegroundColor = ConsoleColor.White; // 글꼴 색을 설정한다.
 Console.Clear(); // 출력된 모든 내용을 지운다.
 
+//플레이어 좌표설정
 int playerX = 0;
 int playerY = 0;
 int objectX = 5;
 int objectY = 5;
-int moveX = 0;
-int moveY = 0;
+int playerDirection = 0; // 1 : Left, 2 :  Right 3 : Up 4 : Down
 
 
 
@@ -42,49 +42,84 @@ while (true)
     {
         
         playerX = Math.Min(playerX + 1, 15);
-        if(objectX == playerX && objectY == playerY)
-        {
-            if (objectX < 15)
-                objectX += 1;
-            else
-                playerX -= 1;
-        }
+        playerDirection = 2;
+        
     }
     // 왼쪽 화살표 키를 눌렀을 때
     if (key == ConsoleKey.LeftArrow)
     {
         playerX = Math.Max(0, playerX - 1);
-        if(objectX == playerX && objectY == playerY)
-        {
-            if (0 < objectX) //.......
-                objectX -= 1;
-            else
-                playerX += 1;
-        }
+        playerDirection = 1;
+        
     }
     // 위쪽 화살표 키를 눌렀을 때
     if (key == ConsoleKey.UpArrow)
     {
         playerY = Math.Max(0, playerY - 1);
-        if(objectY == playerY && objectX == playerX)
-        {
-            if (0 < objectY)
-                objectY -= 1;
-            else
-                playerY += 1;
-        }
+        playerDirection = 3;
     }
     // 아래로 움질일 때
-    if(key == ConsoleKey.DownArrow)
+    if (key == ConsoleKey.DownArrow)
     {
         playerY = Math.Min(playerY + 1, 10);
-        if (objectY == playerY && objectX == playerX)
+        playerDirection = 4;
+    }
+    // 박스 업데이트
+    // 플레이어가 이동한 후
+    if(playerX == objectX && playerY == objectY)
+    {
+        // 박스를 움직이자
+        switch (playerDirection)
         {
-            if (objectY < 10)
-                objectY += 1;
-            else
-                playerY -= 1;
+            case 1:
+                if(objectX == 0)
+                {
+                    playerX = 1;
+                }
+                else
+                {
+                    objectX -= 1;
+                }
+                break;
+            case 2:
+                if(objectX == 15)
+                {
+                    playerX = 14;
+                }
+                else
+                {
+                    objectX += 1;
+                }
+                break;
+            case 3:
+                if(objectY == 0)
+                {
+                    playerY += 1;
+                }
+                else
+                {
+                    objectY -= 1;
+                }
+                break;
+            case 4:
+                if(objectY == 10)
+                {
+                    playerY = 9;
+                }
+                else
+                {
+                    objectY += 1;
+                }
+                break;
+            default:
+                Console.Clear();
+                Console.WriteLine("[Error] 플레이어의 이동 방향이 잘못되었습니다. {playerDirection}");
+                return; // 프로그램을 종류
         }
+
+        
+        // 플레이어가 어느 방향에서 왔는지에 따라 박스의 위치가 달라짐.
+        
     }
    
         
