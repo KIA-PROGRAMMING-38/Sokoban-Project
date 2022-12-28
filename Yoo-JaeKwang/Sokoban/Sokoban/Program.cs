@@ -8,13 +8,15 @@ Console.Clear();                                       // 출력된 모든 내�
 
 int playerX = 0;
 int playerY = 0;
+int playerDirection = 0; // 1 : Up, 2 : Down, 3 : Left, 4 : Right
+
 int boxX = 10;
 int boxY = 5;
 
 // 게임 루프 == 프레임(Frame)
 while (true)
 {
-    Console.Clear(); // 이전 프레임을 지운다.
+    Console.Clear();
 
     // -------------------------------------- Render ------------------------------------------------
     Console.SetCursorPosition(playerX, playerY);
@@ -24,80 +26,27 @@ while (true)
     // -------------------------------------- ProcessInput ------------------------------------------------
     ConsoleKey playerKey = Console.ReadKey().Key; // ConsoleKeyInfo keyInfo = Console.ReadKey(); ConsoleKey key = keyInfo.Key;
     // -------------------------------------- Update ------------------------------------------------
-    if (playerX == boxX && playerY == boxY + 1)
-    {
-        if (playerKey == ConsoleKey.UpArrow)
-        {
-            if (playerY == 1 && boxY == 0)
-            {
-                continue;
-            }
-            boxY = Math.Max(0, boxY - 1);
-            playerY = Math.Max(0, playerY - 1);
-            continue;
-        }
-    }
-
-    if (playerX == boxX && playerY == boxY - 1)
-    {
-        if (playerKey == ConsoleKey.DownArrow)
-        {
-            if (playerY == 19 && boxY == 20)
-            {
-                continue;
-            }
-            boxY = Math.Min(boxY + 1, 20);
-            playerY = Math.Min(playerY + 1, 20);
-            continue;
-        }
-    }
-
-    if (playerX == boxX + 1 && playerY == boxY)
-    {
-        if (playerKey == ConsoleKey.LeftArrow)
-        {
-            if (playerX == 1 && boxX == 0)
-            {
-                continue;
-            }
-            boxX = Math.Max(0, boxX - 1);
-            playerX = Math.Max(0, playerX - 1);
-            continue;
-        }
-    }
-
-    if (playerX == boxX - 1 && playerY == boxY)
-    {
-        if (playerKey == ConsoleKey.RightArrow)
-        {
-            if (playerX == 29 && boxX == 30)
-            {
-                continue;
-            }
-            boxX = Math.Min(boxX + 1, 30);
-            playerX = Math.Min(playerX + 1, 30);
-            continue;
-        }
-    }
-
-
     if (playerKey == ConsoleKey.UpArrow)
     {
         playerY = Math.Max(0, playerY - 1);
+        playerDirection = 1;
     }
 
     if (playerKey == ConsoleKey.DownArrow)
     {
         playerY = Math.Min(playerY + 1, 20);
+        playerDirection = 2;
     }
 
     if (playerKey == ConsoleKey.LeftArrow)
     {
         playerX = Math.Max(0, playerX - 1);
+        playerDirection = 3;
     }
 
     if (playerKey == ConsoleKey.RightArrow)
     {
         playerX = Math.Min(playerX + 1, 30);
+        playerDirection = 4;
     }
 }
