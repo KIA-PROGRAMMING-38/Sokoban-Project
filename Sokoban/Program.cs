@@ -15,7 +15,8 @@ int playerY = 0;
 int boxX = 5;
 int boxY = 5;
 
-// map 설정 => 가로 15(가로가 조금 더 짧아서 더 길게 설정해주는것) 세로 10
+int playerDirection = 0;
+
 
 // 게임 루프 == 프레임(Frame)
 while (true)
@@ -35,75 +36,124 @@ while (true)
     ConsoleKey key = Console.ReadKey().Key;
     // ---------------------Update-----------------
 
+    if (key == ConsoleKey.LeftArrow)
+    {
+        playerX = Math.Max(0, playerX - 1);
+        playerDirection = 1;
+        //if (boxX > 0)
+        //{
+        //    if (playerX == boxX && playerY == boxY)
+        //    {
+        //        boxX -= 1;
+        //    }
+        //}
+        //else if (playerX == boxX && playerY == boxY)
+        //{
+        //    playerX += 1;
+        //}
+    }
+
     // 오른쪽 화살표키를 눌렀을 때
     if (key == ConsoleKey.RightArrow)
     {
         // 오른쪽으로 이동 => 누를때마다 1씩 이동한다.
         playerX = Math.Min(playerX + 1, 15);
-        if (boxX < 15)
-        {
-            if (playerX == boxX && playerY == boxY)
-            {
-                boxX += 1;
-            }
-        }
-        else if (playerX == boxX && playerY == boxY)
-        {
+        playerDirection = 2;
+        //if (boxX < 15)
+        //{
+        //    if (playerX == boxX && playerY == boxY)
+        //    {
+        //        boxX += 1;
+        //    }
+        //}
+        //else if (playerX == boxX && playerY == boxY)
+        //{
 
-            playerX -= 1;
-        }
-    }
-
-    if (key == ConsoleKey.LeftArrow)
-    {
-        playerX = Math.Max(0, playerX - 1);
-        if (boxX > 0)
-        {
-            if (playerX == boxX && playerY == boxY)
-            {
-                boxX -= 1;
-            }
-        }
-        else if (playerX == boxX && playerY == boxY)
-        {
-            playerX += 1;
-        }
-    }
-
-    if (key == ConsoleKey.DownArrow)
-    {
-        playerY = Math.Min(playerY + 1, 10);
-        if (boxY < 10)
-        {
-            if (playerX == boxX && playerY == boxY)
-            {
-                boxY += 1;
-            }
-        }
-        else if (playerX == boxX && playerY == boxY)
-        {
-            playerY -= 1;
-        }
+        //    playerX -= 1;
+        //}
     }
 
     if (key == ConsoleKey.UpArrow)
     {
         playerY = Math.Max(0, playerY - 1);
-        if (boxY > 0)
-        {
-            if (playerX == boxX && playerY == boxY)
-            {
-                boxY -= 1;
-            }
-        }
-        else if (playerX == boxX && playerY == boxY)
-        {
-            playerY += 1;
-        }
+        playerDirection = 3;
+        //if (boxY > 0)
+        //{
+        //    if (playerX == boxX && playerY == boxY)
+        //    {
+        //        boxY -= 1;
+        //    }
+        //}
+        //else if (playerX == boxX && playerY == boxY)
+        //{
+        //    playerY += 1;
+        //}
     }
 
-    //self 박스 update
+    if (key == ConsoleKey.DownArrow)
+    {
+        playerY = Math.Min(playerY + 1, 10);
+        playerDirection = 4;
+        //if (boxY < 10)
+        //{
+        //    if (playerX == boxX && playerY == boxY)
+        //    {
+        //        boxY += 1;
+        //    }
+        //}
+        //else if (playerX == boxX && playerY == boxY)
+        //{
+        //    playerY -= 1;
+        //}
+    }
 
+    //박스 update
+    if (playerX == boxX && playerY == boxY)
+    {
+        switch (playerDirection)
+        {
+            case 1: //플레이어가 왼쪽으로 이동
+               if (boxX == 0)
+                {
+                    playerX = 1;
+                }
+                else
+                {
+                    boxX -= 1;
+                }
+                break;
+            case 2: //플레이어가 오른쪽으로 이동
+                if (boxX == 15)
+                {
+                    playerX = 14;
+                }
+                else
+                {
+                    boxX += 1;
+                }
+                break;
+            case 3: //플레이어가 위로 이동
+                if (boxY == 0)
+                {
+                    playerY = 1;
+                }
+                else
+                {
+                    boxY -= 1;
+                }
+                break;
+            case 4:
+                if (boxY == 10)
+                {
+                    playerY = 9;
+                }
+                else
+                {
+                    boxY += 1;
+                }
+                break;
+        }
+    }
 
 
 }
