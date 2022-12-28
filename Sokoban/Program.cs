@@ -11,7 +11,7 @@ Console.Clear(); // 출력된 모든 내용을 지운다.
 int playerX = 0;
 int playerY = 0;
 
-//박스 좌표 설정
+//self
 int boxX = 5;
 int boxY = 5;
 
@@ -23,11 +23,11 @@ while (true)
 {   // 이전 프레임을 지운다.
     Console.Clear();
     // ---------------------Render----------------
-    
+
     Console.SetCursorPosition(playerX, playerY);
     Console.Write("H");
 
-    // 박스 출력하기
+    // self
     Console.SetCursorPosition(boxX, boxY);
     Console.Write("O");
 
@@ -35,47 +35,75 @@ while (true)
     ConsoleKey key = Console.ReadKey().Key;
     // ---------------------Update-----------------
 
-
-    if (boxX == (playerX + 1) && boxY == playerY)
-    {
-        boxX += 1;
-    }
-    if ((playerX - 1) == boxX && playerY == boxY)
-    {
-        boxX -= 1;
-    }
-
     // 오른쪽 화살표키를 눌렀을 때
     if (key == ConsoleKey.RightArrow)
     {
         // 오른쪽으로 이동 => 누를때마다 1씩 이동한다.
         playerX = Math.Min(playerX + 1, 15);
+        if (boxX < 15)
+        {
+            if (playerX == boxX && playerY == boxY)
+            {
+                boxX += 1;
+            }
+        }
+        else if (playerX == boxX && playerY == boxY)
+        {
 
-        
-        
+            playerX -= 1;
+        }
     }
+
     if (key == ConsoleKey.LeftArrow)
     {
         playerX = Math.Max(0, playerX - 1);
-
-       
+        if (boxX > 0)
+        {
+            if (playerX == boxX && playerY == boxY)
+            {
+                boxX -= 1;
+            }
+        }
+        else if (playerX == boxX && playerY == boxY)
+        {
+            playerX += 1;
+        }
     }
+
     if (key == ConsoleKey.DownArrow)
     {
         playerY = Math.Min(playerY + 1, 10);
+        if (boxY < 10)
+        {
+            if (playerX == boxX && playerY == boxY)
+            {
+                boxY += 1;
+            }
+        }
+        else if (playerX == boxX && playerY == boxY)
+        {
+            playerY -= 1;
+        }
     }
+
     if (key == ConsoleKey.UpArrow)
     {
         playerY = Math.Max(0, playerY - 1);
+        if (boxY > 0)
+        {
+            if (playerX == boxX && playerY == boxY)
+            {
+                boxY -= 1;
+            }
+        }
+        else if (playerX == boxX && playerY == boxY)
+        {
+            playerY += 1;
+        }
     }
 
     //self 박스 update
 
-    // box가 player와 똑같아 질때 오른쪽으로 한칸씩 움직인다.
-
-
-
-    
 
 
 }
