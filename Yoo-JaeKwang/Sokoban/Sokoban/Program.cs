@@ -11,10 +11,10 @@ const int DIRECTION_UP = 1;
 const int DIRECTION_DOWN = 2;
 const int DIRECTION_LEFT = 3;
 const int DIRECTION_RIGHT = 4;
-const int MAP_HEIGHT_MAX = 20;
-const int MAP_HEIGHT_MIN = 0;
-const int MAP_WIDTH_MAX = 30;
-const int MAP_WIDTH_MIN = 0;
+const int MAP_MAX_Y = 20;
+const int MAP_MIN_Y = 0;
+const int MAP_MAX_X = 30;
+const int MAP_MIN_X = 0;
 const string PLAYER_SYMBOL = "P";
 const string BOX_SYMBOL = "B";
 const int PLAYER_INITIAL_X_COORDINATE = 3;
@@ -43,22 +43,22 @@ while (true)
     // 플레이어
     if (playerKey == ConsoleKey.UpArrow)
     {
-        playerY = Math.Max(MAP_HEIGHT_MIN, playerY - 1);
+        playerY = Math.Max(MAP_MIN_Y, --playerY);
         playerDirection = DIRECTION_UP;
     }
     if (playerKey == ConsoleKey.DownArrow)
     {
-        playerY = Math.Min(playerY + 1, MAP_HEIGHT_MAX);
+        playerY = Math.Min(++playerY, MAP_MAX_Y);
         playerDirection = DIRECTION_DOWN;
     }
     if (playerKey == ConsoleKey.LeftArrow)
     {
-        playerX = Math.Max(MAP_WIDTH_MIN, playerX - 1);
+        playerX = Math.Max(MAP_MIN_X, --playerX);
         playerDirection = DIRECTION_LEFT;
     }
     if (playerKey == ConsoleKey.RightArrow)
     {
-        playerX = Math.Min(playerX + 1, MAP_WIDTH_MAX);
+        playerX = Math.Min(++playerX, MAP_MAX_X);
         playerDirection = DIRECTION_RIGHT;
     }
     // 박스
@@ -67,9 +67,9 @@ while (true)
         switch (playerDirection)
         {
             case DIRECTION_UP:
-                if (boxY == MAP_HEIGHT_MIN)
+                if (boxY == MAP_MIN_Y)
                 {
-                    playerY = MAP_HEIGHT_MIN + 1;
+                    playerY = MAP_MIN_Y + 1;
                 }
                 else
                 {
@@ -77,9 +77,9 @@ while (true)
                 }
                 break;
             case DIRECTION_DOWN:
-                if (boxY == MAP_HEIGHT_MAX)
+                if (boxY == MAP_MAX_Y)
                 {
-                    playerY = MAP_HEIGHT_MAX - 1;
+                    playerY = MAP_MAX_Y - 1;
                 }
                 else
                 {
@@ -87,9 +87,9 @@ while (true)
                 }
                 break;
             case DIRECTION_LEFT:
-                if (boxX == MAP_WIDTH_MIN)
+                if (boxX == MAP_MIN_X)
                 {
-                    playerX = MAP_WIDTH_MIN + 1;
+                    playerX = MAP_MIN_X + 1;
                 }
                 else
                 {
@@ -97,9 +97,9 @@ while (true)
                 }
                 break;
             case DIRECTION_RIGHT:
-                if (boxX == MAP_WIDTH_MAX)
+                if (boxX == MAP_MAX_X)
                 {
-                    playerX = MAP_WIDTH_MAX - 1;
+                    playerX = MAP_MAX_X - 1;
                 }
                 else
                 {
