@@ -11,9 +11,10 @@ Console.Clear();                                     // 출력된 모든 내용�
 // 플레이어 좌표 설정
 int playerX = 0;
 int playerY = 0;
+// int playerDirection = 0; // 0 : NONE, 1 : Left, 2 : Right, 3 : Up, 4 : Down
 
-int BoxX = 2;
-int BoxY = 1;
+int box_X = 2;
+int box_Y = 1;
 // 가로 15, 세로 10
 // 게임 루프 == 프레임(Frame)
 while (true)
@@ -23,7 +24,7 @@ while (true)
     // 플레이어 출력하기
     Console.SetCursorPosition(playerX, playerY);
     Console.Write('▶');
-    Console.SetCursorPosition(BoxX, BoxY);
+    Console.SetCursorPosition(box_X, box_Y);
     Console.Write('■');
 
     // ---------------------------------- ProcessInput ----------------------------------
@@ -35,57 +36,112 @@ while (true)
     {
         // 오른쪽으로 이동
         playerX = Math.Min(playerX + 1, 15);
+        // playerDirection = 2;
     }
     if (key == ConsoleKey.LeftArrow)
     {
         playerX = Math.Max(0, playerX - 1);
+        // playerDirection = 1;
     }
     if (key == ConsoleKey.DownArrow)
     {
         playerY = Math.Min(playerY + 1, 10);
+        // playerDirection = 4;
     }
     if (key == ConsoleKey.UpArrow)
     {
         playerY = Math.Max(0, playerY - 1);
+        // playerDirection = 3;
     }
 
-    if (playerX == BoxX && playerY == BoxY && key == ConsoleKey.RightArrow)
+    // 박스 업데이트
+    // 플레이어가 이동한 후
+    if (playerX == box_X && playerY == box_Y && key == ConsoleKey.RightArrow)
     {
-        BoxX++;
-        if (BoxX > 15)
+        box_X++;
+        if (box_X > 15)
         {
-            BoxX = 15;
+            box_X = 15;
             playerX -= 1;
         }
     }
-    if (playerX == BoxX && playerY == BoxY && key == ConsoleKey.LeftArrow)
+    if (playerX == box_X && playerY == box_Y && key == ConsoleKey.LeftArrow)
     {
-        BoxX--;
-        if(BoxX < 0)
+        box_X--;
+        if (box_X < 0)
         {
-            BoxX = 0;
+            box_X = 0;
             playerX += 1;
         }
     }
-    if (playerY == BoxY && playerX == BoxX && key == ConsoleKey.DownArrow)
+    if (playerY == box_Y && playerX == box_X && key == ConsoleKey.DownArrow)
     {
-        BoxY++;
-        if (BoxY > 10)
+        box_Y++;
+        if (box_Y > 10)
         {
-            BoxY = 10;
+            box_Y = 10;
             playerY -= 1;
         }
     }
-    if (playerY == BoxY && playerX == BoxX && key == ConsoleKey.UpArrow)
+    if (playerY == box_Y && playerX == box_X && key == ConsoleKey.UpArrow)
     {
-        BoxY--;
-        if (BoxY < 0)
+        box_Y--;
+        if (box_Y < 0)
         {
-            BoxY = 0;
+            box_Y = 0;
             playerY += 1;
         }
     }
 
+    //if (playerX == Box_X && playerY == Box_Y)
+    //{
+    //    switch (playerDirection)
+    //    {
+    //        case 1: // 왼쪽
+    //            if (Box_X == 0)
+    //            {
+    //                playerX = 1;
+    //            }
+    //            else
+    //            {
+    //                Box_X = Box_X - 1;
+    //            }
+    //            break;
+    //        case 2: // 오른쪽
+    //            if (Box_X == 15)
+    //            {
+    //                playerX = 14;
+    //            }
+    //            else
+    //            {
+    //                Box_X = Box_X + 1;
+    //            }
+    //            break;
+    //        case 3: // 위
+    //            if (Box_Y == 0)
+    //            {
+    //                playerY = 1;
+    //            }
+    //            else
+    //            {
+    //                Box_Y = Box_Y - 1;
+    //            }
+    //            break;
+    //        case 4: // 아래
+    //            if (Box_Y == 10)
+    //            {
+    //                playerY = 9;
+    //            }
+    //            else
+    //            {
+    //                Box_Y = Box_Y + 1;
+    //            }
+    //            break;
+    //        default:
+    //            Console.Clear();
+    //            Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다. {playerDirection}");
 
-
+    //            return; // 프로그램 종료
+    //    }
+    //}
 }
