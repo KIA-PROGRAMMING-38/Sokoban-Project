@@ -75,29 +75,30 @@
             {
                 Console.Clear();
                 // -------------------------------------- Render ------------------------------------------------
+                //플레이어
                 Console.SetCursorPosition(playerX, playerY);
                 Console.Write(PLAYER_SYMBOL);
 
-                Console.SetCursorPosition(boxX[0], boxY[0]);
-                Console.Write(BOX_SYMBOL);
-                Console.SetCursorPosition(boxX[1], boxY[1]);
-                Console.Write(BOX_SYMBOL);
-                Console.SetCursorPosition(boxX[2], boxY[2]);
-                Console.Write(BOX_SYMBOL);
+                //박스
+                for (int i = 0; i < boxX.Length; ++i)
+                {
+                    Console.SetCursorPosition(boxX[i], boxY[i]);
+                    Console.Write(BOX_SYMBOL);
+                }
 
-                Console.SetCursorPosition(wallX[0], wallY[0]);
-                Console.Write(WALL_SYMBOL);
-                Console.SetCursorPosition(wallX[1], wallY[1]);
-                Console.Write(WALL_SYMBOL);
-                Console.SetCursorPosition(wallX[2], wallY[2]);
-                Console.Write(WALL_SYMBOL);
+                //벽
+                for (int i = 0; i < wallX.Length; ++i)
+                {
+                    Console.SetCursorPosition(wallX[i], wallY[i]);
+                    Console.Write(WALL_SYMBOL);
+                }
 
-                Console.SetCursorPosition(goalX[0], goalY[0]);
-                Console.Write(GOAL_SYMBOL);
-                Console.SetCursorPosition(goalX[1], goalY[1]);
-                Console.Write(GOAL_SYMBOL);
-                Console.SetCursorPosition(goalX[2], goalY[2]);
-                Console.Write(GOAL_SYMBOL);
+                //골
+                for (int i = 0; i < goalX.Length; ++i)
+                {
+                    Console.SetCursorPosition(goalX[i], goalY[i]);
+                    Console.Write(GOAL_SYMBOL);
+                }
                 // -------------------------------------- ProcessInput ------------------------------------------------
                 ConsoleKey playerKey = Console.ReadKey().Key; // ConsoleKeyInfo keyInfo = Console.ReadKey(); ConsoleKey key = keyInfo.Key;
                 // -------------------------------------- Update ------------------------------------------------
@@ -127,490 +128,148 @@
                 }
 
                 // 박스
-                if (playerX == boxX[0] && playerY == boxY[0])
+                for (int i = 0; i < boxX.Length; ++i)
                 {
-                    switch (playerDirection)
+                    if (playerX == boxX[i] && playerY == boxY[i])
                     {
-                        case Direction.Up:
-                            if (boxY[0] == MAP_MIN_Y)
-                            {
-                                playerY = MAP_MIN_Y + 1;
-                            }
-                            else
-                            {
-                                --boxY[0];
-                            }
-                            break;
-                        case Direction.Down:
-                            if (boxY[0] == MAP_MAX_Y)
-                            {
-                                playerY = MAP_MAX_Y - 1;
-                            }
-                            else
-                            {
-                                ++boxY[0];
-                            }
-                            break;
-                        case Direction.Left:
-                            if (boxX[0] == MAP_MIN_X)
-                            {
-                                playerX = MAP_MIN_X + 1;
-                            }
-                            else
-                            {
-                                --boxX[0];
-                            }
-                            break;
-                        case Direction.Right:
-                            if (boxX[0] == MAP_MAX_X)
-                            {
-                                playerX = MAP_MAX_X - 1;
-                            }
-                            else
-                            {
-                                ++boxX[0];
-                            }
-                            break;
-                        default:
-                            Console.Clear();
-                            Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
+                        switch (playerDirection)
+                        {
+                            case Direction.Up:
+                                if (boxY[i] == MAP_MIN_Y)
+                                {
+                                    playerY = MAP_MIN_Y + 1;
+                                }
+                                else
+                                {
+                                    --boxY[i];
+                                }
+                                break;
+                            case Direction.Down:
+                                if (boxY[i] == MAP_MAX_Y)
+                                {
+                                    playerY = MAP_MAX_Y - 1;
+                                }
+                                else
+                                {
+                                    ++boxY[i];
+                                }
+                                break;
+                            case Direction.Left:
+                                if (boxX[i] == MAP_MIN_X)
+                                {
+                                    playerX = MAP_MIN_X + 1;
+                                }
+                                else
+                                {
+                                    --boxX[i];
+                                }
+                                break;
+                            case Direction.Right:
+                                if (boxX[i] == MAP_MAX_X)
+                                {
+                                    playerX = MAP_MAX_X - 1;
+                                }
+                                else
+                                {
+                                    ++boxX[i];
+                                }
+                                break;
+                            default:
+                                Console.Clear();
+                                Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
 
-                            return;
+                                return;
+                        }
                     }
-                }
-                if (playerX == boxX[1] && playerY == boxY[1])
-                {
-                    switch (playerDirection)
-                    {
-                        case Direction.Up:
-                            if (boxY[1] == MAP_MIN_Y)
-                            {
-                                playerY = MAP_MIN_Y + 1;
-                            }
-                            else
-                            {
-                                --boxY[1];
-                            }
-                            break;
-                        case Direction.Down:
-                            if (boxY[1] == MAP_MAX_Y)
-                            {
-                                playerY = MAP_MAX_Y - 1;
-                            }
-                            else
-                            {
-                                ++boxY[1];
-                            }
-                            break;
-                        case Direction.Left:
-                            if (boxX[1] == MAP_MIN_X)
-                            {
-                                playerX = MAP_MIN_X + 1;
-                            }
-                            else
-                            {
-                                --boxX[1];
-                            }
-                            break;
-                        case Direction.Right:
-                            if (boxX[1] == MAP_MAX_X)
-                            {
-                                playerX = MAP_MAX_X - 1;
-                            }
-                            else
-                            {
-                                ++boxX[1];
-                            }
-                            break;
-                        default:
-                            Console.Clear();
-                            Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
 
-                            return;
-                    }
-                }
-                if (playerX == boxX[2] && playerY == boxY[2])
-                {
-                    switch (playerDirection)
-                    {
-                        case Direction.Up:
-                            if (boxY[2] == MAP_MIN_Y)
-                            {
-                                playerY = MAP_MIN_Y + 1;
-                            }
-                            else
-                            {
-                                --boxY[2];
-                            }
-                            break;
-                        case Direction.Down:
-                            if (boxY[2] == MAP_MAX_Y)
-                            {
-                                playerY = MAP_MAX_Y - 1;
-                            }
-                            else
-                            {
-                                ++boxY[2];
-                            }
-                            break;
-                        case Direction.Left:
-                            if (boxX[2] == MAP_MIN_X)
-                            {
-                                playerX = MAP_MIN_X + 1;
-                            }
-                            else
-                            {
-                                --boxX[2];
-                            }
-                            break;
-                        case Direction.Right:
-                            if (boxX[2] == MAP_MAX_X)
-                            {
-                                playerX = MAP_MAX_X - 1;
-                            }
-                            else
-                            {
-                                ++boxX[2];
-                            }
-                            break;
-                        default:
-                            Console.Clear();
-                            Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
-
-                            return;
-                    }
                 }
 
                 // 박스에 박스
-                if (boxX[0] == boxX[1] && boxY[0] == boxY[1])
+                for (int i = 0; i < boxX.Length; ++i)
                 {
-                    switch (playerDirection)
+                    for (int j = 0; j < boxX.Length; ++j)
                     {
-                        case Direction.Up:
-                            ++boxY[0];
-                            ++playerY;
-                            break;
-                        case Direction.Down:
-                            --boxY[0];
-                            --playerY;
-                            break;
-                        case Direction.Left:
-                            ++boxX[0];
-                            ++playerX;
-                            break;
-                        case Direction.Right:
-                            --boxX[0];
-                            --playerX;
-                            break;
+                        if ( i != j && boxX[i] == boxX[j] && boxY[i] == boxY[j])
+                        {
+                            switch (playerDirection)
+                            {
+                                case Direction.Up:
+                                    ++boxY[i];
+                                    ++playerY;
+                                    break;
+                                case Direction.Down:
+                                    --boxY[i];
+                                    --playerY;
+                                    break;
+                                case Direction.Left:
+                                    ++boxX[i];
+                                    ++playerX;
+                                    break;
+                                case Direction.Right:
+                                    --boxX[i];
+                                    --playerX;
+                                    break;
+                            }
+                        }
                     }
                 }
-                if (boxX[1] == boxX[2] && boxY[1] == boxY[2])
-                {
-                    switch (playerDirection)
-                    {
-                        case Direction.Up:
-                            ++boxY[1];
-                            ++playerY;
-                            break;
-                        case Direction.Down:
-                            --boxY[1];
-                            --playerY;
-                            break;
-                        case Direction.Left:
-                            ++boxX[1];
-                            ++playerX;
-                            break;
-                        case Direction.Right:
-                            --boxX[1];
-                            --playerX;
-                            break;
-                    }
-                }
-                if (boxX[2] == boxX[0] && boxY[2] == boxY[0])
-                {
-                    switch (playerDirection)
-                    {
-                        case Direction.Up:
-                            ++boxY[2];
-                            ++playerY;
-                            break;
-                        case Direction.Down:
-                            --boxY[2];
-                            --playerY;
-                            break;
-                        case Direction.Left:
-                            ++boxX[2];
-                            ++playerX;
-                            break;
-                        case Direction.Right:
-                            --boxX[2];
-                            --playerX;
-                            break;
-                    }
-                }
-
 
                 // 벽
 
                 // 벽에 사람
-                if (playerX == wallX[0] && playerY == wallY[0])
+                for (int i = 0; i < wallX.Length; ++i)
                 {
-                    switch (playerDirection)
+                    if (playerX == wallX[i] && playerY == wallY[i])
                     {
-                        case Direction.Up:
-                            ++playerY;
-                            break;
-                        case Direction.Down:
-                            --playerY; 
-                            break;
-                        case Direction.Left:
-                            ++playerX;
-                            break;
-                        case Direction.Right:
-                            --playerX;
-                            break;
+                        switch (playerDirection)
+                        {
+                            case Direction.Up:
+                                ++playerY;
+                                break;
+                            case Direction.Down:
+                                --playerY;
+                                break;
+                            case Direction.Left:
+                                ++playerX;
+                                break;
+                            case Direction.Right:
+                                --playerX;
+                                break;
+                        }
                     }
-                }
-                if (playerX == wallX[1] && playerY == wallY[1])
-                {
-                    switch (playerDirection)
-                    {
-                        case Direction.Up:
-                            ++playerY;
-                            break;
-                        case Direction.Down:
-                            --playerY;
-                            break;
-                        case Direction.Left:
-                            ++playerX;
-                            break;
-                        case Direction.Right:
-                            --playerX;
-                            break;
-                    }
-                }
-                if (playerX == wallX[2] && playerY == wallY[2])
-                {
-                    switch (playerDirection)
-                    {
-                        case Direction.Up:
-                            ++playerY;
-                            break;
-                        case Direction.Down:
-                            --playerY;
-                            break;
-                        case Direction.Left:
-                            ++playerX;
-                            break;
-                        case Direction.Right:
-                            --playerX;
-                            break;
-                    }
+
                 }
 
                 // 벽에 박스
-                if (boxX[0] == wallX[0] && boxY[0] == wallY[0])
+                for (int i = 0; i < boxX.Length; ++i)
                 {
-                    switch (playerDirection)
+                    for (int j = 0; j < wallX.Length; ++j)
                     {
-                        case Direction.Up:
-                            ++boxY[0];
-                            ++playerY;
-                            break;
-                        case Direction.Down:
-                            --boxY[0];
-                            --playerY;
-                            break;
-                        case Direction.Left:
-                            ++boxX[0];
-                            ++playerX;
-                            break;
-                        case Direction.Right:
-                            --boxX[0];
-                            --playerX;
-                            break;
-                    }
-                }
-                if (boxX[0] == wallX[1] && boxY[0] == wallY[1])
-                {
-                    switch (playerDirection)
-                    {
-                        case Direction.Up:
-                            ++boxY[0];
-                            ++playerY;
-                            break;
-                        case Direction.Down:
-                            --boxY[0];
-                            --playerY;
-                            break;
-                        case Direction.Left:
-                            ++boxX[0];
-                            ++playerX;
-                            break;
-                        case Direction.Right:
-                            --boxX[0];
-                            --playerX;
-                            break;
-                    }
-                }
-                if (boxX[0] == wallX[2] && boxY[0] == wallY[2])
-                {
-                    switch (playerDirection)
-                    {
-                        case Direction.Up:
-                            ++boxY[0];
-                            ++playerY;
-                            break;
-                        case Direction.Down:
-                            --boxY[0];
-                            --playerY;
-                            break;
-                        case Direction.Left:
-                            ++boxX[0];
-                            ++playerX;
-                            break;
-                        case Direction.Right:
-                            --boxX[0];
-                            --playerX;
-                            break;
-                    }
-                }
+                        if (boxX[i] == wallX[j] && boxY[i] == wallY[j])
+                        {
+                            switch (playerDirection)
+                            {
+                                case Direction.Up:
+                                    ++boxY[i];
+                                    ++playerY;
+                                    break;
+                                case Direction.Down:
+                                    --boxY[i];
+                                    --playerY;
+                                    break;
+                                case Direction.Left:
+                                    ++boxX[i];
+                                    ++playerX;
+                                    break;
+                                case Direction.Right:
+                                    --boxX[i];
+                                    --playerX;
+                                    break;
+                            }
+                        }
 
-                if (boxX[1] == wallX[0] && boxY[1] == wallY[0])
-                {
-                    switch (playerDirection)
-                    {
-                        case Direction.Up:
-                            ++boxY[1];
-                            ++playerY;
-                            break;
-                        case Direction.Down:
-                            --boxY[1];
-                            --playerY;
-                            break;
-                        case Direction.Left:
-                            ++boxX[1];
-                            ++playerX;
-                            break;
-                        case Direction.Right:
-                            --boxX[1];
-                            --playerX;
-                            break;
                     }
                 }
-                if (boxX[1] == wallX[1] && boxY[1] == wallY[1])
-                {
-                    switch (playerDirection)
-                    {
-                        case Direction.Up:
-                            ++boxY[1];
-                            ++playerY;
-                            break;
-                        case Direction.Down:
-                            --boxY[1];
-                            --playerY;
-                            break;
-                        case Direction.Left:
-                            ++boxX[1];
-                            ++playerX;
-                            break;
-                        case Direction.Right:
-                            --boxX[1];
-                            --playerX;
-                            break;
-                    }
-                }
-                if (boxX[1] == wallX[2] && boxY[1] == wallY[2])
-                {
-                    switch (playerDirection)
-                    {
-                        case Direction.Up:
-                            ++boxY[1];
-                            ++playerY;
-                            break;
-                        case Direction.Down:
-                            --boxY[1];
-                            --playerY;
-                            break;
-                        case Direction.Left:
-                            ++boxX[1];
-                            ++playerX;
-                            break;
-                        case Direction.Right:
-                            --boxX[1];
-                            --playerX;
-                            break;
-                    }
-                }
-
-                if (boxX[2] == wallX[0] && boxY[2] == wallY[0])
-                {
-                    switch (playerDirection)
-                    {
-                        case Direction.Up:
-                            ++boxY[2];
-                            ++playerY;
-                            break;
-                        case Direction.Down:
-                            --boxY[2];
-                            --playerY;
-                            break;
-                        case Direction.Left:
-                            ++boxX[2];
-                            ++playerX;
-                            break;
-                        case Direction.Right:
-                            --boxX[2];
-                            --playerX;
-                            break;
-                    }
-                }
-                if (boxX[2] == wallX[1] && boxY[2] == wallY[1])
-                {
-                    switch (playerDirection)
-                    {
-                        case Direction.Up:
-                            ++boxY[2];
-                            ++playerY;
-                            break;
-                        case Direction.Down:
-                            --boxY[2];
-                            --playerY;
-                            break;
-                        case Direction.Left:
-                            ++boxX[2];
-                            ++playerX;
-                            break;
-                        case Direction.Right:
-                            --boxX[2];
-                            --playerX;
-                            break;
-                    }
-                }
-                if (boxX[2] == wallX[2] && boxY[2] == wallY[2])
-                {
-                    switch (playerDirection)
-                    {
-                        case Direction.Up:
-                            ++boxY[2];
-                            ++playerY;
-                            break;
-                        case Direction.Down:
-                            --boxY[2];
-                            --playerY;
-                            break;
-                        case Direction.Left:
-                            ++boxX[2];
-                            ++playerX;
-                            break;
-                        case Direction.Right:
-                            --boxX[2];
-                            --playerX;
-                            break;
-                    }
-                }
-
-
 
                 // 골인
                 int goalCount = 0;
