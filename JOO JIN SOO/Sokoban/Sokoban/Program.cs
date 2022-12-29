@@ -1,14 +1,6 @@
 ﻿namespace Sokoban
 {
     // 열거형
-    enum Map_MinMax // 맵 한계선
-    {
-        MAPFRONTIER_LEFT = 0,
-        MAPFRONTIER_RIGHT = 30,
-        MAPFRONTIER_UP = 0,
-        MAPFRONTIER_DOWN = 20
-    }
-    
     enum Direction // 플레이어 이동 방향
     {
         DIRECTION_LEFT = 1,
@@ -17,17 +9,6 @@
         DIRECTION_DOWN = 4,
     }
 
-    enum Player_Initial_Coordinate
-    {
-        PLAYERINITIAL_X = 0,
-        PLAYERINITIAL_Y = 0
-    }
-
-    enum First_Box_Initial_Coordinate
-    {
-        FIRST_BOX_X = 10,
-        FIRST_BOX_Y = 6
-    }
     class Program
     {
         static void Main()
@@ -40,19 +21,40 @@
             Console.ForegroundColor = ConsoleColor.Yellow;     // 글꼴색을 설정한다
             Console.Clear();                                   // 출력된 모든 내용을 지운다
 
+            // 맵의 가장자리 구현
+            const int MAPFRONTIER_LEFT = 0;
+            const int MAPFRONTIER_RIGHT = 30;
+            const int MAPFRONTIER_UP = 0;
+            const int MAPFRONTIER_DOWN = 20;
+
+            // 가장자리의 기호
+            const string wall_X = "|";
+            const string wall_Y = "-";
+
+            // 장애물 좌표, 이름
+            const int MAP_WALL_X = 10;
+            const int MAP_WALL_Y = 7;
+            const string MAP_WALL_INITIAL = "W";
+
             // 플레이어의 기호(string literal)
             const string PLAYERLITERAL = "P";
+
             // 박스의 기호(string literal)
             const string BOXLITERAL = "O";
 
+            // 골 지점 좌표, 이름
+            const int GOAL_X = 18;
+            const int GOAL_Y = 13;
+            const string GOAL_INITIAL = "G";
+
             // 플레이어의 좌표 이동
-            int player_X = (int)Player_Initial_Coordinate.PLAYERINITIAL_X;
-            int player_Y = (int)Player_Initial_Coordinate.PLAYERINITIAL_Y;
+            int player_X = 0;
+            int player_Y = 0;
             int playerDirection = 0; // 0: None, 1: Left, 2: Right, 3: Up, 4: Down
 
             // 박스의 좌표 이동
-            int box_X = (int)First_Box_Initial_Coordinate.FIRST_BOX_X;
-            int box_Y = (int)First_Box_Initial_Coordinate.FIRST_BOX_Y;
+            int box_X = 5;
+            int box_Y = 6;
 
 
             // 게임 루프 == 프레임(Frame)
@@ -69,6 +71,28 @@
                 Console.SetCursorPosition(box_X, box_Y);
                 Console.Write(BOXLITERAL);
 
+                // 장애물 출력하기
+                Console.SetCursorPosition(MAP_WALL_X, MAP_WALL_Y);
+                Console.Write(MAP_WALL_INITIAL);
+
+                // 골 출력
+                Console.SetCursorPosition(GOAL_X, GOAL_Y);
+                Console.Write(GOAL_INITIAL);
+
+                // X 가장자리 출력
+                for (int wall_Xs = 0; wall_Xs < MAPFRONTIER_DOWN + 1; ++wall_Xs)
+                {
+                    Console.SetCursorPosition(MAPFRONTIER_RIGHT + 1, wall_Xs);
+                    Console.Write(wall_X);
+                }
+
+                // Y 가장자리 출력
+                for (int wall_Ys = 0; wall_Ys < MAPFRONTIER_RIGHT + 1; ++wall_Ys)
+                {
+                    Console.SetCursorPosition(wall_Ys, MAPFRONTIER_DOWN + 1);
+                    Console.Write(wall_Y);
+                }
+
                 //-------------------------------------- ProcessInput -------------------------------------------
                 ConsoleKeyInfo inputKey = Console.ReadKey();
                 ConsoleKey key = inputKey.Key;
@@ -77,44 +101,46 @@
                 //-------------------------------------- Update -------------------------------------------------
                 // 플레이어 업데이트
 
-                if (key == ConsoleKey.LeftArrow && player_X > (int)Map_MinMax.MAPFRONTIER_LEFT)
+                if (key == ConsoleKey.LeftArrow && player_X > MAPFRONTIER_LEFT)
                 {
-                    player_X = Math.Max((int)Map_MinMax.MAPFRONTIER_LEFT, player_X - 1);
+                    player_X = Math.Max(MAPFRONTIER_LEFT, player_X - 1);
                     playerDirection = (int)Direction.DIRECTION_LEFT;
                 }
 
-                if (key == ConsoleKey.RightArrow && player_X < (int)Map_MinMax.MAPFRONTIER_RIGHT)
+                if (key == ConsoleKey.RightArrow && player_X < MAPFRONTIER_RIGHT)
                 {
-                    player_X = Math.Min(player_X + 1, (int)Map_MinMax.MAPFRONTIER_RIGHT);
+                    player_X = Math.Min(player_X + 1, MAPFRONTIER_RIGHT);
                     playerDirection = (int)Direction.DIRECTION_RIGHT;
                 }
 
-                if (key == ConsoleKey.UpArrow && player_Y > (int)Map_MinMax.MAPFRONTIER_UP)
+                if (key == ConsoleKey.UpArrow && player_Y > MAPFRONTIER_UP)
                 {
-                    player_Y = Math.Max((int)Map_MinMax.MAPFRONTIER_UP, player_Y - 1);
+                    player_Y = Math.Max(MAPFRONTIER_UP, player_Y - 1);
                     playerDirection = (int)Direction.DIRECTION_UP;
                 }
 
-                if (key == ConsoleKey.DownArrow && player_Y < (int)Map_MinMax.MAPFRONTIER_DOWN)
+                if (key == ConsoleKey.DownArrow && player_Y < MAPFRONTIER_DOWN)
                 {
-                    player_Y = Math.Min(player_Y + 1, (int)Map_MinMax.MAPFRONTIER_DOWN);
+                    player_Y = Math.Min(player_Y + 1, MAPFRONTIER_DOWN);
                     playerDirection = (int)Direction.DIRECTION_DOWN;
                 }
 
 
                 // 박스 업데이트
                 // 플레이어가 이동한 후
-
-
                 if (player_X == box_X && player_Y == box_Y)
                 {
                     switch (playerDirection)
                     {
                         // 박스를 움직여주면 됨
                         case (int)Direction.DIRECTION_LEFT: // 플레이어가 왼쪽으로 이동 중
-                            if (box_X == (int)Map_MinMax.MAPFRONTIER_LEFT)
+                            if (box_X == MAPFRONTIER_LEFT)
                             {
-                                player_X = (int)Map_MinMax.MAPFRONTIER_LEFT + 1;
+                                player_X = MAPFRONTIER_LEFT + 1;
+                            }
+                            else if (box_X == MAP_WALL_X)
+                            {
+                                box_X = MAP_WALL_X - 1;
                             }
                             else
                             {
@@ -122,9 +148,9 @@
                             }
                             break;
                         case (int)Direction.DIRECTION_RIGHT: // 플레이어가 오른쪽으로 이동 중
-                            if (box_X == (int)Map_MinMax.MAPFRONTIER_RIGHT)
+                            if (box_X == MAPFRONTIER_RIGHT)
                             {
-                                player_X = (int)Map_MinMax.MAPFRONTIER_RIGHT - 1;
+                                player_X = MAPFRONTIER_RIGHT - 1;
                             }
                             else
                             {
@@ -132,9 +158,9 @@
                             }
                             break;
                         case (int)Direction.DIRECTION_UP: // 플레이어가 위쪽으로 이동 중
-                            if (box_Y == (int)Map_MinMax.MAPFRONTIER_UP)
+                            if (box_Y == MAPFRONTIER_UP)
                             {
-                                player_Y = (int)Map_MinMax.MAPFRONTIER_UP + 1;
+                                player_Y = MAPFRONTIER_UP + 1;
                             }
                             else
                             {
@@ -142,9 +168,9 @@
                             }
                             break;
                         case (int)Direction.DIRECTION_DOWN: // 플레이어가 아래쪽으로 이동 중
-                            if (box_Y == (int)Map_MinMax.MAPFRONTIER_DOWN)
+                            if (box_Y == MAPFRONTIER_DOWN)
                             {
-                                player_Y = (int)Map_MinMax.MAPFRONTIER_DOWN - 1;
+                                player_Y = MAPFRONTIER_DOWN - 1;
                             }
                             else
                             {
@@ -157,15 +183,61 @@
 
                             break;
                     }
-
-                    // 플레이어가 어느 방향에서 왔는지에 따라 박스의 위치가 달라짐
-                    // 4가지 경우의 수
-                    // 1. 플레이어가 박스를 오른쪽으로 밀고 있을 때
-                    // 2. 플레이어가 박스를 왼쪽으로 밀고 있을 때
-                    // 3. 플레이어가 박스를 위쪽으로 밀고 있을 때
-                    // 4. 플레이어가 박스를 아래쪽으로 밀고 있을 때
+ 
                 }
+
+                // 1. 플레이어가 벽에 부딪혀야 함
+                if (player_X == MAP_WALL_X && player_Y == MAP_WALL_Y)
+                {
+                    switch (playerDirection)
+                    {
+                        case (int)Direction.DIRECTION_LEFT:
+                            player_X = player_X + 1;
+                            break;
+                        case (int)Direction.DIRECTION_RIGHT:
+                            player_X = player_X - 1;
+                            break;
+                        case (int)Direction.DIRECTION_UP:
+                            player_Y = player_Y + 1;
+                            break;
+                        case (int)Direction.DIRECTION_DOWN:
+                            player_Y = player_Y - 1;
+                            break;
+                    }
+                }
+                // 2. 박스가 벽에 부딪혀야 함
+                if (box_X == MAP_WALL_X && box_Y == MAP_WALL_Y)
+                {
+                    switch (playerDirection)
+                    {
+                        case (int)Direction.DIRECTION_LEFT:
+                            player_X = MAP_WALL_X + 2;
+                            box_X = MAP_WALL_X + 1;
+                            break;
+                        case (int)Direction.DIRECTION_RIGHT:
+                            player_X = MAP_WALL_X - 2;
+                            box_X = MAP_WALL_X - 1;
+                            break;
+                        case (int)Direction.DIRECTION_UP:
+                            player_Y = MAP_WALL_Y + 2;
+                            box_Y = MAP_WALL_Y + 1;
+                            break;
+                        case (int)Direction.DIRECTION_DOWN:
+                            player_Y = MAP_WALL_Y - 2;
+                            box_Y = MAP_WALL_Y - 1;
+                            break;
+                    }
+                }
+
+                if (box_X == GOAL_X && box_Y == GOAL_Y)
+                {
+                    break;
+                }
+
             }
+
+            Console.Clear();
+            Console.WriteLine("축하드립니다! 당신은 성공했습니다");
         }
     }
 }
