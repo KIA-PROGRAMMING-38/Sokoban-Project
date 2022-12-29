@@ -50,8 +50,13 @@
             string WALL_STRING = "#";
 
             // goal의 좌표
-            int INITIAL_GOAL_X = 9;
-            int INITIAL_GOAL_Y = 10;
+            int[] goal_X = new int[2];
+            goal_X[0] = 9;
+            goal_X[1] = 9;
+            int[] goal_Y = new int[2];
+            goal_Y[0] = 2;
+            goal_Y[1] = 10;
+           
             string GOAL_STRING = "G";
 
             Direction playerDirection = Direction.Down;
@@ -97,8 +102,12 @@
                 
 
                 // goal 출력하기
-                Console.SetCursorPosition(INITIAL_GOAL_X, INITIAL_GOAL_Y);
-                Console.Write(GOAL_STRING);
+                for(int i = 0; i < 2; i++)
+                {
+                    Console.SetCursorPosition(goal_X[i], goal_Y[i]);
+                    Console.Write(GOAL_STRING);
+                }
+                
 
                 // ---------------------ProcessInput-----------
                 ConsoleKey key = Console.ReadKey().Key;
@@ -263,10 +272,19 @@
                         }
                     }
                 }
-                
+
                 // goal 구현
-                if (boxX == INITIAL_GOAL_X && boxY == INITIAL_GOAL_Y)
-                return;
+                for (int i = 0; i < 2; i++)
+                {
+                    if (boxX == goal_X[i] && boxY == goal_Y[i])
+                    {
+                        Console.Clear();
+                        Console.Write("축하합니다!!");
+                        return;
+                    }
+                }
+                
+                    
 
             }
 
