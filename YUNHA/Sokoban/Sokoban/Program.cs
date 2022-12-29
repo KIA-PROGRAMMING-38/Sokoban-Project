@@ -44,10 +44,6 @@
             // const int GOAL_X = 7, GOAL_Y = 7;
             const string GOAL = "G";
 
-            // 게임 목표 설정
-            bool[] goaledArr = new bool[3];
-            int count = 0;
-
             // 맵 설정
             // 가로 15, 세로 10
             const int MAP_RIGHT_END = 20, MAP_DOWN_END = 10, MAP_LEFT_END = 0, MAP_UP_END = 0;
@@ -57,6 +53,7 @@
             {
                 // 이전 프레임을 지운다.
                 Console.Clear();
+                bool[] goaledArr = new bool[3];
 
 
                 // -------------------------------------Render------------------------------------- 
@@ -276,13 +273,13 @@
                 #endregion
                 
                 #region 골인 구현
-                for(int i = 0; i < goalList.Length / 2; i++)
+                for(int i = 0; i < boxList.Length / 2; i++)
                 {
-                    for(int j = 0; j < boxList.Length / 2; j++)
+                    for(int j = 0; j < goalList.Length / 2; j++)
                     {
-                        if (goalList[i, 0] == boxList[j, 0] && goalList[i, 1] == boxList[j, 1])
+                        if (boxList[i, 0] == goalList[j, 0] && boxList[i, 1] == goalList[j, 1])
                         {
-                            goaledArr[i] = true;
+                            goaledArr[j] = true;
                         }
                     }
                 }
