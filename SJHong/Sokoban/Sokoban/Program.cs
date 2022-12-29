@@ -10,16 +10,6 @@ namespace sokoban
         Down,
         Up
     }
-
-    enum Size
-    {
-        None,
-        RightEnd = 15,
-        LeftEnd = 0,
-        DownEnd = 10,
-        UpEnd = 0
-    }
-
     class Program
     {
 
@@ -32,15 +22,23 @@ namespace sokoban
             Console.ForegroundColor = ConsoleColor.White;
             Console.Clear();
 
-            const int InitialplayerX = 0;
-            const int InitialplayerY = 0;
+            const int InitialplayerX = 7;
+            const int InitialplayerY = 7;
             Direction playerDirection = default;
 
-            const int InitialboxX = 5;
-            const int InitialboxY = 5;
+            const int InitialboxX = 11;
+            const int InitialboxY = 11;
 
             const int InitialgoalX = 12;
             const int InitialgoalY = 7;
+
+            const int InitialBlockX = 10;
+            const int InitialBlockY = 10;
+
+            const int MaxX = 20;
+            const int MinX = 1;
+            const int MaxY = 16;
+            const int MinY = 1;
 
             int playerX = InitialplayerX;
             int playerY = InitialplayerY;
@@ -51,9 +49,23 @@ namespace sokoban
             int goalX = InitialgoalX;
             int goalY = InitialgoalY;
 
+            int blockX = InitialBlockX;
+            int blockY = InitialBlockY;
+
+            const int RightEnd = MaxX + 1;
+            const int LeftEnd = MinX - 1;
+            const int DownEnd = MaxY + 1;
+            const int UpEnd = MinY - 1;
+
+
             const string playerShape = "P";
             const string BoxShape = "B";
             const string GoalShape = "G";
+            const string Block = "$";
+            const string wallside = "|";
+            const string wall = "-";
+
+
 
             while (true)
             {
@@ -67,6 +79,32 @@ namespace sokoban
                 Console.Write(BoxShape);
                 Console.SetCursorPosition(goalX, goalY);
                 Console.Write(GoalShape);
+                Console.SetCursorPosition(blockX, blockY);
+                Console.Write(Block);
+
+                Console.SetCursorPosition(LeftEnd, UpEnd);
+                for (int count = 0; count <= RightEnd - LeftEnd; ++count)
+                {
+                    Console.Write(wall);
+                }
+                Console.SetCursorPosition(MinX - 1, MinY - 1);
+                for (int count = 0; count <= DownEnd - UpEnd; ++count)
+                {
+                    Console.WriteLine(wallside);
+                    Console.SetCursorPosition(LeftEnd, UpEnd + count);
+                }
+                Console.SetCursorPosition(LeftEnd, DownEnd);
+                for (int count = 0; count <= RightEnd - LeftEnd; ++count)
+                {
+                    Console.Write(wall);
+                    Console.SetCursorPosition(LeftEnd + count, DownEnd);
+                }
+                Console.SetCursorPosition(RightEnd, UpEnd);
+                for (int count = 0; count <= DownEnd - UpEnd; ++count)
+                {
+                    Console.WriteLine(wallside);
+                    Console.SetCursorPosition(RightEnd, UpEnd + count);
+                }
                 //------------------------ProcessInput-----------------
 
                 ConsoleKey Key = Console.ReadKey().Key;
@@ -74,28 +112,28 @@ namespace sokoban
 
                 //----------------------- Update ----------------------
 
-                if (Key == ConsoleKey.RightArrow)
+                if (Key == (ConsoleKey.RightArrow))
                 {
-                    playerX = Math.Min(playerX + 1, (int)Size.RightEnd);
+                    playerX = Math.Min(playerX + 1, MaxX);
                     playerDirection = Direction.Right;
 
                 }
 
                 if (Key == ConsoleKey.LeftArrow)
                 {
-                    playerX = Math.Max((int)Size.LeftEnd, playerX - 1);
+                    playerX = Math.Max(MinX, playerX - 1);
                     playerDirection = Direction.Left;
                 }
 
                 if (Key == ConsoleKey.DownArrow)
                 {
-                    playerY = Math.Min(playerY + 1, (int)Size.DownEnd);
+                    playerY = Math.Min(playerY + 1, MaxY);
                     playerDirection = Direction.Down;
                 }
 
                 if (Key == ConsoleKey.UpArrow)
                 {
-                    playerY = Math.Max((int)Size.UpEnd, playerY - 1);
+                    playerY = Math.Max(MinY, playerY - 1);
                     playerDirection = Direction.Up;
 
                 }
@@ -104,9 +142,9 @@ namespace sokoban
                     switch (playerDirection)
                     {
                         case Direction.Right:
-                            if (boxX == (int)Size.RightEnd)
+                            if (boxX == MaxX)
                             {
-                                playerX = (int)Size.RightEnd - 1;
+                                playerX = MaxX - 1;
                             }
                             else
                             {
@@ -114,9 +152,9 @@ namespace sokoban
                             }
                             break;
                         case Direction.Left:
-                            if (boxX == (int)Size.LeftEnd)
+                            if (boxX == MinX)
                             {
-                                playerX = (int)Size.LeftEnd + 1;
+                                playerX = MinX + 1;
                             }
                             else
                             {
@@ -124,9 +162,9 @@ namespace sokoban
                             }
                             break;
                         case Direction.Down:
-                            if (boxY == (int)Size.DownEnd)
+                            if (boxY == MaxY)
                             {
-                                playerY = (int)Size.DownEnd - 1;
+                                playerY = MaxY - 1;
                             }
                             else
                             {
@@ -134,9 +172,9 @@ namespace sokoban
                             }
                             break;
                         case Direction.Up:
-                            if (boxY == (int)Size.UpEnd)
+                            if (boxY == MinY)
                             {
-                                playerY = (int)Size.UpEnd + 1;
+                                playerY = MinY + 1;
                             }
                             else
                             {
@@ -151,6 +189,47 @@ namespace sokoban
                     }
 
                 }
+                if (blockX == playerX && blockY == playerY)
+                {
+                    switch (playerDirection)
+                    {
+                        case Direction.Right:
+                            --playerX;
+                            break;
+                        case Direction.Left:
+                            ++playerX;
+                            break;
+                        case Direction.Down:
+                            --playerY;
+                            break;
+                        case Direction.Up:
+                            ++playerY;
+                            break;
+                    }
+                }
+                if (blockX == boxX && blockY == boxY)
+                {
+                    switch (playerDirection)
+                    {
+                        case Direction.Right:
+                            --playerX;
+                            --boxX;
+                            break;
+                        case Direction.Left:
+                            ++playerX;
+                            ++boxX;
+                            break;
+                        case Direction.Down:
+                            --playerY;
+                            --boxY;
+                            break;
+                        case Direction.Up:
+                            ++playerY;
+                            ++boxY;
+                            break;
+                    }
+                }
+
                 if (boxX == goalX && boxY == goalY)
                 {
                     Console.Clear();
