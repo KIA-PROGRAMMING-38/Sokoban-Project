@@ -87,30 +87,30 @@ namespace Sokoban
 
                 // ------------update--------------
                 //오른쪽 화살표키를 눌렀을때
+                
                 if (key == ConsoleKey.LeftArrow)
                 {
                     playerX = Math.Max(MAP_MIN_X, playerX - 1);
                     playerDirection = Direction.Left;
-                }
-
+                } // 캐릭터 왼쪽이동 움직임 구현
                 if (key == ConsoleKey.RightArrow)
                 {
                     playerX = Math.Min(MAP_MAX_X, playerX + 1);
                     playerDirection = Direction.Right;
-                }
+
+                } // 캐릭터 오른쪽이동 움직임 구현
                 if (key == ConsoleKey.UpArrow)
                 {
                     playerY = Math.Max(MAP_MIN_Y, playerY - 1);
                     playerDirection = Direction.Up;
-                }
+                } // 캐릭터 위이동 움직임 구현
                 if (key == ConsoleKey.DownArrow)
                 {
                     playerY = Math.Min(MAP_MAX_Y, playerY + 1);
                     playerDirection = Direction.Down;
-                }
-                //1. 플레이어가 벽에 부딪혀야함.
-                //2. 박스도 막아야함.
+                } // 캐릭터 아래이동 움직임 구현
 
+                // 플레이어 , 벽 충돌방지
                 if (playerX == INITIAL_WALL_X && playerY == INITIAL_WALL_Y)
                 {
                     switch (playerDirection)
@@ -140,7 +140,8 @@ namespace Sokoban
                     }
 
                 }
-
+                
+                // 플레이어 , 박스 이동 구현
                 if (playerX == boxX && playerY == boxY) // 플레이어가 이동하고나니 박스가 있네?
                 {
                     // 박스를 움직여주면 됨.
@@ -191,50 +192,37 @@ namespace Sokoban
                             Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다. {playerDirection}");
 
                             return; // 프로그램 종료
-
-                            //1. 플레이어가 벽에 부딪혀야함.
-                            //2. 박스도 막아야함.
-
-                            
                     }
 
                 }
+                // 박스 와 벽 충돌 방지
                 if (boxX == INITIAL_WALL_X && boxY == INITIAL_WALL_Y)
                 {
                     switch (playerDirection)
                     {
                         case Direction.Left:
-                            if (boxX == INITIAL_WALL_X)
-                            {
                                 boxX += 1;
                                 playerX = boxX + 1;
-                            }
-                            
-                            break;
+                           break;
+
                         case Direction.Right:
-                            if (boxX == INITIAL_WALL_X)
-                            {
                                 boxX -= 1;
                                 playerX = boxX - 1;
-                            }
                             break;
+
                         case Direction.Up:
-                            if (boxY == INITIAL_WALL_Y)
-                            {
                                 boxY += 1;
                                 playerY = boxY + 1;
-                            }
                             break;
+
                         case Direction.Down:
-                            if (boxY == INITIAL_WALL_Y)
-                            {
                                 boxY -= 1;
                                 playerY = boxY - 1;
-                            }
                             break;
                     }
 
                 }
+
             }
         }
     }
