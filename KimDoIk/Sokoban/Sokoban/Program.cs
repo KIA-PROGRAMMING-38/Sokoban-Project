@@ -61,6 +61,8 @@
             const int BOXX_START = 1;
             const int BOXY_START = 5;
 
+            const string BOX = "B";
+
             int BoxX = BOXX_START;
             int BoxY = BOXY_START;
 
@@ -71,13 +73,20 @@
             const int LIMIT_XX = 0;
 
             // 벽 설정
-            const int WALL_X = 7;
-            const int WALL_Y = 8;
+            const int WALL_X = 3;
+            const int WALL_Y = 3;
 
             //벽의 기호
             const string WALL = "W";
 
+            //골대 설정
+            const int GOAL_X = 7;
+            const int GOAL_Y = 7;
 
+            // 골대 기호
+            const string GOAL = "G";
+
+        
 
 
 
@@ -91,15 +100,21 @@
                 //-------------------------------Render--------------------------- //플레이어가 무슨 일이 일어났는지 볼 수 있도록 게임을 그립니다
                 // 플레이어 출력
                 Console.SetCursorPosition(playerX, playerY); // 커서의 위치를 세팅해준다. (글을 쓸때 깜빡깜빡하는 것을 커서라고 합니다.)
-                Console.Write("K");
+                Console.Write(PLAYER);
 
-                // 박스 출력하기
-                Console.SetCursorPosition(BoxX, BoxY);
-                Console.Write("B");
+            
 
                 // 벽 출력하기
                 Console.SetCursorPosition(WALL_X, WALL_Y);
                 Console.Write(WALL);
+
+                // 골대 만들기
+                Console.SetCursorPosition(GOAL_X, GOAL_Y);
+                Console.Write(GOAL);
+
+                // 박스 출력하기
+                Console.SetCursorPosition(BoxX, BoxY);
+                Console.Write(BOX);
 
 
                 //------------------------------ProcessInput--------------------- // 마지막 호출 이후 발생한 모든 사용자 입력을 처리합니다.
@@ -136,7 +151,7 @@
 
 
                 }
-                // 1. 플레이어가 벽에 부딪혀야 한다.
+                // 1. 플레이어가 벽에 부딪혔을 때
                 if(playerX == WALL_X && playerY == WALL_Y)
                 {
                     switch (playerDirection)
@@ -175,7 +190,8 @@
                         case Direction.Left: // 플레이어가 왼족으로 이동 중
                             if (BoxX == LIMIT_XX) // 박스가 왼쪽 끝에 있다면?
                             {
-                                playerX = LIMIT_XX + 1;                            }
+                                playerX = LIMIT_XX + 1;                            
+                            }
                             else
                             {
                                 BoxX = playerX - 1;
@@ -225,51 +241,44 @@
 
                    
                 }
-                // 2. 박스도 막아야한다.
+                // 2. 박스가 벽에 부딪혔을 때.
                 if (BoxX == WALL_X && BoxY == WALL_Y)
                 {
                     switch (playerDirection)
                     {
                         case Direction.Left:
-                            if (BoxX == WALL_X)
-                            {
-                                BoxX = WALL_X + 1;
-                                playerX = WALL_X + 2;
-                            }
+                            BoxX = WALL_X + 1;
+                            playerX = WALL_X + 2;
                             break;
 
                         case Direction.Right: // 플레이어가 오른쪽으로 이동중
-                            if (BoxX == WALL_X)
-                            {
-                                BoxX = WALL_X - 1;
-                                playerX = WALL_X - 2;
-                            }
+                            BoxX = WALL_X - 1;
+                            playerX = WALL_X - 2;
                             break;
 
                         case Direction.Up:// 플레이어가 위쪽으로 이동중
-                            if (BoxY == WALL_Y)
-                            {
-                                BoxY = WALL_Y + 1;
-                                playerY = WALL_Y + 2;
-                                
-                            }
+                            BoxY = WALL_Y + 1;
+                            playerY = WALL_Y + 2;
                             break;
 
                         case Direction.Down:// 플레이어가 아래쪽으로 이동중
-                            if (BoxY == WALL_Y)
-                            {
-                                BoxY = WALL_Y - 1;
-                                playerY = WALL_Y - 2;
-
-                            }
+                            BoxY = WALL_Y - 1;
+                            playerY = WALL_Y - 2;
                             break;
 
                         default:
                             Console.Clear();
                             Console.Write($"[Error] 플레이어의 이동 방향이 잘못 되었습니다. {playerDirection}");
-
                             return;
                     }
+                }
+
+                // 박스가 골 지점에 닿을 때
+                if (BoxX == GOAL_X && BoxY == GOAL_Y)
+                {
+                    
+                    break;
+
                 }
 
 
