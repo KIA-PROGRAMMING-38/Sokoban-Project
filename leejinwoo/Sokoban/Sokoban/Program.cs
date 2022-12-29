@@ -57,7 +57,22 @@ namespace Sokoban
             const int INITIAL_WALL_Y = 8;
             //벽의 기호 
             const string WALL_STRING = "H";
+            // 골인 좌표
+            const int INITIAL_GOLL_X = 15;
+            const int INITIAL_GOLL_Y = 10;
+
+            const int INITIAL_GOLL1_X = 0;
+            const int INITIAL_GOLL1_Y = 10;
+           
+            const int INITIAL_GOLL2_X = 15;
+            const int INITIAL_GOLL2_Y = 0;
             
+            const int INITIAL_GOLL3_X = 6;
+            const int INITIAL_GOLL3_Y = 2;
+            // 골인 기호
+            const string GOLL_STRING = "G";
+            // 박스 골인시 기호 
+            const string GOLLIN_STRING = "★";
 
             int playerX = 0;
             int playerY = 0;
@@ -82,6 +97,13 @@ namespace Sokoban
                 //벽 출력하기
                 Console.SetCursorPosition(INITIAL_WALL_X, INITIAL_WALL_Y);
                 Console.Write(WALL_STRING);
+                //골 출력하기
+                Console.SetCursorPosition(INITIAL_GOLL_X, INITIAL_GOLL_Y);
+                Console.Write(GOLL_STRING);
+
+                
+
+
                 //------------ Processintput---------
                 ConsoleKey key = Console.ReadKey().Key;
 
@@ -222,6 +244,17 @@ namespace Sokoban
                     }
 
                 }
+                // 골인 지점 만들기
+                if (boxX == INITIAL_GOLL_X && boxY == INITIAL_GOLL_Y)
+                {
+                    Console.Clear();
+                    Console.WriteLine("축하합니다!");
+                    return;
+                }
+                
+
+
+                
 
             }
         }
