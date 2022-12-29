@@ -154,7 +154,7 @@
                             case Direction.Up:
                                 if (boxY[i] == MAP_MIN_Y)
                                 {
-                                    playerY = MAP_MIN_Y + 1;
+                                    ++playerY;
                                 }
                                 else
                                 {
@@ -164,7 +164,7 @@
                             case Direction.Down:
                                 if (boxY[i] == MAP_MAX_Y)
                                 {
-                                    playerY = MAP_MAX_Y - 1;
+                                    --playerY;
                                 }
                                 else
                                 {
@@ -174,7 +174,7 @@
                             case Direction.Left:
                                 if (boxX[i] == MAP_MIN_X)
                                 {
-                                    playerX = MAP_MIN_X + 1;
+                                    ++playerX;
                                 }
                                 else
                                 {
@@ -184,7 +184,7 @@
                             case Direction.Right:
                                 if (boxX[i] == MAP_MAX_X)
                                 {
-                                    playerX = MAP_MAX_X - 1;
+                                    --playerX;
                                 }
                                 else
                                 {
