@@ -43,7 +43,7 @@ namespace Sokoban
             const int INITIAL_BOX_Y = 5;
             const int INITIAL_BOX2_X = 10;
             const int INITIAL_BOX2_Y = 4;
-            const int INITIAL_BOX3_X = 0;
+            const int INITIAL_BOX3_X = 1;
             const int INITIAL_BOX3_Y = 9;
 
             // 박스의 기호 (string literal)
