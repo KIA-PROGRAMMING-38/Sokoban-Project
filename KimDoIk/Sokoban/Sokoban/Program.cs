@@ -17,16 +17,6 @@
     //const int LIMIT_Y = 10;
     //const int LIMIT_YY = 0;
     //const int LIMIT_XX = 0;
-    enum Limit
-    {
-        none,
-        Map_Max_X = 15,
-        Map_Min_x = 0,
-        Map_Max_Y = 10,
-        Map_Min_y = 0
-
-    }
-
 
 
     class Program
@@ -74,12 +64,19 @@
             int BoxX = BOXX_START;
             int BoxY = BOXY_START;
 
-            // MAP 제한선 설정
-            //const int LIMIT_X = 15;
-            //const int LIMIT_Y = 10;
-            //const int LIMIT_YY = 0;
-            //const int LIMIT_XX = 0;
-            Limit Map = Limit.none;
+            //MAP 제한선 설정
+            const int LIMIT_X = 15;
+            const int LIMIT_Y = 10;
+            const int LIMIT_YY = 0;
+            const int LIMIT_XX = 0;
+
+            // 벽 설정
+            const int WALL_X = 7;
+            const int WALL_Y = 8;
+
+            //벽의 기호
+            const string WALL = "W";
+
 
 
 
@@ -100,6 +97,11 @@
                 Console.SetCursorPosition(BoxX, BoxY);
                 Console.Write("B");
 
+                // 벽 출력하기
+                Console.SetCursorPosition(WALL_X, WALL_Y);
+                Console.Write(WALL);
+
+
                 //------------------------------ProcessInput--------------------- // 마지막 호출 이후 발생한 모든 사용자 입력을 처리합니다.
                 ConsoleKey Key = Console.ReadKey().Key; //키를 입력받기 위해서 만든 명령어
 
@@ -109,30 +111,58 @@
                 //오른쪽 화살표 키를 눌렀을 때
                 if (Key == ConsoleKey.RightArrow)
                 {
-                    playerX = Math.Min(playerX + 1, (int)Limit.Map_Max_X); // Math.Min(A,B) A와 B중 더 작은 놈을 고르겠다.(동일 값 포함)
+                    playerX = Math.Min(playerX + 1, LIMIT_X); // Math.Min(A,B) A와 B중 더 작은 놈을 고르겠다.(동일 값 포함)
                     playerDirection = Direction.Right;
+
                    
                 }
 
                 if (Key == ConsoleKey.LeftArrow)
                 {
-                    playerX = Math.Max((int)Limit.Map_Min_x, playerX - 1); // Math.Max(A, B) A와 B중 더 큰놈을 고르겠다.
+                    playerX = Math.Max(LIMIT_XX, playerX - 1); // Math.Max(A, B) A와 B중 더 큰놈을 고르겠다.
                     playerDirection = Direction.Left;
                 }
 
                 if (Key == ConsoleKey.UpArrow)
                 {
-                    playerY = Math.Max((int)Limit.Map_Min_y, playerY - 1);
+                    playerY = Math.Max(LIMIT_YY, playerY - 1);
                     playerDirection = Direction.Up;
                 }
 
                 if (Key == ConsoleKey.DownArrow)
                 {
-                    playerY = Math.Min(playerY + 1, (int)Limit.Map_Max_Y);
+                    playerY = Math.Min(playerY + 1, LIMIT_Y);
                     playerDirection = Direction.Down;
 
 
                 }
+                // 1. 플레이어가 벽에 부딪혀야 한다.
+                if(playerX == WALL_X && playerY == WALL_Y)
+                {
+                    switch (playerDirection)
+                    {
+                        case Direction.Right:
+                            //오른쪽으로 갔을때
+                            playerX = WALL_X - 1;
+                            break;
+
+                        case Direction.Left:
+                            // 왼쪽으로 갔을때
+                            playerX = WALL_X + 1;
+                            break;
+
+                        case Direction.Up:
+                            //위쪽으로 갔을때
+                            playerY = WALL_Y +1;
+                            break;
+
+                        case Direction.Down:
+                            playerY = WALL_Y - 1;
+                            break;
+                    }
+                }
+              
+
 
                 // 박스 업데이트
                 // 플레이어가 이동한 후
@@ -143,10 +173,9 @@
                     switch (playerDirection)
                     {
                         case Direction.Left: // 플레이어가 왼족으로 이동 중
-                            if (BoxX == (int)Limit.Map_Min_x) // 박스가 왼쪽 끝에 있다면?
+                            if (BoxX == LIMIT_XX) // 박스가 왼쪽 끝에 있다면?
                             {
-                                playerX = (int)Limit.Map_Min_x + 1;
-                            }
+                                playerX = LIMIT_XX + 1;                            }
                             else
                             {
                                 BoxX = playerX - 1;
@@ -155,9 +184,9 @@
                             break;
 
                         case Direction.Right: // 플레이어가 오른쪽으로 이동중
-                            if (BoxX == (int)Limit.Map_Max_X)
+                            if (BoxX == LIMIT_X)
                             {
-                                playerX = (int)Limit.Map_Max_X - 1;
+                                playerX = LIMIT_X - 1;
                             }
                             else
                             {
@@ -166,9 +195,9 @@
                             break;
 
                         case Direction.Up:// 플레이어가 위쪽으로 이동중
-                            if (BoxY == (int)Limit.Map_Min_y)
+                            if (BoxY == LIMIT_YY)
                             {
-                                playerY = (int)Limit.Map_Min_y + 1;
+                                playerY = LIMIT_YY + 1;
                             }
                             else
                             {
@@ -177,9 +206,9 @@
                             break;
 
                         case Direction.Down:// 플레이어가 아래쪽으로 이동중
-                            if (BoxY == (int)Limit.Map_Max_Y)
+                            if (BoxY == LIMIT_Y)
                             {
-                                playerY = (int)Limit.Map_Max_Y - 1;
+                                playerY = LIMIT_Y - 1;
                             }
                             else
                             {
@@ -194,7 +223,57 @@
                             return;
                     }
 
+                   
                 }
+                // 2. 박스도 막아야한다.
+                if (BoxX == WALL_X && BoxY == WALL_Y)
+                {
+                    switch (playerDirection)
+                    {
+                        case Direction.Left:
+                            if (BoxX == WALL_X)
+                            {
+                                BoxX = WALL_X + 1;
+                                playerX = WALL_X + 2;
+                            }
+                            break;
+
+                        case Direction.Right: // 플레이어가 오른쪽으로 이동중
+                            if (BoxX == WALL_X)
+                            {
+                                BoxX = WALL_X - 1;
+                                playerX = WALL_X - 2;
+                            }
+                            break;
+
+                        case Direction.Up:// 플레이어가 위쪽으로 이동중
+                            if (BoxY == WALL_Y)
+                            {
+                                BoxY = WALL_Y + 1;
+                                playerY = WALL_Y + 2;
+                                
+                            }
+                            break;
+
+                        case Direction.Down:// 플레이어가 아래쪽으로 이동중
+                            if (BoxY == WALL_Y)
+                            {
+                                BoxY = WALL_Y - 1;
+                                playerY = WALL_Y - 2;
+
+                            }
+                            break;
+
+                        default:
+                            Console.Clear();
+                            Console.Write($"[Error] 플레이어의 이동 방향이 잘못 되었습니다. {playerDirection}");
+
+                            return;
+                    }
+                }
+
+
+
             }
         }
     }
