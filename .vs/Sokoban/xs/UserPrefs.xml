@@ -1,5 +1,6 @@
 ﻿<Properties StartupConfiguration="{80528CC0-BF43-49AA-A4A7-2BEDD5845680}|Default" GitUserInfo="UsingMD">
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.Test PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Sokoban/Program.cs">
