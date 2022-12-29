@@ -42,7 +42,9 @@
             const string WALL_STRING = "#";
 
             // goal의 좌표
-            
+            const int INITIAL_GOAL_X = 9;
+            const int INITIAL_GOAL_Y = 10;
+            const string GOAL_STRING = "G";
 
             Direction playerDirection = Direction.Down;
 
@@ -80,6 +82,10 @@
                 // 벽 출력하기
                 Console.SetCursorPosition(INITIAL_WALL_X, INITIAL_WALL_Y);
                 Console.Write(WALL_STRING);
+
+                // goal 출력하기
+                Console.SetCursorPosition(INITIAL_GOAL_X, INITIAL_GOAL_Y);
+                Console.Write(GOAL_STRING);
 
                 // ---------------------ProcessInput-----------
                 ConsoleKey key = Console.ReadKey().Key;
@@ -236,7 +242,9 @@
                             return;
                     }
                 }
-
+                // goal 구현
+                if (boxX == INITIAL_GOAL_X && boxY == INITIAL_GOAL_Y)
+                return;
 
             }
 
