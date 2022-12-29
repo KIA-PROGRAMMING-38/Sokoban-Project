@@ -19,6 +19,10 @@
     {
         static void Main()
         {
+
+           
+
+            #region 초기세팅
             // 초기 세팅
             Console.ResetColor(); // 컬러를 초기화한다
             Console.CursorVisible = false; // 커서를 안보이게 해줌(콘솔에서는 입력하려는 표시인거임)
@@ -26,251 +30,520 @@
             Console.BackgroundColor = ConsoleColor.Cyan; // 배경색을 바꿔줌
             Console.ForegroundColor = ConsoleColor.Red; // 글씨의 색을 바꿔줌
             Console.Clear(); // 출력된 모든 내용을 지운다
+            #endregion
 
+            #region 맵 최대범위
             
-
             const int MAP_MIN_X = 0; // 맵의 가로 최소
             const int MAP_MIN_Y = 0; // 맵의 세로 최소
-            const int MAP_MAX_X = 15; // 맵의 가로 최대
-            const int MAP_MAX_Y = 10; // 맵의 세로 최대
+            const int MAP_MAX_X = 20; // 맵의 가로 최대
+            const int MAP_MAX_Y = 15; // 맵의 세로 최대
 
-            const string Player = "R"; // 플레이어 기호
-            const string Box = "B"; // 박스 기호
-            
-            
-            const int INITIAL_WALL_X= 7; // 벽의 좌표
-            const int INITIAL_WALL_Y = 8;
-            const string WALL_STRING = "W";
+            #endregion
 
-            // 1. 플레이어가 벽에 부딪혀야함
-            
-
-
-
-            // 2. 박스도 벽에 부딪혀야 함
-
-            //  const int player_Direction = 0;
-            // int playerDirection = player_Direction; // 0: None, 1: 왼쪽으로 이동중이였다(Left), 2: Right, 3: Up, 4: Down
-
-            DIRECTION playerDirection = DIRECTION.NONE;
-
-
-            const int player_X = 0; // Player_X를 굽이 playerx 로 바꾼 이유는 아래를 다 바꾸기 귀찮아서임...
-            int playerX = player_X; // 플레이어 X 초기좌표
-
+            #region 플레이어기호 및 좌표
+            const string Player = "P"; // 플레이어 기호
+            const int player_X = 0; // 플레이어 X 초기좌표
             const int player_Y = 0; // 플레이어 Y 초기좌표
-            int playerY = player_Y;
+            int playerX = player_X; // 플레이어 X 초기좌표
+            int playerY = player_Y; // 플레이어 Y 초기좌표
+            #endregion
+
+            #region 추가요소기호 및 좌표배열
+
+            #region 박스 기호 및 좌표배열
+            const string Ball = "O"; // 박스 기호
+
+            const int Box1_INITIAL_X = 2; // 박스1 X좌표
+            const int Box1_INITIAL_Y = 3; // 박스1 Y좌표
+            
+
+            
+            const int Box2_INITIAL_X = 4; // 박스2 X 좌표
+            const int Box2_INITIAL_Y = 5; // 박스2 Y 좌표
+            
+
+            
+            const int Box3_INITIAL_X = 8; // 박스3 X 좌표
+            const int Box3_INITIAL_Y = 10; // 박스3 X 좌표
 
 
-            const int Box_X = 2; // 플레이어 X 초기좌표
-            int boxX = Box_X;
+            int[] boxX = new int[] { Box1_INITIAL_X, Box2_INITIAL_X, Box3_INITIAL_X }; // 박스들의 X좌표 배열
+            int[] boxY = new int[] { Box1_INITIAL_Y, Box2_INITIAL_Y, Box3_INITIAL_Y }; // 박스들의 Y좌표 배열
+            int box_length = boxX.Length; // 박스 갯수
+            #endregion
 
-            const int Box_Y = 3; // 플레이어 Y 초기좌표
-            int boxY = Box_Y;
+            #region 벽 기호 및 좌표배열
+            const string Wall = "W"; // 벽 기호
 
-            // 가로 15, 세로 15
+            const int Wall1_INITIAL_X= 7; // 벽1의 X 좌표
+            const int Wall1_INITIAL_Y = 8; // 벽1의 Y 좌표
+
+            
+            const int Wall2_INITIAL_X = 3;
+            const int Wall2_INITIAL_Y = 3;
+
+            
+            const int Wall3_INITIAL_X = 10;
+            const int Wall3_INITIAL_Y = 10;
+
+            int[] wallX = new int[] {Wall1_INITIAL_X, Wall2_INITIAL_X, Wall3_INITIAL_X }; // 벽들의 X 좌표 배열
+            int[] wallY = new int[] {Wall1_INITIAL_Y, Wall2_INITIAL_Y, Wall3_INITIAL_Y }; // 벽들의 Y 좌표 배열
+            int wall_length = wallX.Length; // 벽 갯수
+            #endregion
+
+            #region goal 기호 및 좌표배열
+            const string Goal = "*"; // goal 기호
+
+            const int Goal1_INITIAL_X = 9; // GOAL1 X 좌표
+            const int Goal1_INITIAL_Y = 9; // GOAL1 Y 좌표
+
+            
+            const int Goal2_INITIAL_X = 3; // GOAL2 X 좌표
+            const int Goal2_INITIAL_Y = 7; // GOAL2 Y 좌표
+
+            
+            const int Goal3_INITIAL_X = 5; // GOAL3 X 좌표
+            const int Goal3_INITIAL_Y = 5; // GOAL3 Y 좌표
+
+            int[] goalX = new int[] {Goal1_INITIAL_X, Goal2_INITIAL_X, Goal3_INITIAL_X }; // goal들의 X좌표 배열
+            int[] goalY = new int[] {Goal1_INITIAL_Y, Goal2_INITIAL_Y, Goal3_INITIAL_Y }; // goal들의 Y좌표 배열
+            int goal_length = goalX.Length; // goal 갯수
+            #endregion
+            
+            #endregion
+
+
+
+            DIRECTION playerDirection = DIRECTION.NONE; // playerDirection 이라는 객체를 초기화해줌
+
            
-            
-            
-          
-
-            // 게임 루프 == 프레임(Frame)
             while (true)
             {
 
                 Console.Clear();
 
-                // ------------------------------------------ render -----------------------------------------------
-                // 플레이어 출력하기
-
-                Console.SetCursorPosition(playerX, playerY);
-                Console.Write($"{Player}");
+                #region 렌더링
 
 
-                Console.SetCursorPosition(boxX, boxY);
-                Console.Write($"{Box}");
+                Console.SetCursorPosition(playerX, playerY); // 플레이어를 콘솔에 구현
+                Console.Write(Player);
 
-                Console.SetCursorPosition(INITIAL_WALL_X, INITIAL_WALL_Y);
-                Console.Write(WALL_STRING);
-               
 
-                // ------------------------------------------ ProcessInput -----------------------------------------
+                for(int i = 0; i < box_length ;++i) // 박스들 콘솔에 구현
+                {
+                    Console.SetCursorPosition(boxX[i], boxY[i]);
+                    Console.Write(Ball);
+                }
+
+                for (int i = 0; i < wall_length; ++i) // 벽들 콘솔에 구현
+                {
+                    Console.SetCursorPosition(wallX[i], wallY[i]);
+                    Console.Write(Wall);
+                }
+
+
+                for (int i = 0; i < goal_length; ++i) // goal들 콘솔에 구현
+                {
+                    Console.SetCursorPosition(goalX[i], goalY[i]);
+                    Console.Write(Goal);
+                }
+                #endregion
+
+                #region 인풋
 
                 ConsoleKey key = Console.ReadKey().Key;
-
+                #endregion
 
 
                 // ------------------------------------------ Update -----------------------------------------------
-                // 플레이어 좌표 구하기
+
+
+
+
+                #region 플레이어 좌표 구하기
                 if (key == ConsoleKey.RightArrow) // 오른쪽으로 이동할 때
                 {
                     
                     playerX = Math.Min(playerX + 1, MAP_MAX_X);
                     playerDirection = DIRECTION.RIGHT;
-                    if(playerX==INITIAL_WALL_X && playerY == INITIAL_WALL_Y)
-                    {
-                        playerX = INITIAL_WALL_X - 1;
-                    }
+                    
                 }
 
                 if (key == ConsoleKey.LeftArrow) // 왼쪽으로 이동할 때
                 {
                     playerX = Math.Max(MAP_MIN_X , playerX - 1);
                     playerDirection = DIRECTION.LEFT;
-                    if (playerX == INITIAL_WALL_X && playerY == INITIAL_WALL_Y)
-                    {
-                        playerX = INITIAL_WALL_X + 1;
-                    }
+                   
                 }
 
                 if (key == ConsoleKey.DownArrow) // 아래로 이동할 때
                 {
                     playerY = Math.Min(playerY + 1, MAP_MAX_Y);
                     playerDirection = DIRECTION.DOWN;
-                    if (playerX == INITIAL_WALL_X && playerY == INITIAL_WALL_Y)
-                    {
-                        playerY = INITIAL_WALL_Y - 1;
-                    }
+                    
                 }
 
                 if (key == ConsoleKey.UpArrow) // 위로 이동할 때
                 {
                     playerY = Math.Max(MAP_MIN_Y, playerY - 1);
                     playerDirection = DIRECTION.UP;
-                    if (playerX == INITIAL_WALL_X && playerY == INITIAL_WALL_Y)
-                    {
-                        playerY = INITIAL_WALL_Y + 1;
-                    }
+                    
                 }
+                #endregion
 
-                
-
-
-
-                    // 플레이어가 이동한 좌표를 다 구한 후!
-
-                    if (playerX == boxX && playerY == boxY) // 이동하고보니 박스가 있네?
+                #region 박스 움직이기
+                for (int i = 0; i < box_length ;++i)
                 {
-                    // 박스를 움직여주기
-                    // 플레이어가 어디서 왔는지 모름!
-                    // 플레이어가 온 방향에 따라서 박스의 위치가 달라짐. 1)왼쪽으로 이동중일떄 2)오른쪽으로 이동중일때 3)위로 이동중 4)아래로 이동중
-                    switch (playerDirection)
+                    if(playerX == boxX[i] && playerY == boxY[i])
                     {
-                        case DIRECTION.LEFT: // 왼쪽으로 이동중일때
-                            
-                            if (boxX == MAP_MIN_X) // 박스가 왼쪽 끝에 있다면?
-                            {
-                                playerX = MAP_MIN_X + 1;
-                            }
-                            else
-                            {
-                                boxX = boxX - 1;
-                            }
-                            
-                            break;
+                        switch (playerDirection)
+                        {
+                            case DIRECTION.LEFT:
+                                if (boxX[i] == MAP_MIN_X)
+                                {
+                                    playerX = MAP_MIN_X + 1;
+                                }
+                                else
+                                {
+                                    boxX[i] = boxX[i] - 1;
+                                }
+                                
+                                break;
 
-                        case DIRECTION.RIGHT: // 오른쪽으로 이동중일 때
-                            
+                            case DIRECTION.RIGHT:
+                                if (boxX[i] == MAP_MAX_X)
+                                {
+                                    playerX = MAP_MAX_X - 1;
+                                }
+                                else
+                                {
+                                    boxX[i] = boxX[i] + 1;
+                                }
 
-                            if (boxX == MAP_MAX_X)
-                            {
-                                playerX = MAP_MAX_X - 1;
-                            }
-                            else 
-                            {
-                                boxX = boxX + 1;
-                            }
-                          
+                                break;
 
-                            break;
+                            case DIRECTION.UP:
+                                if (boxY[i] == MAP_MIN_Y)
+                                {
+                                    playerY = MAP_MIN_Y + 1;
+                                }
+                                else
+                                {
+                                    boxY[i] = boxY[i] - 1;
+                                }
 
-                        case DIRECTION.UP: // 위로 이동중일때
-                            if (boxY == MAP_MIN_Y)
-                            {
-                                playerY = MAP_MIN_Y + 1;
-                            }
-                            else
-                            {
-                                boxY = boxY - 1;
-                            }
-                            
-                            break;
+                                break;
 
-                        case DIRECTION.DOWN: // 아래로 이동중 일때
-                            if (boxY == MAP_MAX_Y)
-                            {
-                                playerY = MAP_MAX_Y - 1;
-                            }
-                            else
-                            {
-                                boxY = boxY + 1;
-                            }
-                            
-                            break;
+                            case DIRECTION.DOWN:
+                                if (boxY[i] == MAP_MAX_Y)
+                                {
+                                    playerY = MAP_MAX_Y - 1;
+                                }
+                                else
+                                {
+                                    boxY[i] = boxY[i] + 1;
+                                }
 
-                        default:
-                            Console.Clear();
-                            Console.WriteLine($"플레이어의 이동방향이 잘못되었습니다. {playerDirection}");
-                            return;
+                                break;
 
+                            default:
+                                Console.Clear();
+                                Console.WriteLine("you have entered something wrong");
+                                return;
+                        }
                     }
-
                 }
 
+#endregion
 
-                if (playerX == INITIAL_WALL_X && playerY == INITIAL_WALL_Y)
+                #region 플레이어가 벽에 부딪힐 때
+                for (int i = 0; i < wall_length ;++i)
                 {
-                    switch (playerDirection)
+
+                    if(playerX == wallX[i] && playerY == wallY[i])
                     {
-                        case DIRECTION.LEFT:
-                            playerX = INITIAL_WALL_X + 1;
-                            break;
+                        switch (playerDirection)
+                        {
+                            case DIRECTION.LEFT:
+                                playerX = wallX[i] + 1;
+                                break;
 
-                        case DIRECTION.RIGHT:
-                            playerX = INITIAL_WALL_X - 1;
-                            break;
+                            case DIRECTION.RIGHT:
+                                playerX = wallX[i] - 1;
+                                break;
 
-                        case DIRECTION.UP:
-                            playerY = INITIAL_WALL_Y + 1;
-                            break;
+                            case DIRECTION.UP:
+                                playerY = wallY[i] + 1;
+                                break;
 
-                        case DIRECTION.DOWN:
-                            playerY = INITIAL_WALL_Y - 1;
-                            break;
+                            case DIRECTION.DOWN:
+                                playerY = wallY[i] - 1;
+                                break;
 
+                            default:
+                                Console.Clear();
+                                Console.WriteLine("You have entered something wrong");
+                                return;
+
+                        }
                     }
                 }
+#endregion
 
-                if (boxX == INITIAL_WALL_X && boxY == INITIAL_WALL_Y)
+                #region box가 벽에 부딪힐 때 + 이후 player의 위치
+
+                for (int i = 0; i < wall_length ;++i)
+                {
+                    for(int k = 0; k < box_length; ++k)
+                    {
+
+                        if (boxX[k] == wallX[i] && boxY[k] == wallY[i])
+                        {
+                            switch (playerDirection)
+                            {
+                                case DIRECTION.LEFT:
+                                    boxX[k] = wallX[i] + 1;
+                                    playerX = boxX[k] + 1;
+                                    break;
+
+                                case DIRECTION.RIGHT:
+                                    boxX[k] = wallX[i] - 1;
+                                    playerX = boxX[k] - 1;
+                                    break;
+
+                                case DIRECTION.UP:
+                                    boxY[k] = wallY[i] + 1;
+                                    playerY = boxY[k] + 1;
+                                    break;
+
+                                case DIRECTION.DOWN:
+                                    boxY[k] = wallY[i] - 1;
+                                    playerY = boxY[k] - 1;
+                                    break;
+
+                                default:
+                                    Console.Clear();
+                                    Console.WriteLine("You have entered something wrong");
+                                    return;
+                            }
+                        }
+                    }
+                }
+                #endregion
+
+
+
+                #region 박스끼리 부딪힐 때
+
+                if (boxX[0] == boxX[1] && boxY[0] == boxY[1]) // 1번째 박스가 2번쨰 박스를 밀 때
                 {
                     switch(playerDirection)
                     {
                         case DIRECTION.LEFT:
-                            boxX = INITIAL_WALL_X + 1;
-                            playerX = boxX + 1;
+                            boxX[1] = boxX[0] - 1;
                             break;
 
                         case DIRECTION.RIGHT:
-                            boxX = INITIAL_WALL_X - 1;
-                            playerX = boxX - 1;
+                            boxX[1] = boxX[0] + 1;
                             break;
 
                         case DIRECTION.UP:
-                            boxY = INITIAL_WALL_Y + 1;
-                            playerY = boxY + 1;
+                            boxY[1] = boxY[0] - 1;
                             break;
 
                         case DIRECTION.DOWN:
-                            boxY = INITIAL_WALL_Y - 1;
-                            playerY = boxY - 1;
+                            boxY[1] = boxY[0] + 1;
                             break;
+
+                        default:
+                            Console.Clear();
+                            Console.WriteLine("You have entered something wrong");
+                            return;
                     }
                 }
 
 
 
-            }
+                if (boxX[0] == boxX[1] && boxY[0] == boxY[1]) // 2번째 박스가 1번쨰 박스를 밀 때
+                {
+                    switch (playerDirection)
+                    {
+                        case DIRECTION.LEFT:
+                            boxX[0] = boxX[1] - 1;
+                            break;
 
+                        case DIRECTION.RIGHT:
+                            boxX[0] = boxX[1] + 1;
+                            break;
+
+                        case DIRECTION.UP:
+                            boxY[0] = boxY[1] - 1;
+                            break;
+
+                        case DIRECTION.DOWN:
+                            boxY[0] = boxY[1] + 1;
+                            break;
+
+                        default:
+                            Console.Clear();
+                            Console.WriteLine("You have entered something wrong");
+                            return;
+                    }
+                }
+
+
+                if (boxX[0] == boxX[2] && boxY[0] == boxY[2]) // 1번째 박스가 3번쨰 박스를 밀 때
+                {
+                    switch (playerDirection)
+                    {
+                        case DIRECTION.LEFT:
+                            boxX[2] = boxX[0] - 1;
+                            break;
+
+                        case DIRECTION.RIGHT:
+                            boxX[2] = boxX[0] + 1;
+                            break;
+
+                        case DIRECTION.UP:
+                            boxY[2] = boxY[0] - 1;
+                            break;
+
+                        case DIRECTION.DOWN:
+                            boxY[2] = boxY[0] + 1;
+                            break;
+
+                        default:
+                            Console.Clear();
+                            Console.WriteLine("You have entered something wrong");
+                            return;
+                    }
+                }
+
+                if (boxX[0] == boxX[2] && boxY[0] == boxY[2]) // 3번째 박스가 1번쨰 박스를 밀 때
+                {
+                    switch (playerDirection)
+                    {
+                        case DIRECTION.LEFT:
+                            boxX[0] = boxX[2] - 1;
+                            break;
+
+                        case DIRECTION.RIGHT:
+                            boxX[0] = boxX[2] + 1;
+                            break;
+
+                        case DIRECTION.UP:
+                            boxY[0] = boxY[2] - 1;
+                            break;
+
+                        case DIRECTION.DOWN:
+                            boxY[0] = boxY[2] + 1;
+                            break;
+
+                        default:
+                            Console.Clear();
+                            Console.WriteLine("You have entered something wrong");
+                            return;
+                    }
+                }
+
+                if (boxX[1] == boxX[2] && boxY[1] == boxY[2]) // 2번째 박스가 3번쨰 박스를 밀 때
+                {
+                    switch (playerDirection)
+                    {
+                        case DIRECTION.LEFT:
+                            boxX[2] = boxX[1] - 1;
+                            break;
+
+                        case DIRECTION.RIGHT:
+                            boxX[2] = boxX[1] + 1;
+                            break;
+
+                        case DIRECTION.UP:
+                            boxY[2] = boxY[1] - 1;
+                            break;
+
+                        case DIRECTION.DOWN:
+                            boxY[2] = boxY[1] + 1;
+                            break;
+
+                        default:
+                            Console.Clear();
+                            Console.WriteLine("You have entered something wrong");
+                            return;
+                    }
+                }
+
+
+                if (boxX[1] == boxX[2] && boxY[1] == boxY[2]) // 3번째 박스가 2번쨰 박스를 밀 때
+                {
+                    switch (playerDirection)
+                    {
+                        case DIRECTION.LEFT:
+                            boxX[1] = boxX[2] - 1;
+                            break;
+
+                        case DIRECTION.RIGHT:
+                            boxX[1] = boxX[2] + 1;
+                            break;
+
+                        case DIRECTION.UP:
+                            boxY[1] = boxY[2] - 1;
+                            break;
+
+                        case DIRECTION.DOWN:
+                            boxY[1] = boxY[2] + 1;
+                            break;
+
+                        default:
+                            Console.Clear();
+                            Console.WriteLine("You have entered something wrong");
+                            return;
+                    }
+                }
+
+
+
+
+
+
+
+
+
+
+                #endregion
+
+
+
+
+
+
+
+
+                #region box를 goal에 넣었을때 끝남
+                int A = 0; // goal에 박스 3개 다 들어있을 경우의 값을 저장하기 위해 생성함
+                
+                for (int i = 0; i < goal_length ;++i)
+                {
+                    for(int k = 0; k < box_length ;++k)
+                    {
+                        if (boxX[k] == goalX[i] && boxY[k] == goalY[i])
+                        {
+                            A++;
+                        }
+                    }
+                    
+                }
+
+                if (A == goal_length)
+                {
+                    break;
+                }
+            }
+            #endregion
+
+            Console.Clear();
+            Console.WriteLine("Finished");
         }
 
 
