@@ -62,21 +62,57 @@ class Program
             // 0: None(기본값), 1: left, 2: right, 3: up, 4: down 방향으로 움직였다고 설정
             Direction playerDirection = Direction.None;
 
-            const string BOX_ICON = "O";
-            const int BOX_INITIAL_POSITION_X = 5;
-            const int BOX_INITIAL_POSITION_Y = 3;
-            int boxX = BOX_INITIAL_POSITION_X;
-            int boxY = BOX_INITIAL_POSITION_Y;
+            // 박스의 기호, 좌표
+            const string BOX_ICON = "B";
+            const int BOX1_X = 5;
+            const int BOX1_Y = 3;
+            const int BOX2_X = 3;
+            const int BOX2_Y = 3;
+            const int BOX3_X = 9;
+            const int BOX3_Y = 2;
+            int[,] boxPosition = new int[3, 2]
+                                        {
+                                            {BOX1_X, BOX1_Y},
+                                            {BOX2_X, BOX2_Y},
+                                            {BOX3_X, BOX3_Y}
+                                        };
+            //int[] boxX = { BOX_INITIAL_POSITION_X, BOX2_X, BOX3_X };
+            //int[] boxY = { BOX_INITIAL_POSITION_Y, BOX2_Y, BOX3_Y };
 
             // 벽의 기호, 좌표
             const string WALL_STRING = "W";
-            const int INITIAL_WALL_X = 7;
-            const int INITIAL_WALL_Y = 8;
+            const int WALL1_X = 7;
+            const int WALL1_Y = 8;
+            const int WALL2_X = 1;
+            const int WALL2_Y = 10;
+            const int WALL3_X = 9;
+            const int WALL3_Y = 3;
+            int[,] wallPosition = new int[3, 2]
+                                    {
+                                        {WALL1_X, WALL1_Y},
+                                        {WALL2_X, WALL2_Y},
+                                        {WALL3_X, WALL3_Y}
+                                    };
 
             const int MIN_OF_MAP_X = 0;
             const int MAX_OF_MAP_X = 15;
             const int MIN_OF_MAP_Y = 0;
             const int MAX_OF_MAP_Y = 10;
+
+            // 골인 지점 기호, 좌표
+            const string GOAL_STRING = "G";
+            const int GOAL1_X = 15;
+            const int GOAL1_Y = 0;
+            const int GOAL2_X = 7;
+            const int GOAL2_Y = 10;
+            const int GOAL3_X = 8;
+            const int GOAL3_Y = 2;
+            int[,] goalPosition = new int[3, 2]
+                                    {
+                                        {GOAL1_X, GOAL1_Y},
+                                        {GOAL2_X, GOAL2_Y},
+                                        {GOAL3_X, GOAL3_Y}
+                                    };
 
             // 15 * 10 맵 크기를 제한할 것임 (폰트때문에 가로가 좀 더 넓어야 예쁨)
 
@@ -92,43 +128,81 @@ class Program
             while (true)
             {
                 Console.Clear();  // 이전 프레임을 지운다. 게임루프 한 번이 한 프레임이기 때문에 이전 프레임의 내용을 지워주면 실시간으로 이동하는 것처럼 보인다(이전 프레임 지우고 입력이 있으면 그만큼 옆으로)
-                
+
                 // -------------------------------- Render ---------------------------------
 
                 // 벽 출력하기
-                Console.SetCursorPosition(INITIAL_WALL_X, INITIAL_WALL_Y);
-                Console.Write(WALL_STRING);
+                for (int i = 0; i < wallPosition.GetLength(0); i++)
+                {
+                    Console.SetCursorPosition(wallPosition[i, 0], wallPosition[i, 1]);
+                    Console.Write(WALL_STRING);
+                }
+
+                for(int i = 0; i < goalPosition.GetLength(0); i++)
+                {
+                    Console.SetCursorPosition(goalPosition[i, 0], goalPosition[i, 1]);
+                    Console.Write(GOAL_STRING);
+                }
 
                 // 플레이어가 벽에의해 막히는 것을 구현
-                if(playerX == INITIAL_WALL_X && playerY == INITIAL_WALL_Y)
+                for(int i = 0; i < wallPosition.GetLength(0); i++)
                 {
-                    switch(playerDirection)
+                    if (wallPosition[i, 0] == playerX && wallPosition[i, 1] == playerY)
                     {
-                        case Direction.RIGHT:
-                            playerX -= 1;
-                            break;
-                        case Direction.LEFT:
-                            playerX += 1;
-                            break;
-                        case Direction.UP:
-                            playerY += 1;
-                            break;
-                        case Direction.DOWN:
-                            playerY -= 1;
-                            break;
-                        default:
-                            Console.Clear();
-                            Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다. {playerDirection}");
-                            return;
+                        switch (playerDirection)
+                        {
+                            case Direction.RIGHT:
+                                playerX -= 1;
+                                break;
+                            case Direction.LEFT:
+                                playerX += 1;
+                                break;
+                            case Direction.UP:
+                                playerY += 1;
+                                break;
+                            case Direction.DOWN:
+                                playerY -= 1;
+                                break;
+                            default:
+                                Console.Clear();
+                                Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다. {playerDirection}");
+                                return;
+                        }
                     }
                 }
+                
+                //if (playerX == INITIAL_WALL_X && playerY == INITIAL_WALL_Y)
+                //{
+                //    switch(playerDirection)
+                //    {
+                //        case Direction.RIGHT:
+                //            playerX -= 1;
+                //            break;
+                //        case Direction.LEFT:
+                //            playerX += 1;
+                //            break;
+                //        case Direction.UP:
+                //            playerY += 1;
+                //            break;
+                //        case Direction.DOWN:
+                //            playerY -= 1;
+                //            break;
+                //        default:
+                //            Console.Clear();
+                //            Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다. {playerDirection}");
+                //            return;
+                //    }
+                //}
 
                 // 플레이어 출력하기
                 Console.SetCursorPosition(playerX, playerY);
                 Console.Write(PLAYER_ICON);
 
-                Console.SetCursorPosition(boxX, boxY);
-                Console.Write(BOX_ICON);
+                for(int i = 0; i < boxPosition.GetLength(0); i++)
+                {
+                    Console.SetCursorPosition(boxPosition[i,0], boxPosition[i,1]);
+                    Console.Write(BOX_ICON);
+                }
 
                 // -------------------------------- ProcessInput ------------------------------
                 ConsoleKey key = Console.ReadKey().Key;  // Console.ReadyKey()를 하면 나오는 결과가 ConsoleKeyInfo 타입이라는 것을 알 수 있다. 그렇기 때문에 바로 .Key를 붙여서 ConsoleKey 타입이 나오고, 사용할 수 있는 것
@@ -238,93 +312,139 @@ class Program
                     // 들어가는 수가 뭔지 보고 해야됨
                 }
 
+                // 골인 지점에 도착
+                for(int i = 0; i < goalPosition.GetLength(0); i++)
+                {
+                    if (goalPosition[i, 0] == playerX && goalPosition[i, 1] == playerY)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("골인!! 축하합니다.");
+
+                        return;
+                    }
+                }
+                
+
                 // 박스 업데이트는 플레이어 업데이트랑 분리해야 유지보수가 수월해짐(확장성)
                 // 여러 이동이 한번에 일어날 경우, 두 움직임에 대한 동작을 따로 작성 (하나의 움직임이 끝난 후 다른 움직임)
                 // 플레이어가 이동한 후 박스에 대한 이동
-                if (playerX == boxX && playerY == boxY)  // 플레이어가 이동하고나니 박스가 있네
+
+                // 플레이어가 이동했을 때, 박스가 있으면 움직여주는 것으로 박스를 미는 것을 구현
+                // 플레이어가 어느 방향에서 왔는지에 대한 정보가 필요, 따라서 플레이어 이동방향을 저장할 playerDirection 데이터 생성
+                // 이동 방향을 입력한 키로 인식하는 경우, 후에 플레이어가 작동 키를 바꾸는 경우 적용되지 않기 때문에 보통 키와 동작을 연결시키지 않는다
+                // 따라서 playerDirection 이라는 데이터로 처리하는 것이다 (입력한 방향키로 처리하는 것이 아니라)
+                // 주어진 데이터만 사용하는 것이 아니라, 추가로 필요한 데이터를 직접 정의하여 사용할 수 있어야 한다.
+                for (int i = 0; i < boxPosition.GetLength(0); i++)
                 {
-                    // 플레이어가 이동했을 때, 박스가 있으면 움직여주는 것으로 박스를 미는 것을 구현
-                    // 플레이어가 어느 방향에서 왔는지에 대한 정보가 필요, 따라서 플레이어 이동방향을 저장할 playerDirection 데이터 생성
-                    // 이동 방향을 입력한 키로 인식하는 경우, 후에 플레이어가 작동 키를 바꾸는 경우 적용되지 않기 때문에 보통 키와 동작을 연결시키지 않는다
-                    // 따라서 playerDirection 이라는 데이터로 처리하는 것이다 (입력한 방향키로 처리하는 것이 아니라)
-                    // 주어진 데이터만 사용하는 것이 아니라, 추가로 필요한 데이터를 직접 정의하여 사용할 수 있어야 한다.
-
-                    switch (playerDirection)
+                    if (boxPosition[i, 0] == playerX && boxPosition[i, 1] == playerY)
                     {
-                        case Direction.LEFT: // 플레이어가 왼쪽으로 이동 중
-                            if (boxX == MIN_OF_MAP_X) // 박스가 왼쪽 끝에 있다면
-                            {
-                                playerX = MIN_OF_MAP_X + 1;
-                            }
-                            else
-                            {
-                                boxX = boxX - 1;
-                            }
+                        switch (playerDirection)
+                        {
+                            case Direction.LEFT: // 플레이어가 왼쪽으로 이동 중
+                                if (boxPosition[i, 0] == MIN_OF_MAP_X) // 박스가 왼쪽 끝에 있다면
+                                {
+                                    playerX = MIN_OF_MAP_X + 1;
+                                }
+                                else
+                                {
+                                    boxPosition[i, 0] = boxPosition[i, 0] - 1;
+                                }
 
-                            break;
-                        case Direction.RIGHT:  // 플레이어가 오른쪽으로 이동 중
-                            if (boxX == MAX_OF_MAP_X)
-                            {
-                                playerX = MAX_OF_MAP_X - 1;
-                            }
-                            else
-                            {
-                                boxX = boxX + 1;
-                            }
+                                break;
+                            case Direction.RIGHT:  // 플레이어가 오른쪽으로 이동 중
+                                if (boxPosition[i, 0] == MAX_OF_MAP_X)
+                                {
+                                    playerX = MAX_OF_MAP_X - 1;
+                                }
+                                else
+                                {
+                                    boxPosition[i, 0] = boxPosition[i, 0] + 1;
+                                }
 
-                            break;
-                        case Direction.UP:  // 플레이어가 위쪽으로 이동 중
-                            if (boxY == MIN_OF_MAP_Y)
-                            {
-                                playerY = MIN_OF_MAP_Y + 1;
-                            }
-                            else
-                            {
-                                boxY = boxY - 1;
-                            }
+                                break;
+                            case Direction.UP:  // 플레이어가 위쪽으로 이동 중
+                                if (boxPosition[i, 1] == MIN_OF_MAP_Y)
+                                {
+                                    playerY = MIN_OF_MAP_Y + 1;
+                                }
+                                else
+                                {
+                                    boxPosition[i, 1] = boxPosition[i, 1] - 1;
+                                }
 
-                            break;
-                        case Direction.DOWN:  // 플레이어가 아래로 이동 중
-                            if (boxY == MAX_OF_MAP_Y)
-                            {
-                                playerY = MAX_OF_MAP_Y - 1;
-                            }
-                            else
-                            {
-                                boxY = boxY + 1;
-                            }
+                                break;
+                            case Direction.DOWN:  // 플레이어가 아래로 이동 중
+                                if (boxPosition[i, 1] == MAX_OF_MAP_Y)
+                                {
+                                    playerY = MAX_OF_MAP_Y - 1;
+                                }
+                                else
+                                {
+                                    boxPosition[i, 1] = boxPosition[i, 1] + 1;
+                                }
+                                break;
+                            default:  // 이 경우는 우리가 설정한 조건이 아니기에 오류로 판정, 이처럼 보통 defualt는 오류 처리에 사용
+                                Console.Clear();
+                                Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다. {playerDirection}");
 
-                            break;
-                        default:  // 이 경우는 우리가 설정한 조건이 아니기에 오류로 판정, 이처럼 보통 defualt는 오류 처리에 사용
-                            Console.Clear();
-                            Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다. {playerDirection}");
-
-                            return;
+                                return;
+                        }
                     }
                 }
 
-                if (boxX == INITIAL_WALL_X && boxY == INITIAL_WALL_Y)
+                // 박스가 벽에 의해 막히는 것 구현
+                for (int i = 0; i < boxPosition.GetLength(0); i++)
                 {
-                    switch (playerDirection)
+                    for(int j = 0; j < wallPosition.GetLength(0); j++)
                     {
-                        case Direction.RIGHT:
-                            playerX -= 1;
-                            boxX -= 1;
-                            break;
-                        case Direction.LEFT:
-                            playerX += 1;
-                            boxX += 1;
-                            break;
-                        case Direction.UP:
-                            playerY += 1;
-                            boxY += 1;
-                            break;
-                        case Direction.DOWN:
-                            playerY -= 1;
-                            boxY -= 1;
-                            break;
+                        if (boxPosition[i, 0] == wallPosition[j, 0] && boxPosition[i, 1] == wallPosition[j, 1])
+                        {
+                            switch (playerDirection)
+                            {
+                                case Direction.RIGHT:
+                                    playerX -= 1;
+                                    boxPosition[i, 0] -= 1;
+                                    break;
+                                case Direction.LEFT:
+                                    playerX += 1;
+                                    boxPosition[i, 0] += 1;
+                                    break;
+                                case Direction.UP:
+                                    playerY += 1;
+                                    boxPosition[i, 1] += 1;
+                                    break;
+                                case Direction.DOWN:
+                                    playerY -= 1;
+                                    boxPosition[i, 1] -= 1;
+                                    break;
+                            }
+                        }
                     }
                 }
+                
+
+                //if (boxX == INITIAL_WALL_X && boxY == INITIAL_WALL_Y)
+                //{
+                //    switch (playerDirection)
+                //    {
+                //        case Direction.RIGHT:
+                //            playerX -= 1;
+                //            boxX -= 1;
+                //            break;
+                //        case Direction.LEFT:
+                //            playerX += 1;
+                //            boxX += 1;
+                //            break;
+                //        case Direction.UP:
+                //            playerY += 1;
+                //            boxY += 1;
+                //            break;
+                //        case Direction.DOWN:
+                //            playerY -= 1;
+                //            boxY -= 1;
+                //            break;
+                //    }
+                //}
             }
         }
     }
