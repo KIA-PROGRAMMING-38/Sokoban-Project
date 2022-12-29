@@ -8,10 +8,10 @@
         Up = 3,
         Down = 4
     }
-    
+
     class Program
     {
-        
+
         static void Main()
         {
 
@@ -25,16 +25,23 @@
 
             const int INITIAL_PLAYER_X = 0;
             const int INITIAL_PLAYER_Y = 0;
-
+            
             // 플레이어 좌표 설정
             int playerX = INITIAL_PLAYER_X;
             int playerY = INITIAL_PLAYER_Y;
 
-            
+
             // box 좌표 설정
+            // box의 초기 좌표까지 상수로 하고 싶진 않다..
             int boxX = 5;
             int boxY = 5;
 
+            // 벽의 좌표
+            const int INITIAL_WALL_X = 7;
+            const int INITIAL_WALL_Y = 8;
+            const string WALL_STRING = "#";
+
+            // goal의 좌표
             
 
             Direction playerDirection = Direction.Down;
@@ -50,7 +57,7 @@
 
             // 박스의 기호
             const string BOX_STRING = "O";
-            //플레이어의 초기 좌포
+            
             
 
 
@@ -69,6 +76,10 @@
                 // self
                 Console.SetCursorPosition(boxX, boxY);
                 Console.Write(BOX_STRING);
+
+                // 벽 출력하기
+                Console.SetCursorPosition(INITIAL_WALL_X, INITIAL_WALL_Y);
+                Console.Write(WALL_STRING);
 
                 // ---------------------ProcessInput-----------
                 ConsoleKey key = Console.ReadKey().Key;
@@ -100,7 +111,7 @@
                 if (key == ConsoleKey.DownArrow)
                 {
                     playerY = Math.Min(playerY + 1, MAP_MAX_Y);
-                    playerDirection = Direction.Up;
+                    playerDirection = Direction.Down;
 
                 }
 
@@ -155,13 +166,83 @@
                             break;
                     }
                 }
+                // player가 벽에서 막히게
+                if (playerX == INITIAL_WALL_X && playerY == INITIAL_WALL_Y)
+                {
+                    switch (playerDirection)
+                    {
+                        case Direction.Left:
+                            if (playerX == INITIAL_WALL_X)
+                            {
+                                playerX += 1;
+                            }
+                            break;
+                        case Direction.Right:
+                            if (playerX == INITIAL_WALL_X)
+                            {
+                                playerX -= 1;
+                            }
+                            break;
+                        case Direction.Up:
+                            if (playerY == INITIAL_WALL_Y)
+                            {
+                                playerY += 1;
+                            }
+                            break;
+                        case Direction.Down:
+                            if (playerY == INITIAL_WALL_Y)
+                            {
+                                playerY -= 1;
+                            }
+                            break;
+                    }
+                }
+                // box가 벽에서 막히게
+                if (boxX == INITIAL_WALL_X && boxY == INITIAL_WALL_Y)
+                {
+                    switch (playerDirection)
+                    {
+                        case Direction.Left:
+                            if (boxX == INITIAL_WALL_X)
+                            {
+                                boxX += 1;
+                                playerX += 1;
+                            }
+                            break;
+                        case Direction.Right:
+                            if (boxX == INITIAL_WALL_X)
+                            {
+                                boxX -= 1;
+                                playerX -= 1;
+                            }
+                            break;
+                        case Direction.Up:
+                            if (boxY == INITIAL_WALL_Y)
+                            {
+                                boxY += 1;
+                                playerY += 1;
+                            }
+                            break;
+                        case Direction.Down:
+                            if (boxY == INITIAL_WALL_Y)
+                            {
+                                boxY -= 1;
+                                playerY -= 1;
+                            }
+                            break;
+                        default:
+                            Console.Clear();
+                            Console.WriteLine($"[Error] {playerDirection}");
+                            return;
+                    }
+                }
 
 
             }
-            
 
+
+        }
     }
-}
 }
 
 
