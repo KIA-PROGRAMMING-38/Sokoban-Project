@@ -41,18 +41,31 @@ namespace Sokoban
             // 박스의 초기 좌표
             const int INITIAL_BOX_X = 5;
             const int INITIAL_BOX_Y = 5;
+            const int INITIAL_BOX2_X = 10;
+            const int INITIAL_BOX2_Y = 4;
+            const int INITIAL_BOX3_X = 0;
+            const int INITIAL_BOX3_Y = 9;
+
             // 박스의 기호 (string literal)
             const string BOX_STRING = "B";
 
             // 벽의 좌표
             const int INITIAL_WALL_X = 7;
             const int INITIAL_WALL_Y = 8;
+            const int INITIAL_WALL2_X = 7;
+            const int INITIAL_WALL2_Y = 0;
+            const int INITIAL_WALL3_X = 0;
+            const int INITIAL_WALL3_Y = 7;
             // 벽의 기호(string literal)
             const string WALL_STRING = "W";
 
             // 골인 좌표
-            const int INITIAL_GOAL_X = 4;
-            const int INITIAL_GOAL_Y = 4;
+            const int INITIAL_GOAL_X = 8;
+            const int INITIAL_GOAL_Y = 8;
+            const int INITIAL_GOAL2_X = 4;
+            const int INITIAL_GOAL2_Y = 4;
+            const int INITIAL_GOAL3_X = 6;
+            const int INITIAL_GOAL3_Y = 6;
             // 골인 기호(string literal)
             const string GOAL_STRING = "G";
 
@@ -72,10 +85,6 @@ namespace Sokoban
             int wallY = INITIAL_WALL_Y;
 
             // 골인 좌표 설정
-            int goalX = INITIAL_GOAL_X;
-            int goalY = INITIAL_GOAL_Y;
-
-
 
             // 가로 15 새로 10
             // 게임 루프 == 프레임(Frame)
@@ -93,19 +102,31 @@ namespace Sokoban
                 // 박스 출력하기
                 Console.SetCursorPosition(boxX, boxY);
                 Console.Write(BOX_STRING);
+                Console.SetCursorPosition(INITIAL_BOX2_X, INITIAL_BOX2_Y);
+                Console.Write(BOX_STRING);
+                Console.SetCursorPosition(INITIAL_BOX3_X, INITIAL_BOX3_Y);
+                Console.Write(BOX_STRING);
 
                 // 벽 출력하기
                 Console.SetCursorPosition(wallX, wallY);
                 Console.Write(WALL_STRING);
+                Console.SetCursorPosition(INITIAL_WALL2_X, INITIAL_WALL2_Y);
+                Console.Write(WALL_STRING);
+                Console.SetCursorPosition(INITIAL_WALL3_X, INITIAL_WALL3_Y);
+                Console.Write(WALL_STRING);
+
 
                 // 골인 출력하기
-                Console.SetCursorPosition(goalX, goalY);
+                Console.SetCursorPosition(INITIAL_GOAL_X, INITIAL_GOAL_Y);
                 Console.Write(GOAL_STRING);
-
-
+                Console.SetCursorPosition(INITIAL_GOAL2_X, INITIAL_GOAL2_Y);
+                Console.Write(GOAL_STRING);
+                Console.SetCursorPosition(INITIAL_GOAL3_X, INITIAL_GOAL3_Y);
+                Console.Write(GOAL_STRING);
+               
                 
                 // --------------------------------------------------ProcessINput--------------------------------------------------
-                ConsoleKey key = Console.ReadKey().Key;
+                ConsoleKey key = Console.ReadKey().Key; 
 
                 // -----------------------------------------------------Update-----------------------------------------------------
                
@@ -166,7 +187,7 @@ namespace Sokoban
                         case Direction.Left: // ← 왼쪽으로 이동 중
                             if (boxX == MAP_MIN_X)
                             {
-                                playerX = MAP_MIN_X + 1;
+                                playerX = playerX + 1;
                             }
                             else
                             {
@@ -240,18 +261,11 @@ namespace Sokoban
                     }
                 }
                 // 골인 지점 만들기
-                if (goalX == boxX && goalY == boxY)
+                if (INITIAL_GOAL_X == boxX && INITIAL_GOAL_Y == boxY)
                 {
-                    goto GOAL_EXIT;
+                    break;
                 }
-
-                
-
-
-
-                
             }
-            GOAL_EXIT:
             Console.Clear();
             System.Console.WriteLine("★YOU ARE SO GENIUS!!★");
 
