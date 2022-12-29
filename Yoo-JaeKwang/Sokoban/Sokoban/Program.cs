@@ -29,6 +29,7 @@
             const string BOX_SYMBOL = "B";
             const string WALL_SYMBOL = "X";
             const string GOAL_SYMBOL = "G";
+            const string MAP_OUTLINE_SYMBOL = "X";
 
 
             const int PLAYER_INITIAL_X = 3;
@@ -98,6 +99,22 @@
                 {
                     Console.SetCursorPosition(goalX[i], goalY[i]);
                     Console.Write(GOAL_SYMBOL);
+                }
+
+                //맵 테두리
+                for (int i = 0; i <= MAP_MAX_X + 1; ++i)
+                {
+                    Console.SetCursorPosition(i, MAP_MIN_Y - 1);
+                    Console.Write(MAP_OUTLINE_SYMBOL);
+                    Console.SetCursorPosition(i, MAP_MAX_Y + 1);
+                    Console.Write(MAP_OUTLINE_SYMBOL);
+                }
+                for (int i = 1; i <= MAP_MAX_Y; ++i)
+                {
+                    Console.SetCursorPosition(MAP_MIN_X - 1, i);
+                    Console.Write(MAP_OUTLINE_SYMBOL);
+                    Console.SetCursorPosition(MAP_MAX_X + 1, i);
+                    Console.Write(MAP_OUTLINE_SYMBOL);
                 }
                 // -------------------------------------- ProcessInput ------------------------------------------------
                 ConsoleKey playerKey = Console.ReadKey().Key; // ConsoleKeyInfo keyInfo = Console.ReadKey(); ConsoleKey key = keyInfo.Key;
