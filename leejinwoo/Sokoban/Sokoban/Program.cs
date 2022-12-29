@@ -52,6 +52,12 @@ namespace Sokoban
             const int INITIAL_BOX_X = 5;
             const int INITIAL_BOX_Y = 5;
 
+            //벽의 좌표
+            const int INITIAL_WALL_X = 7;
+            const int INITIAL_WALL_Y = 8;
+            //벽의 기호 
+            const string WALL_STRING = "H";
+            
 
             int playerX = 0;
             int playerY = 0;
@@ -69,11 +75,13 @@ namespace Sokoban
                 //------------ Render-----------
                 // 플레이어 출력하기
                 Console.SetCursorPosition(playerX, playerY);
-                Console.Write("p");
+                Console.Write(PLAYER_STRING);
                 //박스 출력하기
                 Console.SetCursorPosition(boxX, boxY);
-                Console.Write("B");
-
+                Console.Write(BOX_STRING);
+                //벽 출력하기
+                Console.SetCursorPosition(INITIAL_WALL_X, INITIAL_WALL_Y);
+                Console.Write(WALL_STRING);
                 //------------ Processintput---------
                 ConsoleKey key = Console.ReadKey().Key;
 
@@ -99,6 +107,38 @@ namespace Sokoban
                 {
                     playerY = Math.Min(MAP_MAX_Y, playerY + 1);
                     playerDirection = Direction.Down;
+                }
+                //1. 플레이어가 벽에 부딪혀야함.
+                //2. 박스도 막아야함.
+
+                if (playerX == INITIAL_WALL_X && playerY == INITIAL_WALL_Y)
+                {
+                    switch (playerDirection)
+                    {
+                        case Direction.Left:
+                            if (playerX == INITIAL_WALL_X)
+                            {
+                                playerX += 1;
+                            }
+                            break;
+                        case Direction.Right:
+                            if(playerX == INITIAL_WALL_X)
+                            {
+                                playerX -= 1;
+                            }
+                            break;
+                        case Direction.Up:
+                            if (playerY == INITIAL_WALL_Y)
+                            {
+                                playerY += 1;
+                            } break;
+                        case Direction.Down:
+                            if (playerY == INITIAL_WALL_Y)
+                            {
+                                playerY -= 1;
+                            }break;
+                    }
+
                 }
 
                 if (playerX == boxX && playerY == boxY) // 플레이어가 이동하고나니 박스가 있네?
@@ -151,10 +191,50 @@ namespace Sokoban
                             Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다. {playerDirection}");
 
                             return; // 프로그램 종료
+
+                            //1. 플레이어가 벽에 부딪혀야함.
+                            //2. 박스도 막아야함.
+
+                            
                     }
 
                 }
+                if (boxX == INITIAL_WALL_X && boxY == INITIAL_WALL_Y)
+                {
+                    switch (playerDirection)
+                    {
+                        case Direction.Left:
+                            if (boxX == INITIAL_WALL_X)
+                            {
+                                boxX += 1;
+                                playerX = boxX + 1;
+                            }
+                            
+                            break;
+                        case Direction.Right:
+                            if (boxX == INITIAL_WALL_X)
+                            {
+                                boxX -= 1;
+                                playerX = boxX - 1;
+                            }
+                            break;
+                        case Direction.Up:
+                            if (boxY == INITIAL_WALL_Y)
+                            {
+                                boxY += 1;
+                                playerY = boxY + 1;
+                            }
+                            break;
+                        case Direction.Down:
+                            if (boxY == INITIAL_WALL_Y)
+                            {
+                                boxY -= 1;
+                                playerY = boxY - 1;
+                            }
+                            break;
+                    }
 
+                }
             }
         }
     }
