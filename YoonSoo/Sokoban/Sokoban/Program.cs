@@ -36,7 +36,7 @@ namespace Sokoban
             const int INITIAL_PLAYER_X = 0;
             const int INITIAL_PLAYER_Y = 0;
             // 플레이어의 기호 (string literal)
-            const string PLAYER_STRING = "p";
+            const string PLAYER_STRING = "P";
 
             // 박스의 초기 좌표
             const int INITIAL_BOX_X = 5;
@@ -49,6 +49,12 @@ namespace Sokoban
             const int INITIAL_WALL_Y = 8;
             // 벽의 기호(string literal)
             const string WALL_STRING = "W";
+
+            // 골인 좌표
+            const int INITIAL_GOAL_X = 4;
+            const int INITIAL_GOAL_Y = 4;
+            // 골인 기호(string literal)
+            const string GOAL_STRING = "G";
 
             // 플레이어 좌표 설정
             int playerX = 0;
@@ -64,6 +70,11 @@ namespace Sokoban
             // 벽 좌표 설정
             int wallX = INITIAL_WALL_X;
             int wallY = INITIAL_WALL_Y;
+
+            // 골인 좌표 설정
+            int goalX = INITIAL_GOAL_X;
+            int goalY = INITIAL_GOAL_Y;
+
 
 
             // 가로 15 새로 10
@@ -87,6 +98,12 @@ namespace Sokoban
                 Console.SetCursorPosition(wallX, wallY);
                 Console.Write(WALL_STRING);
 
+                // 골인 출력하기
+                Console.SetCursorPosition(goalX, goalY);
+                Console.Write(GOAL_STRING);
+
+
+                
                 // --------------------------------------------------ProcessINput--------------------------------------------------
                 ConsoleKey key = Console.ReadKey().Key;
 
@@ -120,16 +137,16 @@ namespace Sokoban
                     switch (playerDirection)
                     {
                         case Direction.Left:  // ← 왼쪽으로 이동
-                            playerX = playerX- 1;
-                            break;
-                        case Direction.Right:  // → 오른쪽으로 이동
                             playerX = playerX + 1;
                             break;
+                        case Direction.Right:  // → 오른쪽으로 이동
+                            playerX = playerX - 1;
+                            break;
                         case Direction.Up:  // ↑ 위로 이동
-                            playerY = playerY - 1;
+                            playerY = playerY + 1;
                             break;
                         case Direction.Down:  // ↓ 밑으로 이동
-                            playerY = playerY + 1;
+                            playerY = playerY - 1;
                             break;
                         default:
                             Console.Clear();
@@ -141,7 +158,7 @@ namespace Sokoban
 
                 // 박스 업데이트
                 // 플레이가 이동한 후
-                if (playerX == boxX && boxY == playerY) // 플레이어가 이동하거나니 박스가 있네?
+                if (playerX == boxX && playerY == boxY) // 플레이어가 이동하거나니 박스가 있네?
                 {
                     //  박스를 움직여주면 됨.
                     switch (playerDirection)
@@ -193,7 +210,7 @@ namespace Sokoban
                             return; // 프로그램 종료
                     }
                 }
-            
+
                 // 박스가 벽에 부딪혔을 때
                 if (boxX == wallX && boxY == wallY)  // ^^7
                 {
@@ -215,12 +232,30 @@ namespace Sokoban
                             boxY = boxY - 1;
                             playerY = playerY - 1;
                             break;
+                        default: // 기본값
+                            Console.Clear();
+                            Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다. {playerDirection}");
 
+                            return; // 프로그램 종료
                     }
                 }
-            
-            
+                // 골인 지점 만들기
+                if (goalX == boxX && goalY == boxY)
+                {
+                    goto GOAL_EXIT;
+                }
+
+                
+
+
+
+                
             }
+            GOAL_EXIT:
+            Console.Clear();
+            System.Console.WriteLine("★YOU ARE SO GENIUS!!★");
+
         }
     }
+
 }
