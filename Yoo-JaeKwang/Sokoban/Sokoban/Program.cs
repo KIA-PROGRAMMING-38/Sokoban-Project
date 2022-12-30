@@ -2,10 +2,12 @@
 {
     enum Direction
     {
-        Up = 1, 
+        None,
+        Up, 
         Down, 
         Left, 
-        Right
+        Right,
+        Max
     }
     class Program
     {
