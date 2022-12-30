@@ -228,6 +228,11 @@
                                     --boxX[i];
                                     --playerX;
                                     break;
+                                default:
+                                    Console.Clear();
+                                    Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
+
+                                    return;
                             }
                         }
                     }
@@ -254,6 +259,11 @@
                             case Direction.Right:
                                 --playerX;
                                 break;
+                            default:
+                                Console.Clear();
+                                Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
+
+                                return;
                         }
                     }
 
@@ -284,6 +294,11 @@
                                     --boxX[i];
                                     --playerX;
                                     break;
+                                default:
+                                    Console.Clear();
+                                    Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
+
+                                    return;
                             }
                         }
 
