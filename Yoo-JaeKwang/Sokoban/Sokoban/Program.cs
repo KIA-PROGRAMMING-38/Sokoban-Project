@@ -297,16 +297,15 @@
                         if (boxX[i] == goalX[j] && boxY[i] == goalY[j])
                         {
                             ++goalCount;
-                            if (goalCount == goalX.Length)
-                            {
-                                goto endGame;
-                            }
                         }
                     }
                 }
-
+                if (goalCount == goalX.Length)
+                {
+                    break;
+                }
             }
-            endGame:
+            Console.ResetColor();
             Console.Clear();
             Console.WriteLine("Game Clear!");
         }
