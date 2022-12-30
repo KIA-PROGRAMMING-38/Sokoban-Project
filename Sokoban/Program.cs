@@ -23,18 +23,25 @@
             Console.ForegroundColor = ConsoleColor.DarkGray; // 글꼴 색깔 지정.
             Console.Clear(); // 출력된 모든 내용을 지운다.
 
+            // --------------------------player----------------------
+            // 플레이어 좌표 설정
             const int INITIAL_PLAYER_X = 0;
             const int INITIAL_PLAYER_Y = 0;
-            
-            // 플레이어 좌표 설정
+
             int playerX = INITIAL_PLAYER_X;
             int playerY = INITIAL_PLAYER_Y;
 
+            // 플레이어의 기호
+            const string PLAYER_STRING = "H";
 
+            //-----------------------------box------------------------
             // box 좌표 설정
             // box의 초기 좌표까지 상수로 하고 싶진 않다..
             int boxX = 5;
             int boxY = 5;
+            // 박스의 기호
+            const string BOX_STRING = "O";
+
 
             // 벽의 좌표
             int[] wall_X = new int[3];
@@ -67,15 +74,13 @@
             const int MAP_MAX_X = 15;
             const int MAP_MAX_Y = 10;
 
-            // 플레이어의 기호
-            const string PLAYER_STRING = "H";
+            
 
-            // 박스의 기호
-            const string BOX_STRING = "O";
+            
             
             
 
-            Console.Write(wall_X);
+            
 
 
             // 게임 루프 == 프레임(Frame)
@@ -83,36 +88,37 @@
 
             {   // 이전 프레임을 지운다.
                 Console.Clear();
-                // ---------------------Render----------------
+                // ---------------------Render----------------------------
 
+                // player 출력하기
                 Console.SetCursorPosition(playerX, playerY);
                 Console.Write(PLAYER_STRING);
 
-                // self
+                // box 출력하기
                 Console.SetCursorPosition(boxX, boxY);
                 Console.Write(BOX_STRING);
 
                 // 벽 출력하기
-                for(int i = 0; i < 3; i++ )
+                for(int i = 0; i < wall_X.Count(); i++ )
                 {
                     Console.SetCursorPosition(wall_X[i], wall_Y[i]);
                     Console.Write(WALL_STRING);
                 }
 
-                
-
                 // goal 출력하기
-                for(int i = 0; i < 2; i++)
+                for(int i = 0; i < goal_X.Count(); i++)
                 {
                     Console.SetCursorPosition(goal_X[i], goal_Y[i]);
                     Console.Write(GOAL_STRING);
                 }
                 
 
-                // ---------------------ProcessInput-----------
+                // ---------------------ProcessInput----------------------
                 ConsoleKey key = Console.ReadKey().Key;
-                // ---------------------Update-----------------
+                // ---------------------Update----------------------------
 
+                #region 화살표키 눌렀을때 player의 움직임
+                // 왼쪽 화살표키를 눌렀을때
                 if (key == ConsoleKey.LeftArrow)
                 {
                     playerX = Math.Max(MAP_MIN_X, playerX - 1);
@@ -120,7 +126,7 @@
 
                 }
 
-                // 오른쪽 화살표키를 눌렀을 때
+                // 오른쪽 화살표키를 눌렀을때
                 if (key == ConsoleKey.RightArrow)
                 {
                     // 오른쪽으로 이동 => 누를때마다 1씩 이동한다.
@@ -128,20 +134,21 @@
                     playerDirection = Direction.Right;
 
                 }
-
+                // 위쪽 화살표키를 눌렀을때
                 if (key == ConsoleKey.UpArrow)
                 {
                     playerY = Math.Max(MAP_MIN_Y, playerY - 1);
                     playerDirection = Direction.Up;
 
                 }
-
+                // 아래쪽 화살표키를 눌렀을때
                 if (key == ConsoleKey.DownArrow)
                 {
                     playerY = Math.Min(playerY + 1, MAP_MAX_Y);
                     playerDirection = Direction.Down;
 
                 }
+                #endregion
 
                 //박스 update
                 if (playerX == boxX && playerY == boxY)
@@ -194,8 +201,9 @@
                             break;
                     }
                 }
+
                 // player가 벽에서 막히게
-                for(int i = 0; i < 3; i++)
+                for(int i = 0; i < wall_X.Count(); i++)
                 {
                     if (playerX == wall_X[i] && playerY == wall_Y[i])
                     {
@@ -229,9 +237,8 @@
                     }
                 }
              
-                
                 // box가 벽에서 막히게
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < wall_X.Count(); i++)
                 {
                     if (boxX == wall_X[i] && boxY == wall_Y[i])
                     {
@@ -274,7 +281,7 @@
                 }
 
                 // goal 구현
-                for (int i = 0; i < 2; i++)
+                for (int i = 0; i < goal_X.Count(); i++)
                 {
                     if (boxX == goal_X[i] && boxY == goal_Y[i])
                     {
