@@ -28,6 +28,7 @@ namespace JJH_SOKOBAN
             ConsoleColor defaultForegroundColor = Console.ForegroundColor;
             const ConsoleColor WALL_COLOR = ConsoleColor.Red;
             const char WALL_ICON = 'Π';
+            const char WALL_ICON2 = '▣';
             const int WallOffset = 1;
             const int MAP_MIN_X = 0;
             const int MAP_MIN_Y = 0;
@@ -48,7 +49,7 @@ namespace JJH_SOKOBAN
             #endregion
 
             #region Box
-            const ConsoleColor BOX_COLOR = ConsoleColor.White;
+            const ConsoleColor BOX_COLOR = ConsoleColor.DarkYellow;
             const int INITIAL_BOX_X = 5;
             const int INITIAL_BOX_Y = 3;
             const char BOX_ICON = '■'; //▥ Д
@@ -67,7 +68,7 @@ namespace JJH_SOKOBAN
             const ConsoleColor GOAL_COLOR = ConsoleColor.White;
             int[] GoalPosX = { 15, 20, 8 };
             int[] GoalPosY = { 3, 10, 7 };
-            const char GOAL_ICON = 'S'; //▥ Д
+            const char GOAL_ICON = '◎'; //▥ Д
             #endregion
 
             bool isGameOver = false;
@@ -100,7 +101,7 @@ namespace JJH_SOKOBAN
                 {
                     Console.SetCursorPosition(WallPosX[i], WallPosY[i]);
                     Console.ForegroundColor = WALL_COLOR;
-                    Console.Write(WALL_ICON);
+                    Console.Write(WALL_ICON2);
                 }
 
                 for (int i = 0; i < GoalPosX.Length; ++i)
@@ -121,9 +122,17 @@ namespace JJH_SOKOBAN
                     Console.Write(BOX_ICON);
                 }
 
+                // 골 UI
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.SetCursorPosition(MAP_MAX_X+3, 0);
+                Console.Write($"-------------------------");
+                Console.SetCursorPosition(MAP_MAX_X + 3, 1);
+                Console.Write($"|     Goal {GoalInCount:D2} / {GoalPosX.Length:D2}      |");
+                Console.SetCursorPosition(MAP_MAX_X + 3, 2);
+                Console.Write($"-------------------------");
+                //
 
                 Console.ForegroundColor = defaultForegroundColor;
-
                 // 게임 오버 처리
                 if (isGameOver)
                 {
