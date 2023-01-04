@@ -25,9 +25,9 @@ class Program
         // Map 초기설정
 
         const int MAP_MIN_X = 0;
-        const int MAP_MAX_X = 0;
+        const int MAP_MAX_X = 15;
         const int MAP_MIN_Y = 0;
-        const int MAP_MAX_Y = 0;
+        const int MAP_MAX_Y = 10;
 
         // player------------------------
 
@@ -54,6 +54,18 @@ class Program
 
         const string BOX_STRING = "#";
 
+        // wall---------------------------
+        int[] wall_X = new int[4];
+        wall_X[0] = 5;
+        wall_X[1] = 6;
+        wall_X[2] = 9;
+        wall_X[3] = 10;
+        int[] wall_Y = new int[4];
+        wall_Y[0] = 3;
+        wall_Y[1] = 3;
+        wall_Y[2] = 7;
+        wall_Y[3] = 7;
+        const string WALL_STRING = "-";
         // goal---------------------------
 
         //goal 여러개 좌표설정
@@ -88,6 +100,13 @@ class Program
                 Console.Write(BOX_STRING);
             }
 
+            //wall 출력
+            for (int i = 0; i < wall_X.Count(); i++)
+            {
+                Console.SetCursorPosition(wall_X[i], wall_Y[i]);
+                Console.WriteLine(WALL_STRING);
+            }
+
             //goal 출력
             for (int i = 0; i < goal_X.Count(); i++)
             {
@@ -101,6 +120,7 @@ class Program
 
             // update-----------------------------------------------------------
 
+            // player 이동
             if (key == ConsoleKey.LeftArrow)
             {
                 player_X = Math.Max(MAP_MIN_X, player_X - 1);
@@ -108,7 +128,7 @@ class Program
             }
             if (key == ConsoleKey.RightArrow)
             {
-                player_X = Math.Min(MAP_MAX_X, player_Y + 1);
+                player_X = Math.Min(MAP_MAX_X, player_X + 1);
                 playerDirection = Direction.Right;
             }
             if (key == ConsoleKey.UpArrow)
@@ -119,7 +139,100 @@ class Program
             if (key == ConsoleKey.DownArrow)
             {
                 player_Y = Math.Min(MAP_MAX_Y, player_Y + 1);
+                playerDirection = Direction.Down;
             }
+
+            //box 이동
+            for (int i = 0; i < box_X.Count(); i++)
+            {
+                if (player_X == box_X[i] && player_Y == box_Y[i])
+                {
+                    switch (playerDirection)
+                    {
+                        case Direction.Left:
+                            if (box_X[i] == MAP_MIN_X)
+                            {
+                                player_X += 1;
+                            }
+                            else
+                            {
+                                box_X[i] -= 1;
+                            }
+                            break;
+
+                        case Direction.Right:
+                            if (box_X[i] == MAP_MAX_X)
+                            {
+                                player_X -= 1;
+                            }
+                            else
+                            {
+                                box_X[i] += 1;
+                            }
+                            break;
+
+                        case Direction.Up:
+                            if (box_Y[i] == MAP_MIN_Y)
+                            {
+                                player_Y += 1;
+                            }
+                            else
+                            {
+                                box_Y[i] -= 1;
+                            }
+                            break;
+
+                        case Direction.Down:
+                            if (box_Y[i] == MAP_MAX_Y)
+                            {
+                                player_Y -= 1;
+                            }
+                            else
+                            {
+                                box_Y[i] += 1;
+                            }
+                            break;
+
+
+                    }
+                }
+            }
+            // player가 벽에 막힐때
+            for (int i = 0; i < wall_X.Count(); i++)
+            {
+                if (player_X == wall_X[i] && player_Y == wall_Y[i])
+                {
+                    switch (playerDirection)
+                    {
+                        case Direction.Left:
+                            if (player_X == wall_X[i])
+                            {
+                                player_X += 1;
+                            }
+                            break;
+                        case Direction.Right:
+                            if (player_X == wall_X[i])
+                            {
+                                player_X -= 1;
+                            }
+                            break;
+                        case Direction.Up:
+                            if (player_Y == wall_Y[i])
+                            {
+                                player_Y += 1;
+                            }
+                            break;
+                        case Direction.Down:
+                            if (player_Y == wall_Y[i])
+                            {
+                                player_Y -= 1;
+                            }
+                            break;
+
+                    }
+                }
+            }
+          
                 
         }
 

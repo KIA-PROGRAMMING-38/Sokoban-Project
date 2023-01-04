@@ -1,13 +1,11 @@
-﻿<Properties GitUserInfo="UsingMD" StartupConfiguration="{80528CC0-BF43-49AA-A4A7-2BEDD5845680}|Default">
-  <MonoDevelop.Ide.ItemProperties.Sokoban PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.ItemProperties.Test PreferredExecutionTarget="MonoDevelop.Default" />
-  <MultiItemStartupConfigurations />
+﻿<Properties StartupConfiguration="{AC6DCCDC-6581-4D33-BFD7-4690048DEB75}|Default" GitUserInfo="UsingMD">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Test/Program.cs">
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Sokoban/Program.cs">
     <Files>
-      <File FileName="Sokoban/Program.cs" />
-      <File FileName="Test/Program.cs" Line="98" Column="81" />
+      <File FileName="Sokoban/Program.cs" Line="54" Column="27" />
+      <File FileName="Test/Program.cs" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -20,5 +18,7 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints />
+  <MonoDevelop.Ide.ItemProperties.Sokoban PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.ItemProperties.Test PreferredExecutionTarget="MonoDevelop.Default" />
 </Properties>
