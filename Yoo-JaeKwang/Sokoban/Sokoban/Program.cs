@@ -14,12 +14,12 @@
         static void Main()
         {
             // 초기 세팅
-            Console.ResetColor();                                   // 컬러를 초기화한다.
-            Console.CursorVisible = false;                          // 커서를 숨긴다.
-            Console.Title = "경이루 아카데미";                       // 타이틀을 설정한다.
-            Console.BackgroundColor = ConsoleColor.Magenta;         // 배경색을 설정한다.
-            Console.ForegroundColor = ConsoleColor.Yellow;         // 글꼴색을 설정한다.
-            Console.Clear();                                       // 출력된 모든 내용을 지운다.
+            Console.ResetColor();                           // 컬러를 초기화한다.
+            Console.CursorVisible = false;                  // 커서를 숨긴다.
+            Console.Title = "경이루 아카데미";               // 타이틀을 설정한다.
+            Console.BackgroundColor = ConsoleColor.Magenta; // 배경색을 설정한다.
+            Console.ForegroundColor = ConsoleColor.Yellow; // 글꼴색을 설정한다.
+            Console.Clear();                               // 출력된 모든 내용을 지운다.
 
             const int MAP_MAX_Y = 21;
             const int MAP_MIN_Y = 1;
@@ -79,8 +79,9 @@
             // 게임 루프 == 프레임(Frame)
             while (true)
             {
-                Console.Clear();
                 // -------------------------------------- Render ------------------------------------------------
+                Console.Clear();
+                
                 //플레이어
                 Console.SetCursorPosition(playerX, playerY);
                 Console.Write(PLAYER_SYMBOL);
@@ -122,7 +123,7 @@
                     Console.Write(MAP_OUTLINE_SYMBOL);
                 }
                 // -------------------------------------- ProcessInput ------------------------------------------------
-                ConsoleKey playerKey = Console.ReadKey().Key; // ConsoleKeyInfo keyInfo = Console.ReadKey(); ConsoleKey key = keyInfo.Key;
+                ConsoleKey playerKey = Console.ReadKey().Key;           // ConsoleKeyInfo keyInfo = Console.ReadKey(); ConsoleKey key = keyInfo.Key;
                 // -------------------------------------- Update ------------------------------------------------
                 
                 // 플레이어
@@ -150,6 +151,8 @@
                 }
 
                 // 박스
+
+                // 박스에 플레이어
                 for (int i = 0; i < TOTAL_BOX_NUM; ++i)
                 {
                     if (playerX == boxX[i] && playerY == boxY[i])
@@ -243,7 +246,7 @@
 
                 // 벽
 
-                // 벽에 사람
+                // 벽에 플레이어
                 for (int i = 0; i < TOTAL_WALL_NUM; ++i)
                 {
                     if (playerX == wallX[i] && playerY == wallY[i])
