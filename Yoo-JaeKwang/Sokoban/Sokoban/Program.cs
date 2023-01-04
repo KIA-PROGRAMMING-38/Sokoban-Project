@@ -37,6 +37,7 @@
             const int PLAYER_INITIAL_X = 3;
             const int PLAYER_INITIAL_Y = 2;
 
+            const int TOTAL_BOX_NUM = 3;
             const int BOX1_INITIAL_X = 10;
             const int BOX1_INITIAL_Y = 5;
             const int BOX2_INITIAL_X = 5;
@@ -44,6 +45,7 @@
             const int BOX3_INITIAL_X = 12;
             const int BOX3_INITIAL_Y = 12;
 
+            const int TOTAL_WALL_NUM = 3;
             const int WALL1_INITIAL_X = 8;
             const int WALL1_INITIAL_Y = 8;
             const int WALL2_INITIAL_X = 22;
@@ -51,6 +53,7 @@
             const int WALL3_INITIAL_X = 14;
             const int WALL3_INITIAL_Y = 7;
 
+            const int TOTAL_GOAL_NUM = 3;
             const int GOAL1_INITIAL_X = 20;
             const int GOAL1_INITIAL_Y = 15;
             const int GOAL2_INITIAL_X = 15;
@@ -83,21 +86,21 @@
                 Console.Write(PLAYER_SYMBOL);
 
                 //박스
-                for (int i = 0; i < boxX.Length; ++i)
+                for (int i = 0; i < TOTAL_BOX_NUM; ++i)
                 {
                     Console.SetCursorPosition(boxX[i], boxY[i]);
                     Console.Write(BOX_SYMBOL);
                 }
 
                 //벽
-                for (int i = 0; i < wallX.Length; ++i)
+                for (int i = 0; i < TOTAL_WALL_NUM; ++i)
                 {
                     Console.SetCursorPosition(wallX[i], wallY[i]);
                     Console.Write(WALL_SYMBOL);
                 }
 
                 //골
-                for (int i = 0; i < goalX.Length; ++i)
+                for (int i = 0; i < TOTAL_GOAL_NUM; ++i)
                 {
                     Console.SetCursorPosition(goalX[i], goalY[i]);
                     Console.Write(GOAL_SYMBOL);
@@ -147,7 +150,7 @@
                 }
 
                 // 박스
-                for (int i = 0; i < boxX.Length; ++i)
+                for (int i = 0; i < TOTAL_BOX_NUM; ++i)
                 {
                     if (playerX == boxX[i] && playerY == boxY[i])
                     {
@@ -204,9 +207,9 @@
                 }
 
                 // 박스에 박스
-                for (int i = 0; i < boxX.Length; ++i)
+                for (int i = 0; i < TOTAL_BOX_NUM; ++i)
                 {
-                    for (int j = 0; j < boxX.Length; ++j)
+                    for (int j = 0; j < TOTAL_BOX_NUM; ++j)
                     {
                         if ( i != j && boxX[i] == boxX[j] && boxY[i] == boxY[j])
                         {
@@ -241,7 +244,7 @@
                 // 벽
 
                 // 벽에 사람
-                for (int i = 0; i < wallX.Length; ++i)
+                for (int i = 0; i < TOTAL_WALL_NUM; ++i)
                 {
                     if (playerX == wallX[i] && playerY == wallY[i])
                     {
@@ -270,9 +273,9 @@
                 }
 
                 // 벽에 박스
-                for (int i = 0; i < boxX.Length; ++i)
+                for (int i = 0; i < TOTAL_BOX_NUM; ++i)
                 {
-                    for (int j = 0; j < wallX.Length; ++j)
+                    for (int j = 0; j < TOTAL_WALL_NUM; ++j)
                     {
                         if (boxX[i] == wallX[j] && boxY[i] == wallY[j])
                         {
@@ -307,9 +310,9 @@
 
                 // 골인
                 int goalCount = 0;
-                for (int i = 0; i < boxX.Length; ++i)
+                for (int i = 0; i < TOTAL_BOX_NUM; ++i)
                 {
-                    for (int j = 0; j < goalX.Length; ++j)
+                    for (int j = 0; j < TOTAL_GOAL_NUM; ++j)
                     {
                         if (boxX[i] == goalX[j] && boxY[i] == goalY[j])
                         {
@@ -317,7 +320,7 @@
                         }
                     }
                 }
-                if (goalCount == goalX.Length)
+                if (goalCount == TOTAL_GOAL_NUM)
                 {
                     break;
                 }
