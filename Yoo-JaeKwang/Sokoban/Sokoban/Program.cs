@@ -154,53 +154,28 @@
                 }
 
                 // 박스
-
-                // 박스에 플레이어
                 for (int i = 0; i < TOTAL_BOX_NUM; ++i)
                 {
+                    // 박스에 플레이어
                     if (playerX == boxX[i] && playerY == boxY[i])
                     {
                         switch (playerDirection)
                         {
                             case Direction.Up:
-                                if (boxY[i] == MAP_MIN_Y)
-                                {
-                                    ++playerY;
-                                }
-                                else
-                                {
-                                    --boxY[i];
-                                }
+                                boxY[i] = Math.Max(MAP_MIN_Y, --boxY[i]);
+                                playerY = boxY[i] + 1;
                                 break;
                             case Direction.Down:
-                                if (boxY[i] == MAP_MAX_Y)
-                                {
-                                    --playerY;
-                                }
-                                else
-                                {
-                                    ++boxY[i];
-                                }
+                                boxY[i] = Math.Min(++boxY[i], MAP_MAX_Y);
+                                playerY = boxY[i] - 1;
                                 break;
                             case Direction.Left:
-                                if (boxX[i] == MAP_MIN_X)
-                                {
-                                    ++playerX;
-                                }
-                                else
-                                {
-                                    --boxX[i];
-                                }
+                                boxX[i] = Math.Max(MAP_MIN_X, --boxX[i]);
+                                playerX = boxX[i] + 1;
                                 break;
                             case Direction.Right:
-                                if (boxX[i] == MAP_MAX_X)
-                                {
-                                    --playerX;
-                                }
-                                else
-                                {
-                                    ++boxX[i];
-                                }
+                                boxX[i] = Math.Min(++boxX[i], MAP_MAX_X);
+                                playerX = boxX[i] - 1;
                                 break;
                             default:
                                 Console.Clear();
@@ -209,32 +184,27 @@
                                 return;
                         }
                     }
-
-                }
-
-                // 박스에 박스
-                for (int i = 0; i < TOTAL_BOX_NUM; ++i)
-                {
+                    // 박스에 박스
                     for (int j = 0; j < TOTAL_BOX_NUM; ++j)
                     {
-                        if ( i != j && boxX[i] == boxX[j] && boxY[i] == boxY[j])
+                        if (i != j && boxX[j] == boxX[i] && boxY[j] == boxY[i])
                         {
                             switch (playerDirection)
                             {
                                 case Direction.Up:
-                                    ++boxY[i];
+                                    ++boxY[j];
                                     ++playerY;
                                     break;
                                 case Direction.Down:
-                                    --boxY[i];
+                                    --boxY[j];
                                     --playerY;
                                     break;
                                 case Direction.Left:
-                                    ++boxX[i];
+                                    ++boxX[j];
                                     ++playerX;
                                     break;
                                 case Direction.Right:
-                                    --boxX[i];
+                                    --boxX[j];
                                     --playerX;
                                     break;
                                 default:
@@ -246,12 +216,11 @@
                         }
                     }
                 }
-
+               
                 // 벽
-
-                // 벽에 플레이어
                 for (int i = 0; i < TOTAL_WALL_NUM; ++i)
                 {
+                    // 벽에 플레이어
                     if (playerX == wallX[i] && playerY == wallY[i])
                     {
                         switch (playerDirection)
@@ -275,32 +244,27 @@
                                 return;
                         }
                     }
-
-                }
-
-                // 벽에 박스
-                for (int i = 0; i < TOTAL_BOX_NUM; ++i)
-                {
-                    for (int j = 0; j < TOTAL_WALL_NUM; ++j)
+                    // 벽에 박스
+                    for (int j = 0; j < TOTAL_BOX_NUM; ++j)
                     {
-                        if (boxX[i] == wallX[j] && boxY[i] == wallY[j])
+                        if (boxX[j] == wallX[i] && boxY[j] == wallY[i])
                         {
                             switch (playerDirection)
                             {
                                 case Direction.Up:
-                                    ++boxY[i];
+                                    ++boxY[j];
                                     ++playerY;
                                     break;
                                 case Direction.Down:
-                                    --boxY[i];
+                                    --boxY[j];
                                     --playerY;
                                     break;
                                 case Direction.Left:
-                                    ++boxX[i];
+                                    ++boxX[j];
                                     ++playerX;
                                     break;
                                 case Direction.Right:
-                                    --boxX[i];
+                                    --boxX[j];
                                     --playerX;
                                     break;
                                 default:
@@ -310,11 +274,11 @@
                                     return;
                             }
                         }
-
                     }
+
                 }
 
-                // 골인
+                // 골
                 int goalCount = 0;
                 for (int i = 0; i < TOTAL_BOX_NUM; ++i)
                 {
