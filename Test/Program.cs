@@ -205,34 +205,85 @@ class Program
                     switch (playerDirection)
                     {
                         case Direction.Left:
-                            if (player_X == wall_X[i])
-                            {
-                                player_X += 1;
-                            }
+                            player_X += 1;
                             break;
+
                         case Direction.Right:
-                            if (player_X == wall_X[i])
-                            {
                                 player_X -= 1;
-                            }
                             break;
+
                         case Direction.Up:
-                            if (player_Y == wall_Y[i])
-                            {
                                 player_Y += 1;
-                            }
                             break;
+
                         case Direction.Down:
-                            if (player_Y == wall_Y[i])
-                            {
                                 player_Y -= 1;
-                            }
                             break;
 
                     }
                 }
             }
-          
+            // 상자가 벽에서 막힐때
+            for (int i = 0; i < wall_X.Count(); i++)
+            {
+                for (int j =0; j < box_X.Count(); j++)
+                {
+                    if (wall_X[i] == box_X[j] && wall_Y[i] == box_Y[j])
+                    {
+                        switch (playerDirection)
+                        {
+                            case Direction.Left:
+                                {
+                                    box_X[j] += 1;
+                                    player_X += 1;
+                                    break;
+                                }
+                            case Direction.Right:
+                                {
+                                    box_X[j] -= 1;
+                                    player_X -= 1;
+                                    break;
+                                }
+                            case Direction.Up:
+                                {
+                                    box_Y[j] += 1;
+                                    player_Y += 1;
+                                    break;
+                                }
+                            case Direction.Down:
+                                {
+                                    box_Y[j] -= 1;
+                                    player_Y -= 1;
+                                    break;
+                                }
+                        }
+                       
+                    }
+                    
+                }
+            }
+            // box가 골인 했을때
+            // box가 골이랑 모두다 같아졌을때
+            bool[] goalIn = new bool[3];
+
+            for (int i = 0; i < goal_X.Count(); i++)
+            {
+                for (int j =0; j < box_X.Count(); j++)
+                {
+                    if (goal_X[i] == box_X[j] && goal_Y[i] == box_Y[j])
+                    {
+                        goalIn[i] = true;
+                    }
+                    
+                }
+                              
+            }
+            if (goalIn[0] == true && goalIn[1] == true && goalIn[2] == true)
+            {
+                Console.Clear();
+                Console.WriteLine("축하!!");
+                return;
+            }
                 
         }
 
