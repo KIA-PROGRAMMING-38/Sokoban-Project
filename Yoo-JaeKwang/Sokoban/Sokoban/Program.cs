@@ -21,10 +21,13 @@
             Console.ForegroundColor = ConsoleColor.Yellow; // 글꼴색을 설정한다.
             Console.Clear();                               // 출력된 모든 내용을 지운다.
 
-            const int MAP_MAX_Y = 21;
-            const int MAP_MIN_Y = 1;
-            const int MAP_MAX_X = 32;
-            const int MAP_MIN_X = 1;
+            const int MAP_MAX_Y = 26;
+            const int MAP_MIN_Y = 6;
+            const int MAP_MAX_X = 38;
+            const int MAP_MIN_X = 6;
+
+            const int OUTLINE_LENGTH_X = 33;
+            const int OUTLINE_LENGTH_Y = 20;
 
 
             const string PLAYER_SYMBOL = "P";
@@ -34,32 +37,32 @@
             const string MAP_OUTLINE_SYMBOL = "X";
 
 
-            const int PLAYER_INITIAL_X = 3;
-            const int PLAYER_INITIAL_Y = 2;
+            const int PLAYER_INITIAL_X = 8;
+            const int PLAYER_INITIAL_Y = 7;
 
             const int TOTAL_BOX_NUM = 3;
-            const int BOX1_INITIAL_X = 10;
-            const int BOX1_INITIAL_Y = 5;
-            const int BOX2_INITIAL_X = 5;
-            const int BOX2_INITIAL_Y = 10;
-            const int BOX3_INITIAL_X = 12;
-            const int BOX3_INITIAL_Y = 12;
+            const int BOX1_INITIAL_X = 15;
+            const int BOX1_INITIAL_Y = 10;
+            const int BOX2_INITIAL_X = 10;
+            const int BOX2_INITIAL_Y = 15;
+            const int BOX3_INITIAL_X = 17;
+            const int BOX3_INITIAL_Y = 17;
 
             const int TOTAL_WALL_NUM = 3;
-            const int WALL1_INITIAL_X = 8;
-            const int WALL1_INITIAL_Y = 8;
-            const int WALL2_INITIAL_X = 22;
-            const int WALL2_INITIAL_Y = 17;
-            const int WALL3_INITIAL_X = 14;
-            const int WALL3_INITIAL_Y = 7;
+            const int WALL1_INITIAL_X = 13;
+            const int WALL1_INITIAL_Y = 13;
+            const int WALL2_INITIAL_X = 27;
+            const int WALL2_INITIAL_Y = 22;
+            const int WALL3_INITIAL_X = 19;
+            const int WALL3_INITIAL_Y = 12;
 
             const int TOTAL_GOAL_NUM = 3;
-            const int GOAL1_INITIAL_X = 20;
-            const int GOAL1_INITIAL_Y = 15;
-            const int GOAL2_INITIAL_X = 15;
-            const int GOAL2_INITIAL_Y = 10;
-            const int GOAL3_INITIAL_X = 15;
-            const int GOAL3_INITIAL_Y = 15;
+            const int GOAL1_INITIAL_X = 25;
+            const int GOAL1_INITIAL_Y = 20;
+            const int GOAL2_INITIAL_X = 20;
+            const int GOAL2_INITIAL_Y = 15;
+            const int GOAL3_INITIAL_X = 20;
+            const int GOAL3_INITIAL_Y = 20;
 
 
             int playerX = PLAYER_INITIAL_X;
@@ -108,18 +111,18 @@
                 }
 
                 //맵 테두리
-                for (int i = 0; i <= MAP_MAX_X + 1; ++i)
+                for (int i = -1; i <= OUTLINE_LENGTH_X; ++i)
                 {
-                    Console.SetCursorPosition(i, MAP_MIN_Y - 1);
+                    Console.SetCursorPosition(MAP_MIN_X + i, MAP_MIN_Y - 1);
                     Console.Write(MAP_OUTLINE_SYMBOL);
-                    Console.SetCursorPosition(i, MAP_MAX_Y + 1);
+                    Console.SetCursorPosition(MAP_MIN_X + i, MAP_MAX_Y + 1);
                     Console.Write(MAP_OUTLINE_SYMBOL);
                 }
-                for (int i = 1; i <= MAP_MAX_Y; ++i)
+                for (int i = 0; i <= OUTLINE_LENGTH_Y; ++i)
                 {
-                    Console.SetCursorPosition(MAP_MIN_X - 1, i);
+                    Console.SetCursorPosition(MAP_MIN_X - 1, MAP_MIN_Y + i);
                     Console.Write(MAP_OUTLINE_SYMBOL);
-                    Console.SetCursorPosition(MAP_MAX_X + 1, i);
+                    Console.SetCursorPosition(MAP_MAX_X + 1, MAP_MIN_Y + i);
                     Console.Write(MAP_OUTLINE_SYMBOL);
                 }
                 // -------------------------------------- ProcessInput ------------------------------------------------
