@@ -185,6 +185,7 @@
                                 return;
                         }
                         pushedBoxID = i;
+                        break;
                     }
                     // 박스에 박스
                     for (int j = 0; j < TOTAL_BOX_NUM; ++j)
@@ -231,6 +232,7 @@
 
                                     return;
                             }
+                            break;
                         }
                     }
                 }
@@ -261,6 +263,7 @@
 
                                 return;
                         }
+                        break;
                     }
                     // 벽에 박스
                     for (int j = 0; j < TOTAL_BOX_NUM; ++j)
@@ -291,8 +294,8 @@
 
                                     return;
                             }
+                            break;
                         }
-                        break;
                     }
 
                 }
