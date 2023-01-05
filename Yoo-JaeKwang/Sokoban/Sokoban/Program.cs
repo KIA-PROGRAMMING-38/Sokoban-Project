@@ -185,7 +185,6 @@
                                 return;
                         }
                         pushedBoxID = i;
-                        break;
                     }
                     // 박스에 박스
                     for (int j = 0; j < TOTAL_BOX_NUM; ++j)
