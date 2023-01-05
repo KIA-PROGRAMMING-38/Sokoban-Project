@@ -189,56 +189,40 @@
                     // 박스에 박스
                     for (int j = 0; j < TOTAL_BOX_NUM; ++j)
                     {
-                        if (i != j && boxX[j] == boxX[i] && boxY[j] == boxY[i])
+                        if (i == j)
+                        {
+                            continue;
+                        }
+                        if (boxX[i] == boxX[j] && boxY[i] == boxY[j])
                         {
                             switch (playerDirection)
                             {
                                 case Direction.Up:
-                                    if (pushedBoxID == j)
+                                    if (pushedBoxID == i)
                                     {
-                                        ++boxY[j];
-                                        ++playerY;
-                                    }
-                                    else
-                                    {
-                                        ++boxY[i];
-                                        ++playerY;
+                                        boxY[i] = boxY[j] + 1;
+                                        playerY = boxY[i] + 1;
                                     }
                                     break;
                                 case Direction.Down:
-                                    if (pushedBoxID == j)
+                                    if (pushedBoxID == i)
                                     {
-                                        --boxY[j];
-                                        --playerY;
-                                    }
-                                    else
-                                    {
-                                        --boxY[i];
-                                        --playerY;
+                                        boxY[i] = boxY[j] - 1;
+                                        playerY = boxY[i] - 1;
                                     }
                                     break;
                                 case Direction.Left:
-                                    if (pushedBoxID == j)
+                                    if (pushedBoxID == i)
                                     {
-                                        ++boxX[j];
-                                        ++playerX;
-                                    }
-                                    else
-                                    {
-                                        ++boxX[i];
-                                        ++playerX;
+                                        boxX[i] = boxX[j] + 1;
+                                        playerX = boxX[i] + 1;
                                     }
                                     break;
                                 case Direction.Right:
-                                    if (pushedBoxID == j)
+                                    if (pushedBoxID == i)
                                     {
-                                        --boxX[j];
-                                        --playerX;
-                                    }
-                                    else
-                                    {
-                                        --boxX[i];
-                                        --playerX;
+                                        boxX[i] = boxX[j] - 1;
+                                        playerX = boxX[i] - 1;
                                     }
                                     break;
                                 default:
@@ -308,6 +292,7 @@
                                     return;
                             }
                         }
+                        break;
                     }
 
                 }
