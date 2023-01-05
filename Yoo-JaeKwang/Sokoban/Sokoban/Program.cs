@@ -78,6 +78,7 @@
             int[] goalY = { GOAL1_INITIAL_Y, GOAL2_INITIAL_Y, GOAL3_INITIAL_Y };
 
             Direction playerDirection = default;
+            int pushedBoxID = default;
 
             // 게임 루프 == 프레임(Frame)
             while (true)
@@ -183,6 +184,7 @@
 
                                 return;
                         }
+                        pushedBoxID = i;
                     }
                     // 박스에 박스
                     for (int j = 0; j < TOTAL_BOX_NUM; ++j)
@@ -192,20 +194,52 @@
                             switch (playerDirection)
                             {
                                 case Direction.Up:
-                                    ++boxY[j];
-                                    ++playerY;
+                                    if (pushedBoxID == j)
+                                    {
+                                        ++boxY[j];
+                                        ++playerY;
+                                    }
+                                    else
+                                    {
+                                        ++boxY[i];
+                                        ++playerY;
+                                    }
                                     break;
                                 case Direction.Down:
-                                    --boxY[j];
-                                    --playerY;
+                                    if (pushedBoxID == j)
+                                    {
+                                        --boxY[j];
+                                        --playerY;
+                                    }
+                                    else
+                                    {
+                                        --boxY[i];
+                                        --playerY;
+                                    }
                                     break;
                                 case Direction.Left:
-                                    ++boxX[j];
-                                    ++playerX;
+                                    if (pushedBoxID == j)
+                                    {
+                                        ++boxX[j];
+                                        ++playerX;
+                                    }
+                                    else
+                                    {
+                                        ++boxX[i];
+                                        ++playerX;
+                                    }
                                     break;
                                 case Direction.Right:
-                                    --boxX[j];
-                                    --playerX;
+                                    if (pushedBoxID == j)
+                                    {
+                                        --boxX[j];
+                                        --playerX;
+                                    }
+                                    else
+                                    {
+                                        --boxX[i];
+                                        --playerX;
+                                    }
                                     break;
                                 default:
                                     Console.Clear();
