@@ -28,20 +28,28 @@ namespace sokoban
             const int MAP_MAX_Y = 10;
             const int INITIAL_PLAYER_X = 2;
             const int INITIAL_PLAYER_Y = 2;
+            const char PLAYER_SYMBOL = 'P';
+            const char GOAL_SYMBOL = '○';
+            const char BOX_SYMBOL = '●';
    
-            int PlayerX = INITIAL_PLAYER_X;
-            int PlayerY = INITIAL_PLAYER_Y;
-            int[] BoxX = new int[3] { 3, 5, 8 };
-            int[] BoxY = new int[3] { 3, 4, 8 };
-            int[] WallX = new int[3] { 15, 14, 13 };
-            int[] WallY = new int[3] { 8, 8, 8 };
-            int[] GoalX = new int[3] { 5, 8, 9 };
-            int[] GoalY = new int[3] { 9, 2, 9 };
-            int BoxLength = BoxX.Length;
-            int WallLength = WallX.Length;
-            int WhatBox = default;
+            int playerX = INITIAL_PLAYER_X;
+            int playerY = INITIAL_PLAYER_Y;
+            int[] boxX = new int[3] { 3, 5, 8 };
+            int[] boxY = new int[3] { 3, 4, 8 };
+            int[] wallX = new int[3] { 15, 14, 13 };
+            int[] wallY = new int[3] { 8, 8, 8 };
+            int[] goalX = new int[3] { 5, 8, 9 };
+            int[] goalY = new int[3] { 9, 2, 9 };
+            int boxLength = boxX.Length;
+            int wallLength = wallX.Length;
+            int goalLength = goalX.Length;
+            int pushBoxId = default;
 
-            PLAYER_DIRECTION playerDIR = new PLAYER_DIRECTION();
+            bool[] goalCount = new bool[goalLength + 1];
+            goalCount[goalLength] = true;
+            int goalJudge = default;
+
+            PLAYER_DIRECTION playerDir = new PLAYER_DIRECTION();
 
             //15 X 10
             // 게임 루프 == 프레임(Frame)
@@ -62,26 +70,26 @@ namespace sokoban
 
                 // --------------------------------------------- Render -------------------------------------------------------
                 // 플레이어 출력하기
-
-                Console.SetCursorPosition(BoxX[0], BoxY[0]);
-                Console.Write("1");
-                Console.SetCursorPosition(BoxX[1], BoxY[1]);
-                Console.Write("2");
-                Console.SetCursorPosition(BoxX[2], BoxY[2]);
-                Console.Write("3");
-                Console.SetCursorPosition(PlayerX, PlayerY);
-                Console.Write("Q");
-                for (int i = 0; i < WallX.Length; i++)
+                for (int i = 0; i < goalLength; i++)
                 {
-                    Console.SetCursorPosition(WallX[i], WallY[i]);
+                    Console.SetCursorPosition(goalX[i], goalY[i]);
+                    Console.Write("○");
+                }
+             
+                for (int i = 0; i < wallLength; i++)
+                {
+                    Console.SetCursorPosition(wallX[i], wallY[i]);
                     Console.Write("#");
                 }
-                Console.SetCursorPosition(GoalX[0], GoalY[0]);
-                Console.Write("①");
-                Console.SetCursorPosition(GoalX[1], GoalY[1]);
-                Console.Write("②");
-                Console.SetCursorPosition(GoalX[2], GoalY[2]);
-                Console.Write("③");
+                for (int i = 0; i < boxLength; i++)
+                {
+                    Console.SetCursorPosition(boxX[i], boxY[i]);
+                    Console.Write("●");
+                }
+                
+
+                Console.SetCursorPosition(playerX, playerY);
+                Console.Write(PLAYER_SYMBOL);
 
                 // --------------------------------------------- ProcessInput -------------------------------------------------
                 ConsoleKey key = Console.ReadKey().Key;
@@ -89,147 +97,156 @@ namespace sokoban
                 // 오른쪽 화살표키를
                 if (key == ConsoleKey.RightArrow)  //이동 부
                 {
-                    PlayerX = Math.Min(PlayerX + 1, MAP_MAX_X);
-                    playerDIR = PLAYER_DIRECTION.RIGHT;
-                }
+                    playerX = Math.Min(playerX + 1, MAP_MAX_X);
+                    playerDir = PLAYER_DIRECTION.RIGHT;
+                } 
                 if (key == ConsoleKey.LeftArrow)
                 {
-                    PlayerX = Math.Max(PlayerX - 1, MAP_MIN_X + 1);
-                    playerDIR = PLAYER_DIRECTION.LEFT;
+                    playerX = Math.Max(playerX - 1, MAP_MIN_X + 1);
+                    playerDir = PLAYER_DIRECTION.LEFT;
                 }
                 if (key == ConsoleKey.DownArrow)
                 {
-                    PlayerY = Math.Min(PlayerY + 1, MAP_MAX_Y);
-                    playerDIR = PLAYER_DIRECTION.DOWN;
+                    playerY = Math.Min(playerY + 1, MAP_MAX_Y);
+                    playerDir = PLAYER_DIRECTION.DOWN;
                 }
                 if (key == ConsoleKey.UpArrow)
                 {
-                    PlayerY = Math.Max(PlayerY - 1, MAP_MIN_Y + 1);
-                    playerDIR = PLAYER_DIRECTION.UP;
-
+                    playerY = Math.Max(playerY - 1, MAP_MIN_Y + 1);
+                    playerDir = PLAYER_DIRECTION.UP;
                 }
-                for (int i = 0; i < BoxLength; i++)
+                for (int i = 0; i < boxLength; i++)
                 {
-                    if (PlayerX == BoxX[i] && PlayerY == BoxY[i]) // 외곽 벽을 만났을 떄
+                    if (playerX == boxX[i] && playerY == boxY[i]) // 외곽 벽을 만났을 떄
                     {
-                        WhatBox = i;
-                        switch (playerDIR)
+                        pushBoxId = i;
+                        switch (playerDir)
                         {
                             case PLAYER_DIRECTION.RIGHT: //right
-                                PlayerX = Math.Min(PlayerX, MAP_MAX_X - 1);
-                                BoxX[i] = Math.Min(BoxX[i] + 1, MAP_MAX_X);
+                                playerX = Math.Min(playerX, MAP_MAX_X - 1);
+                                boxX[i] = Math.Min(boxX[i] + 1, MAP_MAX_X);
                                 break;
                             case PLAYER_DIRECTION.LEFT: //left
-                                PlayerX = Math.Max(PlayerX, MAP_MIN_X + 2);
-                                BoxX[i] = Math.Max(BoxX[i] - 1, MAP_MIN_X + 1);
+                                playerX = Math.Max(playerX, MAP_MIN_X + 2);
+                                boxX[i] = Math.Max(boxX[i] - 1, MAP_MIN_X + 1);
                                 break;
                             case PLAYER_DIRECTION.DOWN: //down
-                                PlayerY = Math.Min(PlayerY, MAP_MAX_Y - 1);
-                                BoxY[i] = Math.Min(BoxY[i] + 1, MAP_MAX_Y);
+                                playerY = Math.Min(playerY, MAP_MAX_Y - 1);
+                                boxY[i] = Math.Min(boxY[i] + 1, MAP_MAX_Y);
                                 break;
                             case PLAYER_DIRECTION.UP: //up
-                                PlayerY = Math.Max(PlayerY, MAP_MIN_Y + 2);
-                                BoxY[i] = Math.Max(BoxY[i] - 1, MAP_MIN_Y + 1);
+                                playerY = Math.Max(playerY, MAP_MIN_Y + 2);
+                                boxY[i] = Math.Max(boxY[i] - 1, MAP_MIN_Y + 1);
                                 break;
 
                         }
                     }
-                }
-                for (int i = 0; i < WallLength; i++)
+                } // 외곽 벽을 만났을 떄
+                for (int i = 0; i < wallLength; i++) //벽과 플레이어
                 {
-                    if (PlayerX == WallX[i] && PlayerY == WallY[i]) //벽과 플레이어
+                    if (playerX == wallX[i] && playerY == wallY[i]) 
                     {
-                        switch (playerDIR)
+                        switch (playerDir)
                         {
                             case PLAYER_DIRECTION.RIGHT: //right
-                                PlayerX = WallX[i] - 1;
+                                playerX = wallX[i] - 1;
                                 break;
                             case PLAYER_DIRECTION.LEFT: //left
-                                PlayerX = WallX[i] + 1;
+                                playerX = wallX[i] + 1;
                                 break;
                             case PLAYER_DIRECTION.DOWN: //down
-                                PlayerY = WallY[i] - 1;
+                                playerY = wallY[i] - 1;
                                 break;
                             case PLAYER_DIRECTION.UP: //up
-                                PlayerY = WallY[i] + 1;
+                                playerY = wallY[i] + 1;
                                 break;
                         }
                     }
-                }
-                for (int i = 0; i < BoxLength; i++)
+                } //벽과 플레이어
+                for (int i = 0; i < boxLength; i++) //벽과 박스
                 {
-                    for (int j = 0; j < WallLength; j++)
+                    for (int j = 0; j < wallLength; j++)
                     {
-                        if (BoxX[i] == WallX[j] && BoxY[i] == WallY[j]) //벽과 박스
+                        if (boxX[i] == wallX[j] && boxY[i] == wallY[j]) 
                         {
-                            switch (playerDIR)
+                            switch (playerDir)
                             {
                                 case PLAYER_DIRECTION.RIGHT: //right
-                                    PlayerX = Math.Min(PlayerX, WallX[j] - 2);
-                                    BoxX[i] = Math.Min(BoxX[i] + 1, WallX[j] - 1);
+                                    playerX = Math.Min(playerX, wallX[j] - 2);
+                                    boxX[i] = Math.Min(boxX[i] + 1, wallX[j] - 1);
                                     break;
                                 case PLAYER_DIRECTION.LEFT: //left
-                                    PlayerX = Math.Max(PlayerX, WallX[j] + 2);
-                                    BoxX[i] = Math.Min(BoxX[i] + 1, WallX[j] + 1);
+                                    playerX = Math.Max(playerX, wallX[j] + 2);
+                                    boxX[i] = Math.Min(boxX[i] + 1, wallX[j] + 1);
                                     break;
                                 case PLAYER_DIRECTION.DOWN: //down
-                                    PlayerY = Math.Min(PlayerY, WallY[j] - 2);
-                                    BoxY[i] = Math.Min(BoxY[i] - 1, WallY[j] - 1);
+                                    playerY = Math.Min(playerY, wallY[j] - 2);
+                                    boxY[i] = Math.Min(boxY[i] - 1, wallY[j] - 1);
                                     break;
                                 case PLAYER_DIRECTION.UP: //up
-                                    PlayerY = Math.Max(PlayerY, WallY[j] + 2);
-                                    BoxY[i] = Math.Max(BoxY[i] - 1, WallY[j] + 1);
+                                    playerY = Math.Max(playerY, wallY[j] + 2);
+                                    boxY[i] = Math.Max(boxY[i] - 1, wallY[j] + 1);
                                     break;
                             }
                         }
                     }
-                }
-                for (int i = 0; i < BoxLength; i++)
+                } //벽과 박스
+                for (int i = 0; i < boxLength; i++) //박스와 박스 충돌
                 {
-                    for (int j = 0; j < BoxLength; j++)
+                    for (int j = 0; j < boxLength; j++)
                     {
-                        if (i ==j )
+                        if (i == j)
                         {
                             continue;
                         }
-                        if (BoxX[i] == BoxX[j] && BoxY[i] == BoxY[j] && WhatBox == i) //박스와 박스 충돌
+                        if (boxX[i] == boxX[j] && boxY[i] == boxY[j] && pushBoxId == i) 
                         {
-                            switch (playerDIR)
+                            switch (playerDir)
                             {
                                 case PLAYER_DIRECTION.RIGHT: //right
-                                    PlayerX = PlayerX - 1;
-                                    BoxX[j] = PlayerX + 2;
-                                    BoxX[i] = PlayerX + 1;
+                                    playerX = playerX - 1;
+                                    boxX[j] = playerX + 2;
+                                    boxX[i] = playerX + 1;
                                     break;
                                 case PLAYER_DIRECTION.LEFT: //left
-                                    PlayerX = PlayerX + 1;
-                                    BoxX[j] = PlayerX - 2;
-                                    BoxX[i] = PlayerX - 1;
+                                    playerX = playerX + 1;
+                                    boxX[j] = playerX - 2;
+                                    boxX[i] = playerX - 1;
                                     break;
                                 case PLAYER_DIRECTION.DOWN: //down
-                                    PlayerY = PlayerY - 1;
-                                    BoxY[j] = PlayerY + 2;
-                                    BoxY[i] = PlayerY + 1;
+                                    playerY = playerY - 1;
+                                    boxY[j] = playerY + 2;
+                                    boxY[i] = playerY + 1;
                                     break;
                                 case PLAYER_DIRECTION.UP: //up
-                                    PlayerY = PlayerY + 1;
-                                    BoxY[j] = PlayerY - 2;
-                                    BoxY[i] = PlayerY - 1;
+                                    playerY = playerY + 1;
+                                    boxY[j] = playerY - 2;
+                                    boxY[i] = playerY - 1;
                                     break;
                             }
                         }
                     }
+                } //박스와 박스 충돌
+
+
+
+                for (int i = 0; i < boxLength; i++)
+                {
+                    for (int j = 0; j < boxLength; j++)
+                    {
+                        if (boxX[i] == goalX[j] && boxY[i] == goalY[j])
+                        {
+                            goalCount[j] = true;
+                        }
+                    }
                 }
-                
-                    if (BoxX[0] == GoalX[0] && BoxY[0] == GoalY[0] &&  //클리어 판정
-                    BoxX[1] == GoalX[1] && BoxY[1] == GoalY[1] &&
-                    BoxX[2] == GoalX[2] && BoxY[2] == GoalY[2])
+               if (!(Array.Exists(goalCount,x => false)))
                 {
                     Console.Clear();
                     Console.WriteLine("Clear!");
+
                     return;
                 }
-                    
             }
         }
     }
