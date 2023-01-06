@@ -72,6 +72,10 @@
             const int LIMIT_YY = 0;
             const int LIMIT_XX = 0;
 
+            // MAP 제한선 그림
+         
+
+
             // 벽 설정
             const int WALL_X = 3;
             const int WALL_Y = 3;
@@ -98,6 +102,10 @@
                 Console.Clear();
 
                 //-------------------------------Render--------------------------- //플레이어가 무슨 일이 일어났는지 볼 수 있도록 게임을 그립니다
+
+                // 제한선 출력
+                Console.SetCursorPosition(LIMIT_X, LIMIT_Y);
+
                 // 플레이어 출력
                 Console.SetCursorPosition(playerX, playerY); // 커서의 위치를 세팅해준다. (글을 쓸때 깜빡깜빡하는 것을 커서라고 합니다.)
                 Console.Write(PLAYER);
@@ -276,7 +284,7 @@
                 // 박스가 골 지점에 닿을 때
                 if (BoxX == GOAL_X && BoxY == GOAL_Y)
                 {
-                    
+                    Console.Clear();
                     break;
 
                 }
