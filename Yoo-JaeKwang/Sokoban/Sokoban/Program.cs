@@ -109,15 +109,24 @@
                 for (int goalId = 0; goalId < TOTAL_GOAL_NUM; ++goalId)
                 {
                     Console.SetCursorPosition(goalX[goalId], goalY[goalId]);
-                    Console.Write(GOAL_SYMBOL);
+
                     //골에 박스
+                    bool isBoxOnGoal = false;
                     for (int boxId = 0; boxId < TOTAL_BOX_NUM; ++boxId)
                     {
                         if (goalX[goalId] == boxX[boxId] && goalY[goalId] == boxY[boxId])
                         {
-                            Console.SetCursorPosition(goalX[goalId], goalY[goalId]);
-                            Console.Write(GOALIN_SYMBOL);
+                            isBoxOnGoal = true;
+                            break;
                         }
+                    }
+                    if (isBoxOnGoal)
+                    {
+                        Console.Write(GOALIN_SYMBOL);
+                    }
+                    else
+                    {
+                        Console.Write(GOAL_SYMBOL);
                     }
                 }
 
