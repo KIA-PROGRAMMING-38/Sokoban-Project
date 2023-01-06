@@ -29,6 +29,7 @@ namespace Sokoban
 
             // 기호 상수 정의
             const int GOAL_COUNT = 2;
+            const int WALL_COUNT = 2;
             const int BOX_COUNT = GOAL_COUNT;
 
             // 플레이어 위치를 저장하기 위한 변수
@@ -46,12 +47,15 @@ namespace Sokoban
             int[] boxPositionsY = { 5, 3 };
 
             // 벽 위치를 저장하기 위한 변수
-            int wallX = 7;
-            int wallY = 7;
+            int[] wallPositionX = { 4, 7 };
+            int[] wallPositionY = { 3, 7 };
 
             // 골 위치를 저장하기 위한 변수
             int[] goalPositionsX = { 9, 1 };
             int[] goalPositionsY = { 9, 2 };
+
+            // 골에 몇번 박스가 들어가 있는지 저장하기 위한 변수
+            bool[] isBoxOnGoal = new bool[BOX_COUNT];
 
             // 게임 루프 구성
             while (true)
@@ -71,18 +75,7 @@ namespace Sokoban
                     int goalY = goalPositionsY[goalId];
 
                     Console.SetCursorPosition(goalX, goalY);
-                    Console.Write("G");
-                    //for (int boxId = 0; boxId < BOX_COUNT; boxId++)
-                    //{
-                    //    // 박스가 골 지점 위에 있는지 확인한다.
-                    //    if (goalPositionsX[goalId] == boxPositionsX[boxId] && goalPositionsY[goalId] == boxPositionsY[boxId])
-                    //    {
-
-                    //        Console.SetCursorPosition(boxPositionsX[boxId], boxPositionsY[boxId]);
-                    //        Console.Write("*");
-                    //        break; // goal하나에 박스 하나만 올라가 있기 때문에
-                    //    }
-                    //}
+                    Console.Write("G");                    
                 }
 
                 // 박스를 그린다.
@@ -92,20 +85,8 @@ namespace Sokoban
                     int boxY = boxPositionsY[i];
 
                     Console.SetCursorPosition(boxX, boxY);
-
-                    bool isBoxOnGoal = false;
-
-                    for (int goalId = 0; goalId < GOAL_COUNT; ++goalId)
-                    {
-                        if (boxX == goalPositionsX[goalId] && boxY == goalPositionsY[goalId])
-                        {
-                            isBoxOnGoal = true;
-
-                            break; // 하나만 바꿔줄꺼니까 두개 goal에 있는지 검사할 필요없다.
-                        }
-                    }
-
-                    if (isBoxOnGoal == true)
+                                        
+                    if (isBoxOnGoal[i] == true)
                     {
                         Console.Write("*");
                     }
@@ -118,8 +99,15 @@ namespace Sokoban
                 
 
                 // 벽을 그린다.
-                Console.SetCursorPosition(wallX, wallY);
-                Console.Write("W");
+                for (int i = 0; i < WALL_COUNT; ++i)
+                {
+                    int wallX = wallPositionX[i];
+                    int wallY = wallPositionY[i];
+
+                    Console.SetCursorPosition(wallX, wallY);
+                    Console.Write("W");
+                }
+                
 
                 
 
@@ -154,27 +142,33 @@ namespace Sokoban
                 }
 
                 // 플레이어와 벽의 충돌 처리
-                if (playerX == wallX && playerY == wallY)
+                for (int i = 0; i < WALL_COUNT; ++i)
                 {
-                    switch (playerMoveDirection)
-                    {
-                        case Direction.Left:
-                            playerX = wallX + 1;
-                            break;
-                        case Direction.Right:
-                            playerX = wallX - 1;
-                            break;
-                        case Direction.Up:
-                            playerY = wallY + 1;
-                            break;
-                        case Direction.Down:
-                            playerY = wallY - 1;
-                            break;
-                        default:
-                            Console.Clear();
-                            Console.WriteLine($"[Error] 플레이어 이동 방향 데이터가 오류입니다. : {playerMoveDirection}");
+                    int wallX = wallPositionX[i];
+                    int wallY = wallPositionY[i];
 
-                            return;
+                    if (playerX == wallX && playerY == wallY)
+                    {
+                        switch (playerMoveDirection)
+                        {
+                            case Direction.Left:
+                                playerX = wallX + 1;
+                                break;
+                            case Direction.Right:
+                                playerX = wallX - 1;
+                                break;
+                            case Direction.Up:
+                                playerY = wallY + 1;
+                                break;
+                            case Direction.Down:
+                                playerY = wallY - 1;
+                                break;
+                            default:
+                                Console.Clear();
+                                Console.WriteLine($"[Error] 플레이어 이동 방향 데이터가 오류입니다. : {playerMoveDirection}");
+
+                                return;
+                        }
                     }
                 }
 
@@ -228,37 +222,54 @@ namespace Sokoban
                     int boxX = boxPositionsX[i];
                     int boxY = boxPositionsY[i];
 
-                    if (boxX == wallX && boxY == wallY)
+                    for(int wallId = 0; wallId < WALL_COUNT; ++wallId)
                     {
-                        switch (playerMoveDirection)
-                        {
-                            case Direction.Left:
-                                boxX = wallX + 1;
-                                playerX = boxX + 1;
-                                break;
-                            case Direction.Right:
-                                boxX = wallX - 1;
-                                playerX = boxX - 1;
-                                break;
-                            case Direction.Up:
-                                boxY = wallY + 1;
-                                playerY = boxY + 1;
-                                break;
-                            case Direction.Down:
-                                boxY = wallY - 1;
-                                playerY = boxY - 1;
-                                break;
-                            default:
-                                Console.Clear();
-                                Console.WriteLine($"[Error] 플레이어 이동 방향 데이터가 오류입니다. : {playerMoveDirection}");
+                        int wallX = wallPositionX[wallId];
+                        int wallY = wallPositionY[wallId];
 
-                                return;
+                        if (boxX == wallX && boxY == wallY)
+                        {
+                            switch (playerMoveDirection)
+                            {
+                                case Direction.Left:
+                                    boxX = wallX + 1;
+                                    playerX = boxX + 1;
+                                    break;
+
+                                case Direction.Right:
+                                    boxX = wallX - 1;
+                                    playerX = boxX - 1;
+                                    break;
+
+                                case Direction.Up:
+                                    boxY = wallY + 1;
+                                    playerY = boxY + 1;
+                                    break;
+
+                                case Direction.Down:
+                                    boxY = wallY - 1;
+                                    playerY = boxY - 1;
+                                    break;
+
+                                default:
+                                    Console.Clear();
+                                    Console.WriteLine($"[Error] 플레이어 이동 방향 데이터가 오류입니다. : {playerMoveDirection}");
+
+                                    return;
+                            }
+
+                            boxPositionsX[i] = boxX;
+                            boxPositionsY[i] = boxY;
+                            break; // 박스가 동시에 같은 벽에 부딪힐 일은 없기 때문에
                         }
-                        boxPositionsX[i] = boxX;
-                        boxPositionsY[i] = boxY;
-                        break; // 박스가 동시에 같은 벽에 부딪힐 일은 없기 때문에
+
+                        
                     }
+
+                    
                 }
+
+                    
 
                 
 
@@ -312,12 +323,15 @@ namespace Sokoban
                 int boxOnGoalCount = 0;
                 for (int goalId = 0; goalId < GOAL_COUNT; goalId++)
                 {
+                    isBoxOnGoal[goalId] = false;
+
                     for(int boxId = 0; boxId < BOX_COUNT; boxId++)
                     {
                         // 박스가 골 지점 위에 있는지 확인한다.
                         if (goalPositionsX[goalId] == boxPositionsX[boxId] && goalPositionsY[goalId] == boxPositionsY[boxId])
                         {
-                            ++boxOnGoalCount;                          
+                            ++boxOnGoalCount;
+                            isBoxOnGoal[goalId] = true;
                             break; // goal하나에 박스 하나만 올라가 있기 때문에
                         }
                     }

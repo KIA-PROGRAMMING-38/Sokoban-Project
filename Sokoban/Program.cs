@@ -81,23 +81,40 @@
 
             const string GOAL_STRING = "0";
 
+            // 골에 몇번 박스가 들어갔는지 알기위한 변수
+            bool[] isBoxOnGoal = new bool[goal_X.Count()];
 
             // 게임루프
 
             while (true)
             {
-                Console.Clear();
+                Console.Clear(); 
                 // Render-----------------------------------------------------------
 
                 //player 출력
                 Console.SetCursorPosition(player_X, player_Y);
                 Console.Write(PLAYER_STRING);
 
+                //goal 출력
+                for (int i = 0; i < goal_X.Count(); i++)
+                {
+                    Console.SetCursorPosition(goal_X[i], goal_Y[i]);
+                    Console.Write(GOAL_STRING);
+                }
+
                 //box 출력
                 for (int i = 0; i < box_X.Count(); i++)
                 {
+
                     Console.SetCursorPosition(box_X[i], box_Y[i]);
-                    Console.Write(BOX_STRING);
+                    if (isBoxOnGoal[i] == true)
+                    {
+                        Console.Write("*");
+                    }
+                    else
+                    {
+                        Console.Write("B");
+                    }                    
                 }
 
                 //wall 출력
@@ -107,13 +124,7 @@
                     Console.WriteLine(WALL_STRING);
                 }
 
-                //goal 출력
-                for (int i = 0; i < goal_X.Count(); i++)
-                {
-                    Console.SetCursorPosition(goal_X[i], goal_Y[i]);
-                    Console.Write(GOAL_STRING);
-                }
-
+                
                 // prosess Input----------------------------------------------------
 
                 ConsoleKey key = Console.ReadKey().Key;
@@ -311,21 +322,22 @@
 
                 // box가 골인 했을때
                 // box가 골이랑 모두다 같아졌을때
-                bool[] goalIn = new bool[3];
+                
 
                 for (int i = 0; i < goal_X.Count(); i++)
                 {
+                    isBoxOnGoal[i] = false;
+
                     for (int j = 0; j < box_X.Count(); j++)
                     {
                         if (goal_X[i] == box_X[j] && goal_Y[i] == box_Y[j])
                         {
-                            goalIn[i] = true;
+                            isBoxOnGoal[i] = true;                            
                         }
-
                     }
 
                 }
-                if (goalIn[0] == true && goalIn[1] == true && goalIn[2] == true)
+                if (isBoxOnGoal[0] == true && isBoxOnGoal[1] == true && isBoxOnGoal[2] == true)
                 {
                     Console.Clear();
                     Console.WriteLine("축하!!");
