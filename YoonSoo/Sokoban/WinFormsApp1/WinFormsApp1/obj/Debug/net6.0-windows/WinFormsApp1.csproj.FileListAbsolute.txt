@@ -1,0 +1,17 @@
+D:\GitPractice\Sokoban-Project\YoonSoo\Sokoban\WinFormsApp1\WinFormsApp1\bin\Debug\net6.0-windows\WinFormsApp1.exe
+D:\GitPractice\Sokoban-Project\YoonSoo\Sokoban\WinFormsApp1\WinFormsApp1\bin\Debug\net6.0-windows\WinFormsApp1.deps.json
+D:\GitPractice\Sokoban-Project\YoonSoo\Sokoban\WinFormsApp1\WinFormsApp1\bin\Debug\net6.0-windows\WinFormsApp1.runtimeconfig.json
+D:\GitPractice\Sokoban-Project\YoonSoo\Sokoban\WinFormsApp1\WinFormsApp1\bin\Debug\net6.0-windows\WinFormsApp1.dll
+D:\GitPractice\Sokoban-Project\YoonSoo\Sokoban\WinFormsApp1\WinFormsApp1\bin\Debug\net6.0-windows\WinFormsApp1.pdb
+D:\GitPractice\Sokoban-Project\YoonSoo\Sokoban\WinFormsApp1\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsApp1.csproj.AssemblyReference.cache
+D:\GitPractice\Sokoban-Project\YoonSoo\Sokoban\WinFormsApp1\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsApp1.Form1.resources
+D:\GitPractice\Sokoban-Project\YoonSoo\Sokoban\WinFormsApp1\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsApp1.csproj.GenerateResource.cache
+D:\GitPractice\Sokoban-Project\YoonSoo\Sokoban\WinFormsApp1\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsApp1.GeneratedMSBuildEditorConfig.editorconfig
+D:\GitPractice\Sokoban-Project\YoonSoo\Sokoban\WinFormsApp1\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsApp1.AssemblyInfoInputs.cache
+D:\GitPractice\Sokoban-Project\YoonSoo\Sokoban\WinFormsApp1\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsApp1.AssemblyInfo.cs
+D:\GitPractice\Sokoban-Project\YoonSoo\Sokoban\WinFormsApp1\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsApp1.csproj.CoreCompileInputs.cache
+D:\GitPractice\Sokoban-Project\YoonSoo\Sokoban\WinFormsApp1\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsApp1.dll
+D:\GitPractice\Sokoban-Project\YoonSoo\Sokoban\WinFormsApp1\WinFormsApp1\obj\Debug\net6.0-windows\refint\WinFormsApp1.dll
+D:\GitPractice\Sokoban-Project\YoonSoo\Sokoban\WinFormsApp1\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsApp1.pdb
+D:\GitPractice\Sokoban-Project\YoonSoo\Sokoban\WinFormsApp1\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsApp1.genruntimeconfig.cache
+D:\GitPractice\Sokoban-Project\YoonSoo\Sokoban\WinFormsApp1\WinFormsApp1\obj\Debug\net6.0-windows\ref\WinFormsApp1.dll

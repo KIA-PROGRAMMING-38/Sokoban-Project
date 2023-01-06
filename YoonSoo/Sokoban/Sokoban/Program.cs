@@ -19,18 +19,21 @@ namespace Sokoban
         static void Main()
         {
             // 초기
-            Console.ResetColor();                              // 컬러를 초기화한다.
-            Console.CursorVisible = false;                     // 커서를 숨긴다.
-            Console.Title = "어우석과 이찬혁의 사랑을 응원한다.";                // 타이틀을 설정한다.
-            Console.BackgroundColor = ConsoleColor.DarkGreen;  // 배경을 설정한다.
-            Console.ForegroundColor = ConsoleColor.Black;      //글꼴을 설정한다.
-            Console.Clear();                                   // 출려된 모든 내용을 지운다.
+            Console.ResetColor();                                        // 컬러를 초기화한다.
+            Console.CursorVisible = false;                              // 커서를 숨긴다.
+            Console.Title = "악령 어우석, 이찬혁 퇴치하자.";             // 타이틀을 설정한다.
+            Console.BackgroundColor = ConsoleColor.Black;             // 배경을 설정한다.
+            Console.ForegroundColor = ConsoleColor.DarkRed;          // 글꼴을 설정한다.
+            Console.Clear();                                        // 출려된 모든 내용을 지운다.
 
-            // 기호 상수
+            // 기호 상수 정의
+            const int GOAL_COUNT = 2;
+            const int BOX_COUNT = GOAL_COUNT;
+
             // 맵의 가로 범위, 세로 범위
             const int MAP_MIN_X = 0;
             const int MAP_MIN_Y = 0;
-            const int MAP_MAX_X = 15;
+            const int MAP_MAX_X = 20;
             const int MAP_MAX_Y = 10;
 
 
@@ -38,7 +41,7 @@ namespace Sokoban
             const int INITIAL_PLAYER_X = 0;
             const int INITIAL_PLAYER_Y = 0;
             // 플레이어의 기호 (string literal)
-            const string PLAYER_STRING = "P";
+            const string PLAYER_STRING = "†";
 
 
             // 박스의 초기 좌표
@@ -55,12 +58,12 @@ namespace Sokoban
             // 벽의 좌표
             const int INITIAL_WALL_X = 10;
             const int INITIAL_WALL_Y = 8;
-            const int INITIAL_WALL2_X = 13;
-            const int INITIAL_WALL2_Y = 4;
+            const int INITIAL_WALL2_X = 7;
+            const int INITIAL_WALL2_Y = 7;
             const int INITIAL_WALL3_X = 2;
             const int INITIAL_WALL3_Y = 7;
             // 벽의 기호(string literal)
-            const string WALL_STRING = "W";
+            const string WALL_STRING = "▧";
 
 
             // 골인 좌표
@@ -127,11 +130,11 @@ namespace Sokoban
 
                 // 박스 출력하기
                 Console.SetCursorPosition(boxX, boxY);
-                Console.Write("a");
+                Console.Write("ⓐ");
                 Console.SetCursorPosition(box2_X, box2_Y);
-                Console.Write("b");
+                Console.Write("ⓑ");
                 Console.SetCursorPosition(box3_X, box3_Y);
-                Console.Write("c");
+                Console.Write("ⓒ");
 
                 // 벽 출력하기
                 Console.SetCursorPosition(wallX, wallY);
@@ -144,12 +147,12 @@ namespace Sokoban
 
                 // 골인 출력하기
                 Console.SetCursorPosition(goalX, goalY);
-                Console.Write("A");
+                Console.Write("a");
                 Console.SetCursorPosition(goal2_X, goal2_Y);
-                Console.Write("B");
+                Console.Write("b");
                 Console.SetCursorPosition(goal3_X, goal3_Y);
-                Console.Write("C");
-               
+                Console.Write("c");
+              
                 
                 // --------------------------------------------------ProcessINput--------------------------------------------------
                 ConsoleKey key = Console.ReadKey().Key; // 저장을 해야 사용할 수 있다
@@ -596,8 +599,6 @@ namespace Sokoban
                 }
 
 
-
-
                 // 골인 지점 만들기
                 if(!boxGoalIn)
                 {
@@ -614,7 +615,6 @@ namespace Sokoban
                     if (goal2_X == box2_X && goal2_Y == box2_Y)
                     {
                         box2GoalIn = true;
-                        goalcount += 1;
                     }
                 }
 
@@ -624,7 +624,6 @@ namespace Sokoban
                     if (goal3_X == box3_X && goal3_Y == box3_Y)
                     {
                         box3GoalIn = true;
-                        goalcount += 1;
                     }
                 }
                 
@@ -632,12 +631,14 @@ namespace Sokoban
                 if(boxGoalIn && box2GoalIn && box3GoalIn)
                 {
                     Console.Clear();
-                    System.Console.WriteLine("★YOU ARE SO GENIUS!!★");
+                    System.Console.WriteLine("퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴");
+                    Console.WriteLine("마.마.마.마.마.마.마.마.마.마.마.마.마.마.마.마.마.마.마.마");
+                    Console.WriteLine("성.성.성.성.성.성.성.성.성.성.성.성.성.성.성.성.성.성.성.성");
+                    Console.WriteLine("공.공.공.공.공.공.공.공.공.공.공.공.공.공.공.공.공.공.공.공");
                     return;
                 }
             }
             
-
 
         }
     }

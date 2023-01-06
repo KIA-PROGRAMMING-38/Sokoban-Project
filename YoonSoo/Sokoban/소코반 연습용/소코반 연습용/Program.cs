@@ -51,7 +51,6 @@ namespace Sokoban
 
 
 
-
             // 게임 루프 구성
             while (true)
             {
@@ -195,6 +194,23 @@ namespace Sokoban
                             boxX = Math.Max(0, boxX - 1);
                             playerX = boxX + 1;
                             break;
+                        case Direction.Right:
+                            boxX = Math.Min(boxX + 1, 20);
+                            playerX = boxX - 1;
+                            break;
+                        case Direction.Up:
+                            boxY = Math.Max(0, boxY - 1);
+                            playerY = boxX + 1;
+                            break;
+                        case Direction.Down:
+                            boxY = Math.Min(boxY +1, 20);
+                            playerY = boxX - 1;
+                            break;
+                        default:
+                            Console.Clear();
+                            Console.WriteLine($"[Error] 플레이어 이동 방향 데이터가 오류입니다. : {playerMoveDirection}");
+
+                            return;
                     }
                 }
             }
