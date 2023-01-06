@@ -33,9 +33,9 @@
             const string PLAYER_SYMBOL = "P";
             const string BOX_SYMBOL = "B";
             const string WALL_SYMBOL = "X";
-            const string GOAL_SYMBOL = "G";
+            const string GOAL_SYMBOL = "O";
             const string MAP_OUTLINE_SYMBOL = "X";
-            const string GOALIN_SYMBOL = "O";
+            const string GOALIN_SYMBOL = "@";
 
 
             const int PLAYER_INITIAL_X = 8;
