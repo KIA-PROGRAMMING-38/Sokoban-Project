@@ -23,6 +23,13 @@ namespace prototype
         DOWN = 4
     }
 
+    #region 사용 키
+
+    // space = 박스 당기기
+    // 방향키 = 이동하기
+
+    #endregion
+
 
     class program
     {
@@ -34,7 +41,7 @@ namespace prototype
             Console.BackgroundColor = ConsoleColor.Red; // 배경 색
             Console.ForegroundColor = ConsoleColor.Yellow; // 글자 색
             Console.CursorVisible = false; // 커서를 숨김
-            Console.Title = "복기용 프로토타입"; // 제목을 지어줌
+            Console.Title = "어코반"; // 제목을 지어줌
             Console.Clear(); // 원래 밑에 뜨는 그 뭐 많은 것들 지워주는거임
 
             #endregion
@@ -95,7 +102,7 @@ namespace prototype
 
             #region 나무들 기호 및 좌표
 
-            string tree = "|";
+            string tree = "♣";
 
             const int tree1X = 3;
             const int tree1Y = 4;
@@ -109,22 +116,36 @@ namespace prototype
             const int tree4X = 3;
             const int tree4Y = 7;
 
-            const int tree5X = 7;
+            const int tree5X = 13;
             const int tree5Y = 1;
 
             const int tree6X = 13;
-            const int tree6Y = 1;
+            const int tree6Y = 2;
 
             const int tree7X = 13;
-            const int tree7Y = 2;
+            const int tree7Y = 3;
 
             const int tree8X = 13;
-            const int tree8Y = 3;
+            const int tree8Y = 10;
+
+            const int tree9X = 13;
+            const int tree9Y = 9;
+
+            const int tree10X = 13;
+            const int tree10Y = 8;
+
+            const int tree11X = 13;
+            const int tree11Y = 7;
+
+            const int tree12X = 13;
+            const int tree12Y = 6;
+
+            const int tree13X = 13;
+            const int tree13Y = 5;
 
 
-
-            int[] tree_X = new int[] { tree1X, tree2X, tree3X, tree4X, tree5X, tree6X, tree7X, tree8X };
-            int[] tree_Y = new int[] { tree1Y, tree2Y, tree3Y, tree4Y, tree5Y, tree6Y, tree7Y, tree8Y };
+            int[] tree_X = new int[] { tree1X, tree2X, tree3X, tree4X, tree5X, tree6X, tree7X, tree8X, tree9X, tree10X, tree11X, tree12X, tree13X };
+            int[] tree_Y = new int[] { tree1Y, tree2Y, tree3Y, tree4Y, tree5Y, tree6Y, tree7Y, tree8Y, tree9Y, tree10Y, tree11Y, tree12Y, tree13Y };
 
             #endregion
 
@@ -138,11 +159,19 @@ namespace prototype
             const int goal2X = 14;
             const int goal2Y = 2;
 
-            const int goal3X = 3;
+            const int goal3X = 4;
             const int goal3Y = 8;
 
-            int[] goal_X = new int[] { goal1X, goal2X, goal3X };
-            int[] goal_Y = new int[] { goal1Y, goal2Y, goal3Y };
+            const int goal4X = 23;
+            const int goal4Y = 5;
+
+            const int goal5X = 27;
+            const int goal5Y = 6;
+
+
+
+            int[] goal_X = new int[] { goal1X, goal2X, goal3X, goal4X, goal5X };
+            int[] goal_Y = new int[] { goal1Y, goal2Y, goal3Y, goal4Y, goal5Y };
 
             #endregion
 
@@ -154,6 +183,14 @@ namespace prototype
             POSITION[] position = new POSITION[box_X.Length];
             #endregion
 
+            #region 골안 박스 바꿔주는 기호
+            string success = "♬";
+            #endregion
+
+            bool[] isboxongoal = new bool[box_X.Length]; // n번째 박스가 골위에 있는지를 저장하는 bool배열
+
+            int movecount = 0; // 이동한 횟수를 저장하는 변수
+
             #endregion
 
             #region 게임루프
@@ -163,22 +200,16 @@ namespace prototype
                 Console.Clear();
 
                 #region 렌더링
-                // 렌더링
 
-                #region goal 여러개 그려주기
+                Console.SetCursorPosition(Map_minX + 2, Map_maxY + 3);
+                Console.Write("'Space' = 당기기");
 
-                for (int i = 0; i < goal_X.Length; ++i)
-                {
-                    Console.SetCursorPosition(goal_X[i], goal_Y[i]);
-                    Console.Write(goal);
-                }
+                Console.SetCursorPosition(Map_minX + 2, Map_maxY + 5);
+                Console.Write("Hint = 13+26+4-30+3-12+7-6+1-2");
 
-                #endregion
+                Console.SetCursorPosition(Map_maxX + 5, Map_minY + 2);
+                Console.Write($"움직인 횟수 = {movecount}");
 
-                #region 플레이어 그려주기
-                Console.SetCursorPosition(player_X, player_Y);
-                Console.Write(player);
-                #endregion
 
                 #region 프레임 그려주기
                 for (int i = 1; i < Map_maxY + 1; ++i) // Y축 그려주기 = X는 고정이고 Y만 달라지는거임
@@ -198,14 +229,14 @@ namespace prototype
                 }
                 #endregion
 
-                #region 박스 여러개 그려주기
+                #region goal 여러개 그려주기
 
-                for (int i = 0; i < box_X.Length; ++i)
+                for (int i = 0; i < goal_X.Length; ++i)
                 {
-                    Console.SetCursorPosition(box_X[i], box_Y[i]);
-                    Console.Write(box);
-                }
+                    Console.SetCursorPosition(goal_X[i], goal_Y[i]);
+                    Console.Write(goal);
 
+                }
 
                 #endregion
 
@@ -215,6 +246,34 @@ namespace prototype
                     Console.SetCursorPosition(tree_X[i], tree_Y[i]);
                     Console.Write(tree);
                 }
+
+                Console.SetCursorPosition(13, 4); // 페이크 나무
+                Console.Write(tree);
+
+                #endregion
+
+                #region 플레이어 그려주기
+                Console.SetCursorPosition(player_X, player_Y);
+                Console.Write(player);
+                #endregion
+
+                #region 박스 그려주기 + 골에 박스가 들어가면 다른 아이가 출력되도록 그려주기
+
+                for (int k = 0; k < box_X.Length; ++k)
+                {
+                    Console.SetCursorPosition(box_X[k], box_Y[k]);
+
+                    if (isboxongoal[k])
+                    {
+                        Console.Write(success);
+                    }
+                    else
+                    {
+                        Console.Write(box);
+                    }
+                }
+
+
 
                 #endregion
 
@@ -232,6 +291,15 @@ namespace prototype
                 #endregion
 
                 #region 업데이트
+
+                #region 이동한 횟수 측정하기
+
+                if (key == ConsoleKey.RightArrow || key == ConsoleKey.LeftArrow || key == ConsoleKey.UpArrow || key == ConsoleKey.DownArrow || key == ConsoleKey.Spacebar)
+                {
+                    ++movecount;
+                }
+
+                #endregion
 
                 #region 플레이어 이동 구현
 
@@ -257,75 +325,6 @@ namespace prototype
                 {
                     player_Y = Math.Min(player_Y + 1, Map_maxY);
                     direction = DIRECTION.DOWN;
-                }
-
-                #endregion
-
-                #region 박스 당기는 거 구현
-
-
-                for (int i = 0; i < box_X.Length; ++i)
-                {
-                    if (player_Y == box_Y[i] && player_X == box_X[i] + 1)
-                    {
-                        position[i] = POSITION.RIGHT;
-                    }
-
-                    else if (player_Y == box_Y[i] && player_X == box_X[i] - 1)
-                    {
-                        position[i] = POSITION.LEFT;
-                    }
-
-                    else if (player_X == box_X[i] && player_Y == box_Y[i] + 1)
-                    {
-                        position[i] = POSITION.DOWN;
-                    }
-
-                    else if (player_X == box_X[i] && player_Y == box_Y[i] - 1)
-                    {
-                        position[i] = POSITION.UP;
-                    }
-                }
-
-
-
-
-                for (int i = 0; i < box_X.Length; ++i)
-                {
-                    if (key == ConsoleKey.Spacebar)
-                    {
-                        switch (position[i])
-                        {
-                            case POSITION.RIGHT:
-                                player_X++;
-                                box_X[i]++;
-
-                                break;
-
-                            case POSITION.LEFT:
-                                player_X--;
-                                box_X[i]--;
-
-                                break;
-
-                            case POSITION.UP:
-                                player_Y--;
-                                box_Y[i]--;
-
-                                break;
-
-                            case POSITION.DOWN:
-                                player_Y++;
-                                box_Y[i]++;
-
-                                break;
-                        }
-                    }
-                }
-
-                for (int i = 0; i < position.Length; ++i)
-                {
-                    position[i] = POSITION.NONE;
                 }
 
                 #endregion
@@ -373,40 +372,154 @@ namespace prototype
 
                 #endregion
 
+                #region 플레이어와 박스의 상대적인 위치 정의
+
+
+                for (int i = 0; i < box_X.Length; ++i)
+                {
+                    if (player_Y == box_Y[i] && player_X == box_X[i] + 1)
+                    {
+                        position[i] = POSITION.RIGHT;
+                        break;
+                    }
+
+                    else if (player_Y == box_Y[i] && player_X == box_X[i] - 1)
+                    {
+                        position[i] = POSITION.LEFT;
+                        break;
+                    }
+
+                    else if (player_X == box_X[i] && player_Y == box_Y[i] + 1)
+                    {
+                        position[i] = POSITION.DOWN;
+                        break;
+                    }
+
+                    else if (player_X == box_X[i] && player_Y == box_Y[i] - 1)
+                    {
+                        position[i] = POSITION.UP;
+                        break;
+                    }
+                }
+                #endregion
+
+                #region 박스 당기기 구현
+                for (int i = 0; i < box_X.Length; ++i)
+                {
+
+                    if (key == ConsoleKey.Spacebar)
+                    {
+                        switch (position[i])
+                        {
+                            case POSITION.RIGHT:
+
+                                player_X = Math.Min(player_X + 1, Map_maxX);
+                                box_X[i] = player_X - 1;
+                                break;
+
+                            case POSITION.LEFT:
+
+                                player_X = Math.Max(player_X - 1, Map_minX);
+                                box_X[i] = player_X + 1;
+                                break;
+
+                            case POSITION.UP:
+
+                                player_Y = Math.Max(player_Y - 1, Map_minY);
+                                box_Y[i] = player_Y + 1;
+                                break;
+
+                            case POSITION.DOWN:
+
+                                player_Y = Math.Min(player_Y + 1, Map_maxY);
+                                box_Y[i] = player_Y - 1;
+                                break;
+                        }
+                    }
+
+                }
+                #endregion
+
+                #region 박스 차기 구현
+                for (int i = 0; i < box_X.Length; ++i)
+                {
+
+                    if (key == ConsoleKey.A)
+                    {
+                        switch (position[i])
+                        {
+                            case POSITION.RIGHT:
+
+
+                                box_X[i] = Map_minX;
+
+                                break;
+
+                            case POSITION.LEFT:
+
+                                box_X[i] = Map_maxX;
+
+                                break;
+
+                            case POSITION.UP:
+
+                                box_Y[i] = Map_maxY;
+
+                                break;
+
+                            case POSITION.DOWN:
+
+                                box_Y[i] = Map_minY;
+
+                                break;
+                        }
+                    }
+                    position[i] = POSITION.NONE;
+                }
+                #endregion
+
+
+
+
                 #region 플레이어가 나무에 막히는 거 구현
 
                 for (int i = 0; i < tree_X.Length; ++i)
                 {
-                    if (player_X == tree_X[i] && player_Y == tree_Y[i])
+                    for (int k = 0; k < box_X.Length; ++k)
                     {
-                        switch (direction)
+                        if (player_X == tree_X[i] && player_Y == tree_Y[i])
                         {
-                            case DIRECTION.LEFT:
+                            switch (direction)
+                            {
+                                case DIRECTION.LEFT:
 
-                                player_X = tree_X[i] + 1;
-                                break;
+                                    player_X = tree_X[i] + 1;
+                                    break;
 
-                            case DIRECTION.RIGHT:
+                                case DIRECTION.RIGHT:
 
-                                player_X = tree_X[i] - 1;
-                                break;
+                                    player_X = tree_X[i] - 1;
+                                    break;
 
-                            case DIRECTION.UP:
+                                case DIRECTION.UP:
 
-                                player_Y = tree_Y[i] + 1;
-                                break;
+                                    player_Y = tree_Y[i] + 1;
+                                    break;
 
-                            case DIRECTION.DOWN:
+                                case DIRECTION.DOWN:
 
-                                player_Y = tree_Y[i] - 1;
-                                break;
+                                    player_Y = tree_Y[i] - 1;
+                                    break;
+
+                            }
 
                         }
-
                     }
                 }
 
                 #endregion
+
+
 
                 #region 박스가 나무에 막히는 거 구현
                 for (int i = 0; i < tree_X.Length; ++i)
@@ -491,11 +604,18 @@ namespace prototype
 
                 for (int i = 0; i < box_X.Length; ++i)
                 {
+                    isboxongoal[i] = false;
+
                     for (int k = 0; k < goal_X.Length; ++k)
                     {
                         if (box_X[i] == goal_X[k] && box_Y[i] == goal_Y[k])
                         {
                             ++count;
+                            isboxongoal[i] = true;
+                            // n번째 박스가 골 위에 있는지를 저장
+                            break;
+                            // break를 넣어주는 이유는 어차피 골하나에 박스는 하나밖에 못올라가니까, 박스 하나가 올려진게 확인이 되었으면 나머지 박스는 검사 안해도됌
+
                         }
                     }
                 }
@@ -507,6 +627,11 @@ namespace prototype
 
                 #endregion
 
+
+
+
+
+
                 #endregion
             }
 
@@ -514,7 +639,7 @@ namespace prototype
 
             // 목적 달성하면 나오는 화면
             Console.Clear();
-            Console.WriteLine("ㅊㅋㅊㅋㅊㅋㅊㅋㅊㅋ");
+            Console.WriteLine("ㅊㅋㅊㅋㅊㅋㅊㅋㅊㅋㅊㅋ");
 
 
         }
