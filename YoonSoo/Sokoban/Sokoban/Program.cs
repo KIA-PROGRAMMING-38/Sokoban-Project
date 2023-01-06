@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Tracing;
+using System.Runtime.CompilerServices;
 
 namespace Sokoban
 {
@@ -87,6 +88,11 @@ namespace Sokoban
             int box3_X = INITIAL_BOX3_X;
             int box3_Y = INITIAL_BOX3_Y;
 
+            // 박스 골인 여부 저장
+            bool boxGoalIn = false;
+            bool box2GoalIn = false;
+            bool box3GoalIn = false;
+
 
             // 벽 좌표 설정
             int wallX = INITIAL_WALL_X;
@@ -104,7 +110,7 @@ namespace Sokoban
             int goal2_Y = INITIAL_GOAL2_Y;
             int goal3_X = INITIAL_GOAL3_X;
             int goal3_Y = INITIAL_GOAL3_Y;
-
+            int goalcount = 0;
 
             // 가로 15 새로 10
             // 게임 루프 == 프레임(Frame)
@@ -138,11 +144,11 @@ namespace Sokoban
 
                 // 골인 출력하기
                 Console.SetCursorPosition(goalX, goalY);
-                Console.Write("ⓐ");
+                Console.Write("A");
                 Console.SetCursorPosition(goal2_X, goal2_Y);
-                Console.Write("ⓑ");
+                Console.Write("B");
                 Console.SetCursorPosition(goal3_X, goal3_Y);
-                Console.Write("ⓒ");
+                Console.Write("C");
                
                 
                 // --------------------------------------------------ProcessINput--------------------------------------------------
@@ -593,21 +599,44 @@ namespace Sokoban
 
 
                 // 골인 지점 만들기
-                if (goalX == boxX && goalY == boxY)
+                if(!boxGoalIn)
                 {
-                    
+                    if (goalX == boxX && goalY == boxY)
+                    {
+                        boxGoalIn = true;
+                        goalcount = goalcount + 1;    //  <= goalcount += 1; 와 같은 뜻이다.
+                    }
                 }
-                if (goal2_X == box2_X && goal2_Y == box2_Y)
+                
+
+                if(!box2GoalIn)
                 {
-                 
+                    if (goal2_X == box2_X && goal2_Y == box2_Y)
+                    {
+                        box2GoalIn = true;
+                        goalcount += 1;
+                    }
                 }
-                if (goal3_X == box3_X && goal3_Y == box3_Y)
+
+
+                if(box3GoalIn == false)
                 {
-                    break;
+                    if (goal3_X == box3_X && goal3_Y == box3_Y)
+                    {
+                        box3GoalIn = true;
+                        goalcount += 1;
+                    }
+                }
+                
+
+                if(boxGoalIn && box2GoalIn && box3GoalIn)
+                {
+                    Console.Clear();
+                    System.Console.WriteLine("★YOU ARE SO GENIUS!!★");
+                    return;
                 }
             }
-            Console.Clear();
-            System.Console.WriteLine("★YOU ARE SO GENIUS!!★");
+            
 
 
         }
