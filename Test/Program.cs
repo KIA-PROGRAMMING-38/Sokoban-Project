@@ -64,6 +64,27 @@ namespace Sokoban
                 Console.SetCursorPosition(playerX, playerY);
                 Console.Write("P");
 
+                // 골을 그린다.
+                for (int goalId = 0; goalId < GOAL_COUNT; ++goalId)
+                {
+                    int goalX = goalPositionsX[goalId];
+                    int goalY = goalPositionsY[goalId];
+
+                    Console.SetCursorPosition(goalX, goalY);
+                    Console.Write("G");
+                    //for (int boxId = 0; boxId < BOX_COUNT; boxId++)
+                    //{
+                    //    // 박스가 골 지점 위에 있는지 확인한다.
+                    //    if (goalPositionsX[goalId] == boxPositionsX[boxId] && goalPositionsY[goalId] == boxPositionsY[boxId])
+                    //    {
+
+                    //        Console.SetCursorPosition(boxPositionsX[boxId], boxPositionsY[boxId]);
+                    //        Console.Write("*");
+                    //        break; // goal하나에 박스 하나만 올라가 있기 때문에
+                    //    }
+                    //}
+                }
+
                 // 박스를 그린다.
                 for (int i = 0; i < BOX_COUNT; ++i)
                 {
@@ -71,22 +92,36 @@ namespace Sokoban
                     int boxY = boxPositionsY[i];
 
                     Console.SetCursorPosition(boxX, boxY);
-                    Console.Write("B");
+
+                    bool isBoxOnGoal = false;
+
+                    for (int goalId = 0; goalId < GOAL_COUNT; ++goalId)
+                    {
+                        if (boxX == goalPositionsX[goalId] && boxY == goalPositionsY[goalId])
+                        {
+                            isBoxOnGoal = true;
+
+                            break; // 하나만 바꿔줄꺼니까 두개 goal에 있는지 검사할 필요없다.
+                        }
+                    }
+
+                    if (isBoxOnGoal == true)
+                    {
+                        Console.Write("*");
+                    }
+                    else
+                    {
+                        Console.Write("B");
+                    }
+
                 }
+                
 
                 // 벽을 그린다.
                 Console.SetCursorPosition(wallX, wallY);
                 Console.Write("W");
 
-                // 골을 그린다.
-                for (int i = 0; i < GOAL_COUNT; ++i)
-                {
-                    int goalX = goalPositionsX[i];
-                    int goalY = goalPositionsY[i];
-
-                    Console.SetCursorPosition(goalX, goalY);
-                    Console.Write("G");
-                }
+                
 
                 // --------------------------------- ProcessInput -----------------------------------------
                 ConsoleKey key = Console.ReadKey().Key;
@@ -265,7 +300,7 @@ namespace Sokoban
                         }
                     }
                 }
-                
+
 
 
                 // 박스와 골의 처리
@@ -273,6 +308,27 @@ namespace Sokoban
                 // 2) Box1번과 Goal2번이 만났을 때
                 // 3) Box2번과 Goal1번이 만났을 때
                 // 4. Box2번과 Goal2번이 만났을 때
+
+                int boxOnGoalCount = 0;
+                for (int goalId = 0; goalId < GOAL_COUNT; goalId++)
+                {
+                    for(int boxId = 0; boxId < BOX_COUNT; boxId++)
+                    {
+                        // 박스가 골 지점 위에 있는지 확인한다.
+                        if (goalPositionsX[goalId] == boxPositionsX[boxId] && goalPositionsY[goalId] == boxPositionsY[boxId])
+                        {
+                            ++boxOnGoalCount;                          
+                            break; // goal하나에 박스 하나만 올라가 있기 때문에
+                        }
+                    }
+                }
+
+                if (boxOnGoalCount == GOAL_COUNT)
+                {
+                    Console.Clear();
+                    Console.WriteLine("축하합니다!!");
+                    break;
+                }
                 
             }
         }
