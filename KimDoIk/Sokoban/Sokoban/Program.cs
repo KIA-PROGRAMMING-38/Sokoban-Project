@@ -57,6 +57,9 @@ namespace Sokoban
             int[] goalPositionX = { 9, 7 };
             int[] goalPositionY = { 10, 7 };
 
+            // 박스가 골 지점에 들어간지 체크하기 위한 배열
+            bool[] goalPicture = new bool[GOAL_COUNT];
+
             // 박스 충돌 처리
             // 현재 내가 밀고 있는 박스가 몇번째 박스인지 알게 해주는 역할을 합니다.
             int pushedBoxId = 0;
@@ -72,21 +75,43 @@ namespace Sokoban
                 Console.SetCursorPosition(playerX, playerY);
                 Console.Write("P");
 
-                #region 골 지점 생성
-                // 골을 반복해서 그려준다. 반복 횟수를 알기 때문에 for문을 사용한다.
-                for (int i = 0; i < GOAL_COUNT; i++)
-                {
-                    Console.SetCursorPosition(goalPositionX[i], goalPositionY[i]);
-                    Console.Write("G");
-                }
-                #endregion
-
                 // 박스를 반복해서 그려준다. 반복 횟수를 알기 때문에 for문을 사용한다.
                 for (int i = 0; i < BOX_COUNT; i++)
                 {
                     Console.SetCursorPosition(boxPositionX[i], boxPositionY[i]);
                     Console.Write("B");
                 }
+
+                #region 골 지점 생성
+                // 골을 반복해서 그려준다. 반복 횟수를 알기 때문에 for문을 사용한다.
+                for (int i = 0; i < GOAL_COUNT; i++)
+                {
+                    Console.SetCursorPosition(goalPositionX[i], goalPositionY[i]);
+                    if (goalPicture[i] == true)
+                    {
+                        Console.Write('★');
+                    }
+                    else
+                    {
+                        Console.Write("G");
+                    }
+
+                }
+                #endregion
+
+
+                //// 박스가 골 지점에 도달 했을 때 이미지가 바뀌도록 그려준다.
+                //for (int i = 0; i < GOAL_COUNT; i++)
+                //{
+                //    for(int k = 0; k < BOX_COUNT; k++)
+                //    {
+                //        if (boxPositionX[i] == goalPositionX[k] && boxPositionY[i] == goalPositionY[k])
+                //        {
+                //            Console.SetCursorPosition(goalPositionX[k], goalPositionY[k]);
+                //            Console.Write('★');
+                //        }
+                //    }
+                //}
 
                 // 벽을 그린다.
                 Console.SetCursorPosition(wallX, wallY);
@@ -306,12 +331,15 @@ namespace Sokoban
 
                 for (int goalId = 0; goalId < GOAL_COUNT; goalId++) // 모든 골 지점에 대해서
                 {
+                    goalPicture[goalId] = false;
+
                     for (int boxId = 0; boxId < BOX_COUNT; boxId++) // 모든 박스에 대해서
                     {
                         //  박스가 골 지점 위에 있는지 확인한다.
                         if (boxPositionX[boxId] == goalPositionX[goalId] && boxPositionY[boxId] == goalPositionY[goalId])
                         {
                             ++boxCount;
+                            goalPicture[goalId] = true;
                             break; // 나머지 박스
                         }
 
