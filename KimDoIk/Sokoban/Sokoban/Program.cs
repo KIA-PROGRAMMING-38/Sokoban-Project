@@ -35,6 +35,9 @@ namespace Sokoban
             const int BOX_COUNT = 2;
             const int GOAL_COUNT = BOX_COUNT; // 골이랑 박스의 개수는 같다고 설정해줍니다. 
 
+            // 벽의 개수
+            const int WALL_COUNT = 4;
+
             // 플레이어 위치를 저장하기 위한 변수
             const int PLAYERX = 0;
             const int PLAYERY = 0;
@@ -49,9 +52,9 @@ namespace Sokoban
             int[] boxPositionX = { 5, 11 };
             int[] boxPositionY = { 7, 13 };
 
-            // 벽 위치를 저장하기 위한 변수
-            const int wallX = 6;
-            const int wallY = 6;
+            // 벽 위치를 저장하기 위한 변수를 다양하게 만들기 위해 배열로 작성
+            int[] wallX = new int[WALL_COUNT]{6, 8, 9 };
+            int[] wallY = { 6, 15, 8 };
 
             // 골 위치를 여러개 저장하기 위한 변수를 배열로 작성
             int[] goalPositionX = { 9, 7 };
@@ -82,16 +85,18 @@ namespace Sokoban
                     Console.Write("B");
                 }
 
-                #region 골 지점 생성
+                #region 골 지점 생성 및 박스가 골 지점 안에 들어 갔을 때 ★로 바뀌게 만들어주기
                 // 골을 반복해서 그려준다. 반복 횟수를 알기 때문에 for문을 사용한다.
                 for (int i = 0; i < GOAL_COUNT; i++)
                 {
                     Console.SetCursorPosition(goalPositionX[i], goalPositionY[i]);
+
+                    // 업데이트 된 인덱스값이 true라면 ★을 출력한다. 
                     if (goalPicture[i] == true)
                     {
                         Console.Write('★');
                     }
-                    else
+                    else // 업데이트 된 인덱스 값이 false라면 G를 출력한다.
                     {
                         Console.Write("G");
                     }
@@ -114,8 +119,12 @@ namespace Sokoban
                 //}
 
                 // 벽을 그린다.
-                Console.SetCursorPosition(wallX, wallY);
-                Console.Write("W");
+                for(int i = 0; i <WALL_COUNT; i++)
+                {
+                    Console.SetCursorPosition(wallX[i], wallY[i]);
+                    Console.Write("W");
+                }
+                
 
 
                 //-----------------------ProcessInput--------------------- // 마지막 호출 이후 발생한 모든 사용자 입력을 처리합니다.
@@ -147,36 +156,40 @@ namespace Sokoban
                 }
 
                 // 플레이어가 벽에 닿을 때 플레이어는 움직이지 못한다.
-                if (playerX == wallX && playerY == wallY)
+                // 벽의 개수를 다양하게 만들어줬기 때문에, 반복문을 사용합니다.
+                for(int i = 0; i < WALL_COUNT; i++)
                 {
-                    switch (playerMoveDirection)
+                    if (playerX == wallX[i] && playerY == wallY[i])
                     {
-                        case Direction.Left:
-                            playerX = wallX + 1;
-                            break;
+                        switch (playerMoveDirection)
+                        {
+                            case Direction.Left:
+                                playerX = wallX[i] + 1;
+                                break;
 
-                        case Direction.Right:
-                            playerX = wallX - 1;
-                            break;
+                            case Direction.Right:
+                                playerX = wallX[i] - 1;
+                                break;
 
-                        case Direction.Up:
-                            playerY = wallY + 1;
-                            break;
+                            case Direction.Up:
+                                playerY = wallY[i] + 1;
+                                break;
 
-                        case Direction.Down:
-                            playerY = wallY - 1;
-                            break;
+                            case Direction.Down:
+                                playerY = wallY[i] - 1;
+                                break;
 
-                        default:
-                            Console.Clear();
-                            Console.WriteLine($"[Error] 플레이어 이동 방향 데이터가 오류 입니다. : {playerMoveDirection}");
+                            default:
+                                Console.Clear();
+                                Console.WriteLine($"[Error] 플레이어 이동 방향 데이터가 오류 입니다. : {playerMoveDirection}");
 
-                            return;
+                                return;
+                        }
                     }
                 }
 
                 // 플레이어가 박스를 밀때 박스가 움직일 수 있도록 만듭니다.
-                // 박스의 개수를 배열로 만들어줬습니다. 횟수를 알기 때문에 for문으로 만들어줍니다.
+                // 박스의 개수를 다양하게 만들어줬습니다. 횟수를 알기 때문에 for문으로 만들어줍니다.
                 for (int i = 0; i < BOX_COUNT; i++)
                 {
                     if (playerX == boxPositionX[i] && playerY == boxPositionY[i])
@@ -218,41 +231,45 @@ namespace Sokoban
 
                 // 플레이어가 박스를 밀 때 박스가 벽을 마주한다면 못움직여야한다.
                 // 박스의 개수를 배열로 만들어줬습니다. 횟수를 알기 때문에 for문으로 만들어줍니다.
+                // 벽의 개수를 배열로 만들어줬습니다.
                 for (int i = 0; i < BOX_COUNT; i++)
                 {
-                    if (boxPositionX[i] == wallX && boxPositionY[i] == wallY)
+                    for (int count = 0; count < WALL_COUNT; count++) 
                     {
-                        switch (playerMoveDirection)
+                        if (boxPositionX[i] == wallX[count] && boxPositionY[i] == wallY[count])
                         {
-                            case Direction.Left:
-                                boxPositionX[i] = wallX + 1;
-                                playerX = boxPositionX[i] + 1;
-                                break;
+                            switch (playerMoveDirection)
+                            {
+                                case Direction.Left:
+                                    boxPositionX[i] = wallX[count] + 1;
+                                    playerX = boxPositionX[i] + 1;
+                                    break;
 
-                            case Direction.Right:
-                                boxPositionX[i] = wallX - 1;
-                                playerX = boxPositionX[i] - 1;
-                                break;
+                                case Direction.Right:
+                                    boxPositionX[i] = wallX[count] - 1;
+                                    playerX = boxPositionX[i] - 1;
+                                    break;
 
-                            case Direction.Up:
-                                boxPositionY[i] = wallY + 1;
-                                playerY = boxPositionY[i] + 1;
-                                break;
+                                case Direction.Up:
+                                    boxPositionY[i] = wallY[count] + 1;
+                                    playerY = boxPositionY[i] + 1;
+                                    break;
 
-                            case Direction.Down:
-                                boxPositionY[i] = wallY - 1;
-                                playerY = boxPositionY[i] - 1;
-                                break;
+                                case Direction.Down:
+                                    boxPositionY[i] = wallY[count] - 1;
+                                    playerY = boxPositionY[i] - 1;
+                                    break;
 
-                            default:
-                                Console.Clear();
-                                Console.WriteLine($"[Error] 플레이어 이동 방향 데이터가 오류 입니다. : {playerMoveDirection}");
+                                default:
+                                    Console.Clear();
+                                    Console.WriteLine($"[Error] 플레이어 이동 방향 데이터가 오류 입니다. : {playerMoveDirection}");
 
-                                return;
+                                    return;
+                            }
+                            break; // 플레이어는 1개의 박스밖에 못밉니다. 당연히 박스 1개만 벽에 부딪히겠죠.
+                                   // 그렇다면 더 이상 반복을 돌 필요가 없습니다. 그래서 나와줘야합니다.
+                                   // 나와주지 않는다면 실행 시간이 길어지고, 낭비하게 됩니다.
                         }
-                        break; // 플레이어는 1개의 박스밖에 못밉니다. 당연히 박스 1개만 벽에 부딪히겠죠.
-                               // 그렇다면 더 이상 반복을 돌 필요가 없습니다. 그래서 나와줘야합니다.
-                               // 나와주지 않는다면 실행 시간이 길어지고, 낭비하게 됩니다.
                     }
                 }
 
@@ -331,7 +348,7 @@ namespace Sokoban
 
                 for (int goalId = 0; goalId < GOAL_COUNT; goalId++) // 모든 골 지점에 대해서
                 {
-                    goalPicture[goalId] = false;
+                    goalPicture[goalId] = false; // 박스가 골 지점(true)에서 벗어났으면(false)로 초기화시켜준다. ★을 G로 변경 시켜줘야한다.
 
                     for (int boxId = 0; boxId < BOX_COUNT; boxId++) // 모든 박스에 대해서
                     {
@@ -339,8 +356,10 @@ namespace Sokoban
                         if (boxPositionX[boxId] == goalPositionX[goalId] && boxPositionY[boxId] == goalPositionY[goalId])
                         {
                             ++boxCount;
-                            goalPicture[goalId] = true;
-                            break; // 나머지 박스
+                            goalPicture[goalId] = true; // 박스가 골 위에 있다는 사실을 저장해준다.
+
+                            // 더 이상 조사할 필요가 없으므로 탈출한다.
+                            break;
                         }
 
                     }
