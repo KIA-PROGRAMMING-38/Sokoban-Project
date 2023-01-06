@@ -32,9 +32,9 @@
 
             const string PLAYER_SYMBOL = "P";
             const string BOX_SYMBOL = "B";
-            const string WALL_SYMBOL = "X";
+            const string WALL_SYMBOL = "#";
             const string GOAL_SYMBOL = "O";
-            const string MAP_OUTLINE_SYMBOL = "X";
+            const string MAP_OUTLINE_SYMBOL = "#";
             const string GOALIN_SYMBOL = "@";
 
 
