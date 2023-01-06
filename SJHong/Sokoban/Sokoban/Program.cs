@@ -26,7 +26,7 @@ class Sokoban
         Console.Title = "소코반";
 
         // 4. 배경색 설정
-        Console.BackgroundColor = ConsoleColor.DarkYellow;
+        Console.BackgroundColor = ConsoleColor.Black;
 
         // 5. 글꼴색 설정
         Console.ForegroundColor = ConsoleColor.White;
@@ -45,18 +45,24 @@ class Sokoban
 
         int playerX = 3;
         int playerY = 3;
+        const char playerShape = '8';
 
-        int[] boxX = { 10, 19 };
-        int[] boxY = { 3, 7 };
+        int[] boxX = { 10, 19, 4 };
+        int[] boxY = { 3, 7, 4 };
         int boxNum = boxX.Length;
+        const char boxShape = 'a';
 
-        int[] blockX = { 1,2,3,4,5,6,7,8,9,10,11,11,11 };
-        int[] blockY = { 6,6,6,6,6,6,6,6,6,6,6,7,8 };
+        int[] blockX = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 11, 11, 15, 15, 15, 15, 15 };
+        int[] blockY = { 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 8, 1, 2, 3, 4, 5 };
         int blockNum = blockX.Length;
+        const char blockShape = '#';
 
-        int[] goalX = { 14, 10 };
-        int[] goalY = { 7, 9 };
+        int[] goalX = { 14, 10, 7 };
+        int[] goalY = { 7, 9, 5 };
         int goalNum = goalX.Length;
+        const char goalShape = 'O';
+        const char boxInGoalShape = '@';
+        bool[] isBoxInGoal = new bool[boxNum];
 
 
         Direction currentPlayerDirection = Direction.None;
@@ -73,60 +79,62 @@ class Sokoban
             Console.Clear();
 
             // 2. 객체 위치에 커서 위치 후 그리기
+
+            Console.ForegroundColor = ConsoleColor.White;
             Console.SetCursorPosition(playerX, playerY);
-            Console.Write("+");
+            Console.Write(playerShape);
 
-            for (int i = 0; i < boxNum; ++i)
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            for (int goalId = 0; goalId < goalNum; ++goalId)
             {
-                Console.SetCursorPosition(boxX[i], boxY[i]);
-                Console.Write("a");
+                Console.SetCursorPosition(goalX[goalId], goalY[goalId]);
+                Console.Write(goalShape);
             }
 
-            for (int i = 0; i < blockNum; ++i)
+            for (int boxId = 0; boxId < boxNum; ++boxId)
             {
-                Console.SetCursorPosition(blockX[i], blockY[i]);
-                Console.Write("#");
-            }
+                Console.SetCursorPosition(boxX[boxId], boxY[boxId]);
 
-
-
-            for (int i = 0; i < goalNum; ++i)
-            {
-                Console.SetCursorPosition(goalX[i], goalY[i]);
-                Console.Write("O");
-            }
-
-            for (int i = 0; i < boxNum; ++i)
-            {
-                for (int j = 0; j < goalNum; ++j)
+                if (isBoxInGoal[boxId] == true)
                 {
-                    if (boxX[i] == goalX[j] && boxY[i] == goalY[j])
-                    {
-                        Console.SetCursorPosition(goalX[j], goalY[j]);
-                        Console.Write("@");
-                    }
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write(boxInGoalShape);
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write(boxShape);
                 }
             }
 
-            for(int i = 0; i <= MaxX; ++i)
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            for (int blockId = 0; blockId < blockNum; ++blockId)
+            {
+                Console.SetCursorPosition(blockX[blockId], blockY[blockId]);
+                Console.Write(blockShape);
+            }
+
+            for (int i = 0; i <= MaxX; ++i)
             {
                 for (int j = 0; j <= MaxY; ++j)
                 {
                     if (MinX != 0 && MinY != 0)
                     {
+
                         Console.SetCursorPosition(MinX - 1 + i, MinY - 1);
-                        Console.Write("#");
+                        Console.Write(blockShape);
                         Console.SetCursorPosition(MinX - 1, MinY + j);
-                        Console.WriteLine("#");
+                        Console.WriteLine(blockShape);
                     }
                     Console.SetCursorPosition(MaxX + 1 - i, MaxY + 1);
-                    Console.Write("#");
-                    Console.SetCursorPosition(MaxX + 1, MaxY- j);
-                    Console.Write("#");
+                    Console.Write(blockShape);
+                    Console.SetCursorPosition(MaxX + 1, MaxY - j);
+                    Console.Write(blockShape);
                 }
             }
 
             int boxInGoal = 0;
+            int pushedBox = 0;
 
             // ====프로세스 인풋====
 
@@ -155,37 +163,36 @@ class Sokoban
             {
                 playerY = Math.Min(++playerY, MaxY);
                 currentPlayerDirection = Direction.Down;
-
             }
 
             // 플레이어의 좌표에 따라 박스 좌표 수정
             // 플레이어와 박스가 겹쳤을 때 이동해야 함.
 
-            for (int i = 0; i < boxNum; ++i)
+            for (int boxId = 0; boxId < boxNum; ++boxId)
             {
-                if (playerX == boxX[i] && playerY == boxY[i])
+                if (playerX == boxX[boxId] && playerY == boxY[boxId])
                 {
                     // 그러나 박스의 좌표를 바꾸려면 그 방향을 알아야 한다. 방향에 따라 값을 다르게 출력함.
                     switch (currentPlayerDirection)
                     {
                         case Direction.Left:
-                            boxX[i] = Math.Max(MinX, --boxX[i]);
-                            playerX = boxX[i] + 1;
+                            boxX[boxId] = Math.Max(MinX, --boxX[boxId]);
+                            playerX = boxX[boxId] + 1;
                             break;
 
                         case Direction.Right:
-                            boxX[i] = Math.Min(++boxX[i], MaxX);
-                            playerX = boxX[i] - 1;
+                            boxX[boxId] = Math.Min(++boxX[boxId], MaxX);
+                            playerX = boxX[boxId] - 1;
                             break;
 
                         case Direction.Up:
-                            boxY[i] = Math.Max(MinY, --boxY[i]);
-                            playerY = boxY[i] + 1;
+                            boxY[boxId] = Math.Max(MinY, --boxY[boxId]);
+                            playerY = boxY[boxId] + 1;
                             break;
 
                         case Direction.Down:
-                            boxY[i] = Math.Min(++boxY[i], MaxY);
-                            playerY = boxY[i] - 1;
+                            boxY[boxId] = Math.Min(++boxY[boxId], MaxY);
+                            playerY = boxY[boxId] - 1;
                             break;
 
                         default:
@@ -193,13 +200,15 @@ class Sokoban
                             Console.WriteLine("잘못된 이동방향입니다.");
                             return;
                     }
+                    pushedBox = boxId;
+                    break;
                 }
             }
 
             // 플레이어와 장애물과 부딪혔을 때
-            for (int i = 0; i < blockNum; ++i)
+            for (int blockId = 0; blockId < blockNum; ++blockId)
             {
-                if (playerX == blockX[i] && playerY == blockY[i])
+                if (playerX == blockX[blockId] && playerY == blockY[blockId])
                 {
                     switch (currentPlayerDirection)
                     {
@@ -220,33 +229,32 @@ class Sokoban
                             Console.WriteLine("잘못된 이동방향입니다.");
                             return;
                     }
-
                 }
             }
 
             // 장애물과 박스가 부딪혔을 때
-            for (int i = 0; i < boxNum; ++i)
+            for (int boxId = 0; boxId < boxNum; ++boxId)
             {
-                for (int j = 0; j < blockNum; ++j)
+                for (int blockId = 0; blockId < blockNum; ++blockId)
                 {
-                    if (boxX[i] == blockX[j] && boxY[i] == blockY[j])
+                    if (boxX[boxId] == blockX[blockId] && boxY[boxId] == blockY[blockId])
                     {
                         switch (currentPlayerDirection)
                         {
                             case Direction.Left:
-                                ++boxX[i];
+                                ++boxX[boxId];
                                 ++playerX;
                                 break;
                             case Direction.Right:
-                                --boxX[i];
+                                --boxX[boxId];
                                 --playerX;
                                 break;
                             case Direction.Up:
-                                ++boxY[i];
+                                ++boxY[boxId];
                                 ++playerY;
                                 break;
                             case Direction.Down:
-                                --boxY[i];
+                                --boxY[boxId];
                                 --playerY;
                                 break;
                             default:
@@ -259,60 +267,69 @@ class Sokoban
             }
 
             //박스와 박스가 부딪힐 때
-            for (int i = 0; i < boxNum - 1; ++i)
+
+            for (int collidedBox = 0; collidedBox < boxNum; ++collidedBox)
             {
-                if (boxX[i] == boxX[i + 1] && boxY[i] == boxY[i + 1])
+
+                if (pushedBox == collidedBox)
+                {
+                    continue;
+                }
+
+                if (boxX[pushedBox] == boxX[collidedBox] && boxY[pushedBox] == boxY[collidedBox])
                 {
                     switch (currentPlayerDirection)
                     {
                         case Direction.Left:
-                            ++boxX[i];
+                            ++boxX[pushedBox];
                             ++playerX;
                             break;
                         case Direction.Right:
-                            --boxX[i];
+                            --boxX[pushedBox];
                             --playerX;
                             break;
                         case Direction.Up:
-                            ++boxY[i];
+                            ++boxY[pushedBox];
                             ++playerY;
                             break;
                         case Direction.Down:
-                            --boxY[i];
+                            --boxY[pushedBox];
                             --playerY;
                             break;
                     }
                 }
+
             }
 
+
             // 골에 들어갔을 떄 클리어
-            for (int i = 0; i < boxNum; ++i)
+            for (int boxId = 0; boxId < boxNum; ++boxId)
             {
-                for (int j = 0; j < goalNum; ++j)
+                for (int goalId = 0; goalId < goalNum; ++goalId)
                 {
-                    if (boxX[i] == goalX[j] && boxY[i] == goalY[j])
+                    isBoxInGoal[boxId] = false;
+                    if (boxX[boxId] == goalX[goalId] && boxY[boxId] == goalY[goalId])
                     {
                         ++boxInGoal;
-
-                        if (boxInGoal == goalNum)
-                        {
-                            goto Exit;
-                        }
+                        isBoxInGoal[boxId] = true;
+                        break;
                     }
                 }
             }
 
-        }
-
-    Exit:
-        Console.Clear();
-        Console.WriteLine("Game Clear! Press E to exit!");
-        while (true)
-        {
-            if (Console.ReadKey().Key == ConsoleKey.E)
+            if (boxInGoal == goalNum)
             {
-                return;
+                Console.Clear();
+                Console.WriteLine("Game Clear! Press E to exit!");
+                while (true)
+                {
+                    if (Console.ReadKey().Key == ConsoleKey.E)
+                    {
+                        return;
+                    }
+                }
             }
+
         }
     }
 }
