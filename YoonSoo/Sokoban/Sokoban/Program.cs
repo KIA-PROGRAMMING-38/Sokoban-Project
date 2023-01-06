@@ -121,11 +121,11 @@ namespace Sokoban
 
                 // 박스 출력하기
                 Console.SetCursorPosition(boxX, boxY);
-                Console.Write(BOX_STRING);
+                Console.Write("a");
                 Console.SetCursorPosition(box2_X, box2_Y);
-                Console.Write(BOX_STRING);
+                Console.Write("b");
                 Console.SetCursorPosition(box3_X, box3_Y);
-                Console.Write(BOX_STRING);
+                Console.Write("c");
 
                 // 벽 출력하기
                 Console.SetCursorPosition(wallX, wallY);
@@ -138,11 +138,11 @@ namespace Sokoban
 
                 // 골인 출력하기
                 Console.SetCursorPosition(goalX, goalY);
-                Console.Write(GOAL_STRING);
+                Console.Write("ⓐ");
                 Console.SetCursorPosition(goal2_X, goal2_Y);
-                Console.Write(GOAL_STRING);
+                Console.Write("ⓑ");
                 Console.SetCursorPosition(goal3_X, goal3_Y);
-                Console.Write(GOAL_STRING);
+                Console.Write("ⓒ");
                
                 
                 // --------------------------------------------------ProcessINput--------------------------------------------------
@@ -595,13 +595,16 @@ namespace Sokoban
                 // 골인 지점 만들기
                 if (goalX == boxX && goalY == boxY)
                 {
-                    break;
+                    
                 }
                 if (goal2_X == box2_X && goal2_Y == box2_Y)
                 {
+                 
+                }
+                if (goal3_X == box3_X && goal3_Y == box3_Y)
+                {
                     break;
                 }
-
             }
             Console.Clear();
             System.Console.WriteLine("★YOU ARE SO GENIUS!!★");
