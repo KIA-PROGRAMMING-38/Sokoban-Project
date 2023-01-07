@@ -35,8 +35,8 @@ namespace Sokoban
             const int BOX_COUNT = 2;
             const int GOAL_COUNT = BOX_COUNT; // 골이랑 박스의 개수는 같다고 설정해줍니다. 
 
-            // 벽의 개수
-            const int WALL_COUNT = 4;
+            // 벽의 개수를 설정합니다.
+            const int WALL_COUNT = 3;
 
             // 플레이어 위치를 저장하기 위한 변수
             const int PLAYERX = 0;
@@ -54,7 +54,7 @@ namespace Sokoban
 
             // 벽 위치를 저장하기 위한 변수를 다양하게 만들기 위해 배열로 작성
             int[] wallX = new int[WALL_COUNT]{6, 8, 9 };
-            int[] wallY = { 6, 15, 8 };
+            int[] wallY = new int[WALL_COUNT]{ 6, 15, 8 };
 
             // 골 위치를 여러개 저장하기 위한 변수를 배열로 작성
             int[] goalPositionX = { 9, 7 };
@@ -129,7 +129,6 @@ namespace Sokoban
 
                 //-----------------------ProcessInput--------------------- // 마지막 호출 이후 발생한 모든 사용자 입력을 처리합니다.
                 ConsoleKey key = Console.ReadKey().Key;
-
 
                 //-----------------------Update--------------------- // 게임 데이터를 업데이트를 시켜주는 것 입니다.
 
