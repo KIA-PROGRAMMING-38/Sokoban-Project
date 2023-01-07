@@ -258,16 +258,16 @@
                         switch (playerDirection)
                         {
                             case Direction.Up:
-                                ++playerY;
+                                playerY = wallY[wallId] + 1;
                                 break;
                             case Direction.Down:
-                                --playerY;
+                                playerY = wallY[wallId] - 1;
                                 break;
                             case Direction.Left:
-                                ++playerX;
+                                playerX = wallX[wallId] + 1;
                                 break;
                             case Direction.Right:
-                                --playerX;
+                                playerX = wallX[wallId] - 1;
                                 break;
                             default:
                                 Console.Clear();
@@ -285,20 +285,20 @@
                             switch (playerDirection)
                             {
                                 case Direction.Up:
-                                    ++boxY[boxId];
-                                    ++playerY;
+                                    boxY[boxId] = wallY[wallId] + 1;
+                                    playerY = boxY[boxId] + 1;
                                     break;
                                 case Direction.Down:
-                                    --boxY[boxId];
-                                    --playerY;
+                                    boxY[boxId] = wallY[wallId] - 1;
+                                    playerY = boxY[boxId] - 1;
                                     break;
                                 case Direction.Left:
-                                    ++boxX[boxId];
-                                    ++playerX;
+                                    boxX[boxId] = wallX[wallId] + 1;
+                                    playerX = boxX[boxId] + 1;
                                     break;
                                 case Direction.Right:
-                                    --boxX[boxId];
-                                    --playerX;
+                                    boxX[boxId] = wallX[wallId] - 1;
+                                    playerX = boxX[boxId] - 1;
                                     break;
                                 default:
                                     Console.Clear();
@@ -309,7 +309,6 @@
                             break;
                         }
                     }
-
                 }
 
                 // 골
