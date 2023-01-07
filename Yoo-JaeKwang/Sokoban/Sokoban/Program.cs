@@ -81,7 +81,6 @@
             bool[] isBoxOnGoal = new bool[TOTAL_BOX_NUM];
 
             Direction playerDirection = default;
-            int pushedBoxID = default;
 
             // 게임 루프 == 프레임(Frame)
             while (true)
@@ -98,7 +97,6 @@
                 {
                     Console.SetCursorPosition(goalX[goalId], goalY[goalId]);
                     Console.Write(GOAL_SYMBOL);
-
                 }
 
                 //박스
@@ -197,7 +195,6 @@
 
                                 return;
                         }
-                        pushedBoxID = boxId;
                     }
                     // 박스에 박스
                     for (int collidedBoxId = 0; collidedBoxId < TOTAL_BOX_NUM; ++collidedBoxId)
@@ -211,32 +208,20 @@
                             switch (playerDirection)
                             {
                                 case Direction.Up:
-                                    if (pushedBoxID == boxId)
-                                    {
                                         boxY[boxId] = boxY[collidedBoxId] + 1;
                                         playerY = boxY[boxId] + 1;
-                                    }
                                     break;
                                 case Direction.Down:
-                                    if (pushedBoxID == boxId)
-                                    {
                                         boxY[boxId] = boxY[collidedBoxId] - 1;
                                         playerY = boxY[boxId] - 1;
-                                    }
                                     break;
                                 case Direction.Left:
-                                    if (pushedBoxID == boxId)
-                                    {
                                         boxX[boxId] = boxX[collidedBoxId] + 1;
                                         playerX = boxX[boxId] + 1;
-                                    }
                                     break;
                                 case Direction.Right:
-                                    if (pushedBoxID == boxId)
-                                    {
                                         boxX[boxId] = boxX[collidedBoxId] - 1;
                                         playerX = boxX[boxId] - 1;
-                                    }
                                     break;
                                 default:
                                     Console.Clear();
