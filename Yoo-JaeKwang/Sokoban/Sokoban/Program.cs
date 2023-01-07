@@ -78,6 +78,8 @@
             int[] goalX = { GOAL1_INITIAL_X, GOAL2_INITIAL_X, GOAL3_INITIAL_X };
             int[] goalY = { GOAL1_INITIAL_Y, GOAL2_INITIAL_Y, GOAL3_INITIAL_Y };
 
+            bool[] isBoxOnGoal = new bool[TOTAL_BOX_NUM];
+
             Direction playerDirection = default;
             int pushedBoxID = default;
 
@@ -91,11 +93,27 @@
                 Console.SetCursorPosition(playerX, playerY);
                 Console.Write(PLAYER_SYMBOL);
 
+                //골
+                for (int goalId = 0; goalId < TOTAL_GOAL_NUM; ++goalId)
+                {
+                    Console.SetCursorPosition(goalX[goalId], goalY[goalId]);
+                    Console.Write(GOAL_SYMBOL);
+
+                }
+
                 //박스
                 for (int boxId = 0; boxId < TOTAL_BOX_NUM; ++boxId)
                 {
                     Console.SetCursorPosition(boxX[boxId], boxY[boxId]);
-                    Console.Write(BOX_SYMBOL);
+                    //골에 박스
+                    if (isBoxOnGoal[boxId])
+                    {
+                        Console.Write(GOALIN_SYMBOL);
+                    }
+                    else
+                    {
+                        Console.Write(BOX_SYMBOL);
+                    }
                 }
 
                 //벽
@@ -105,30 +123,6 @@
                     Console.Write(WALL_SYMBOL);
                 }
 
-                //골
-                for (int goalId = 0; goalId < TOTAL_GOAL_NUM; ++goalId)
-                {
-                    Console.SetCursorPosition(goalX[goalId], goalY[goalId]);
-
-                    //골에 박스
-                    bool isBoxOnGoal = false;
-                    for (int boxId = 0; boxId < TOTAL_BOX_NUM; ++boxId)
-                    {
-                        if (goalX[goalId] == boxX[boxId] && goalY[goalId] == boxY[boxId])
-                        {
-                            isBoxOnGoal = true;
-                            break;
-                        }
-                    }
-                    if (isBoxOnGoal)
-                    {
-                        Console.Write(GOALIN_SYMBOL);
-                    }
-                    else
-                    {
-                        Console.Write(GOAL_SYMBOL);
-                    }
-                }
 
                 //맵 테두리
                 for (int i = -1; i <= OUTLINE_LENGTH_X; ++i)
@@ -320,13 +314,15 @@
 
                 // 골
                 int goalCount = 0;
-                for (int goalId = 0; goalId < TOTAL_GOAL_NUM; ++goalId)
+                for (int boxId = 0; boxId < TOTAL_BOX_NUM; ++boxId)
                 {
-                    for (int boxId = 0; boxId < TOTAL_BOX_NUM; ++boxId)
+                    isBoxOnGoal[boxId] = false;
+                    for (int goalId = 0; goalId < TOTAL_GOAL_NUM; ++goalId)
                     {
                         if (boxX[boxId] == goalX[goalId] && boxY[boxId] == goalY[goalId])
                         {
                             ++goalCount;
+                            isBoxOnGoal[boxId] = true;
                             break;
                         }
                     }
