@@ -282,7 +282,7 @@
                 // 상자랑 상자가 부딪혔을 때
                 // 오류
                 for (int i = 0; i < box_X.Count(); i++)
-                {                                      
+                {
                     for (int j = 1; j < box_X.Count(); j++)
                     {
                         if (i == j)
@@ -322,8 +322,8 @@
 
                 // box가 골인 했을때
                 // box가 골이랑 모두다 같아졌을때
-                
 
+                int goalInCount = 0;
                 for (int i = 0; i < goal_X.Count(); i++)
                 {
                     isBoxOnGoal[i] = false;
@@ -332,12 +332,15 @@
                     {
                         if (goal_X[i] == box_X[j] && goal_Y[i] == box_Y[j])
                         {
-                            isBoxOnGoal[i] = true;                            
+                            isBoxOnGoal[i] = true;
+                            goalInCount += 1;
+
+                            break; // goal에 box하나가 들어와 있다면 다시 해당 goal에 대해선 검사할 필요가 없으므로
                         }
                     }
 
                 }
-                if (isBoxOnGoal[0] == true && isBoxOnGoal[1] == true && isBoxOnGoal[2] == true)
+                if (goalInCount == goal_X.Count())
                 {
                     Console.Clear();
                     Console.WriteLine("축하!!");

@@ -280,7 +280,7 @@ namespace Sokoban
                     {
                         continue;
                     }
-                    if (boxPositionsX[0] == boxPositionsX[1] && boxPositionsY[0] == boxPositionsY[1])
+                    if (boxPositionsX[pushedBoxId] == boxPositionsX[collidedBoxId] && boxPositionsY[pushedBoxId] == boxPositionsY[collidedBoxId])
                     {
                         switch (playerMoveDirection)
                         {
@@ -311,8 +311,6 @@ namespace Sokoban
                         }
                     }
                 }
-
-
 
                 // 박스와 골의 처리
                 // 1) Box1번과 Goal1번이 만났을 때
