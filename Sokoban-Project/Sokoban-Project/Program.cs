@@ -38,7 +38,7 @@ namespace prototype
             #region 초기세팅
 
             Console.ResetColor(); // 컬러를 초기화
-            Console.BackgroundColor = ConsoleColor.Red; // 배경 색
+            Console.BackgroundColor = ConsoleColor.Blue; // 배경 색
             Console.ForegroundColor = ConsoleColor.Yellow; // 글자 색
             Console.CursorVisible = false; // 커서를 숨김
             Console.Title = "어코반"; // 제목을 지어줌
@@ -72,7 +72,7 @@ namespace prototype
 
             #region 박스 여러개 기호 및 좌표
 
-            string box = "O";
+            string box = "B";
 
             int box1_X = 2;
             int box1_Y = 2;
@@ -191,6 +191,23 @@ namespace prototype
 
             int movecount = 0; // 이동한 횟수를 저장하는 변수
 
+            #region 포탈 기호 및 좌표
+
+            string portal = "O";
+            const int portal1X = 4;
+            const int portal1Y = 8;
+
+            const int portal2X = 23;
+            const int portal2Y = 2;
+
+            int[] portal_X = new int[] { portal1X, portal2X };
+            int[] portal_Y = new int[] { portal1Y, portal2Y };
+
+            #endregion
+
+
+
+
             #endregion
 
             #region 게임루프
@@ -204,7 +221,13 @@ namespace prototype
                 Console.SetCursorPosition(Map_minX + 2, Map_maxY + 3);
                 Console.Write("'Space' = 당기기");
 
+                Console.SetCursorPosition(Map_minX + 2, Map_maxY + 4);
+                Console.Write("'A' = 발로 차기 ");
+
                 Console.SetCursorPosition(Map_minX + 2, Map_maxY + 5);
+                Console.Write("'O' = 포탈 ");
+
+                Console.SetCursorPosition(Map_minX + 2, Map_maxY + 8);
                 Console.Write("Hint = 13+26+4-30+3-12+7-6+1-2");
 
                 Console.SetCursorPosition(Map_maxX + 5, Map_minY + 2);
@@ -215,17 +238,21 @@ namespace prototype
                 for (int i = 1; i < Map_maxY + 1; ++i) // Y축 그려주기 = X는 고정이고 Y만 달라지는거임
                 {
                     Console.SetCursorPosition(Map_minX - 1, i);
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                     Console.Write(frame);
                     Console.SetCursorPosition(Map_maxX + 1, i);
                     Console.Write(frame);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                 }
 
                 for (int i = 1; i < Map_maxX + 3; ++i) // x축 그려주기 = y축은 고정이고 X만 달라지는거임
                 {
                     Console.SetCursorPosition(i - 1, Map_minY - 1);
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                     Console.Write(frame);
                     Console.SetCursorPosition(i - 1, Map_maxY + 1);
                     Console.Write(frame);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                 }
                 #endregion
 
@@ -244,11 +271,17 @@ namespace prototype
                 for (int i = 0; i < tree_X.Length; ++i)
                 {
                     Console.SetCursorPosition(tree_X[i], tree_Y[i]);
+
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.Write(tree);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                 }
 
+
                 Console.SetCursorPosition(13, 4); // 페이크 나무
+                Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write(tree);
+                Console.ForegroundColor = ConsoleColor.Yellow;
 
                 #endregion
 
@@ -269,7 +302,9 @@ namespace prototype
                     }
                     else
                     {
+                        Console.ForegroundColor = ConsoleColor.Magenta;
                         Console.Write(box);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                     }
                 }
 
@@ -277,8 +312,17 @@ namespace prototype
 
                 #endregion
 
+                #region 포탈 그려주기
 
 
+
+                for (int i = 0; i < portal_X.Length; ++i)
+                {
+                    Console.SetCursorPosition(portal_X[i], portal_Y[i]);
+                    Console.Write(portal);
+                }
+
+                #endregion
 
                 #endregion
 
@@ -307,24 +351,64 @@ namespace prototype
                 {
                     player_X = Math.Min(player_X + 1, Map_maxX);
                     direction = DIRECTION.RIGHT;
+                    if (player_X == portal_X[0] && player_Y == portal_Y[0])
+                    {
+                        player_X = portal_X[1] + 1;
+                        player_Y = portal_Y[1];
+                    }
+                    else if (player_X == portal_X[1] && player_Y == portal_Y[1])
+                    {
+                        player_X = portal_X[0] + 1;
+                        player_Y = portal_Y[0];
+                    }
                 }
 
                 if (key == ConsoleKey.LeftArrow)
                 {
                     player_X = Math.Max(player_X - 1, Map_minX);
                     direction = DIRECTION.LEFT;
+                    if (player_X == portal_X[0] && player_Y == portal_Y[0])
+                    {
+                        player_X = portal_X[1] - 1;
+                        player_Y = portal_Y[1];
+                    }
+                    else if (player_X == portal_X[1] && player_Y == portal_Y[1])
+                    {
+                        player_X = portal_X[0] - 1;
+                        player_Y = portal_Y[0];
+                    }
                 }
 
                 if (key == ConsoleKey.UpArrow)
                 {
                     player_Y = Math.Max(player_Y - 1, Map_minY);
                     direction = DIRECTION.UP;
+                    if (player_X == portal_X[0] && player_Y == portal_Y[0])
+                    {
+                        player_X = portal_X[1];
+                        player_Y = portal_Y[1] - 1;
+                    }
+                    else if (player_X == portal_X[1] && player_Y == portal_Y[1])
+                    {
+                        player_X = portal_X[0];
+                        player_Y = portal_Y[0] - 1;
+                    }
                 }
 
                 if (key == ConsoleKey.DownArrow)
                 {
                     player_Y = Math.Min(player_Y + 1, Map_maxY);
                     direction = DIRECTION.DOWN;
+                    if (player_X == portal_X[0] && player_Y == portal_Y[0])
+                    {
+                        player_X = portal_X[1];
+                        player_Y = portal_Y[1] + 1;
+                    }
+                    else if (player_X == portal_X[1] && player_Y == portal_Y[1])
+                    {
+                        player_X = portal_X[0];
+                        player_Y = portal_Y[0] + 1;
+                    }
                 }
 
                 #endregion
@@ -333,6 +417,7 @@ namespace prototype
 
                 for (int i = 0; i < box_X.Length; ++i)
                 {
+
                     if (player_X == box_X[i] && player_Y == box_Y[i])
                     {
                         switch (direction)
@@ -341,27 +426,69 @@ namespace prototype
 
                                 box_X[i] = Math.Min(player_X + 1, Map_maxX);
                                 player_X = box_X[i] - 1;
+                                if (box_X[i] == portal_X[0] && box_Y[i] == portal_Y[0])
+                                {
+                                    box_X[i] = portal_X[1] + 1;
+                                    box_Y[i] = portal_Y[1];
+                                }
+                                else if (box_X[i] == portal_X[1] && box_Y[i] == portal_Y[1])
+                                {
+                                    box_X[i] = portal_X[0] + 1;
+                                    box_Y[i] = portal_Y[0];
+                                }
                                 break;
 
                             case DIRECTION.LEFT:
 
                                 box_X[i] = Math.Max(player_X - 1, Map_minX);
                                 player_X = box_X[i] + 1;
+                                if (box_X[i] == portal_X[0] && box_Y[i] == portal_Y[0])
+                                {
+                                    box_X[i] = portal_X[1] - 1;
+                                    box_Y[i] = portal_Y[1];
+                                }
+                                else if (box_X[i] == portal_X[1] && box_Y[i] == portal_Y[1])
+                                {
+                                    box_X[i] = portal_X[0] - 1;
+                                    box_Y[i] = portal_Y[0];
+                                }
                                 break;
 
                             case DIRECTION.UP:
 
                                 box_Y[i] = Math.Max(player_Y - 1, Map_minY);
                                 player_Y = box_Y[i] + 1;
+                                if (box_X[i] == portal_X[0] && box_Y[i] == portal_Y[0])
+                                {
+                                    box_Y[i] = portal_Y[1] - 1;
+                                    box_X[i] = portal_X[1];
+                                }
+                                else if (box_X[i] == portal_X[1] && box_Y[i] == portal_Y[1])
+                                {
+                                    box_Y[i] = portal_Y[0] - 1;
+                                    box_X[i] = portal_X[0];
+                                }
                                 break;
 
                             case DIRECTION.DOWN:
 
                                 box_Y[i] = Math.Min(player_Y + 1, Map_maxY);
                                 player_Y = box_Y[i] - 1;
+                                if (box_X[i] == portal_X[0] && box_Y[i] == portal_Y[0])
+                                {
+                                    box_Y[i] = portal_Y[1] + 1;
+                                    box_X[i] = portal_X[1];
+                                }
+                                else if (box_X[i] == portal_X[1] && box_Y[i] == portal_Y[1])
+                                {
+                                    box_Y[i] = portal_Y[0] + 1;
+                                    box_X[i] = portal_X[0];
+                                }
                                 break;
                         }
                     }
+
+
                 }
 
 
