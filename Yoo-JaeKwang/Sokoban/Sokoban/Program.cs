@@ -80,7 +80,7 @@
 
             bool[] isBoxOnGoal = new bool[TOTAL_BOX_NUM];
 
-            Direction playerDirection = default;
+            Direction playerDirection = Direction.None;
 
             // 게임 루프 == 프레임(Frame)
             while (true)
