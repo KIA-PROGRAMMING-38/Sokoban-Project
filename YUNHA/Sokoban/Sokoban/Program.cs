@@ -14,7 +14,7 @@
         static void Main()
         {
             // 초기 세팅
-            const string VERSION = "2022.12.28";
+            const string VERSION = "2023.01.09";
             Console.ResetColor();                                   // 컬러를 초기화한다.
             Console.CursorVisible = false;                          // 커서를 숨긴다.
             Console.Title = "Sokoban " + VERSION;                   // 타이틀을 설정한다.
@@ -22,62 +22,78 @@
             Console.ForegroundColor = ConsoleColor.Yellow;          // 글꼴색을 설정한다.
             Console.Clear();                                        // 출력된 모든 내용을 지운다.
 
+            // 맵 설정
+            // 가로 40, 세로 20
+            const int MAP_RIGHT_END = 39, MAP_DOWN_END = 19, MAP_LEFT_END = 0, MAP_UP_END = 0;
+            const int GOAL_COUNT = 3;
+            const int BOX_COUNT = GOAL_COUNT;
+
             // 플레이어 설정
-            const int INIT_PLAYER_X = 0, INIT_PLAYER_Y = 0;
+            const int INIT_PLAYER_X = 1, INIT_PLAYER_Y = 1;
             int playerX = INIT_PLAYER_X, playerY = INIT_PLAYER_Y;
             Direction playerDirection = Direction.None;
             const string PLAYER = "K";
 
             // 박스 설정
-            int[,] boxList = { { 5, 5 }, { 12, 5 }, { 3, 7 } };
-            // const int INIT_BOX_X = 5, INIT_BOX_Y = 5;
-            // int boxX = INIT_BOX_X, boxY = INIT_BOX_Y;
+            int[] boxPositionsX = { 5, 22, 33 };
+            int[] boxPositionsY = { 7, 10, 13 };
+            int pushedBoxId = 0;
             const string BOX = "B";
 
             // 벽 설정
-            int[,] wallList = { { 3, 4 }, { 1, 6 }, { 2, 8 } };
-            // const int INIT_WALL_X = 3, INIT_WALL_Y = 3;
+            int[] wallPositionsX = { 11, 16, 25 };
+            int[] wallPositionsY = { 6, 11, 11 };
+            const int WALL_COUNT = 3;
             const string WALL = "X";
 
             // 골인 지점
-            int[,] goalList = { { 2, 2 }, { 4, 7 }, { 6, 9 } };
-            // const int GOAL_X = 7, GOAL_Y = 7;
+            int[] goalPositionsX = { 22, 8, 30 };
+            int[] goalPositionsY = { 7, 14, 12 };
             const string GOAL = "G";
-
-            // 맵 설정
-            // 가로 15, 세로 10
-            const int MAP_RIGHT_END = 20, MAP_DOWN_END = 10, MAP_LEFT_END = 0, MAP_UP_END = 0;
+            const string GOALIN = "@";
 
             // 게임 루프 == 프레임(Frame)
             while (true)
             {
                 // 이전 프레임을 지운다.
                 Console.Clear();
-                bool[] goaledArr = new bool[3];
-
-
+                
                 // -------------------------------------Render------------------------------------- 
                 // 플레이어 출력하기
                 Console.SetCursorPosition(playerX, playerY);
                 Console.Write(PLAYER);
-                // 박스 출력하기
-                for (int i = 0; i < boxList.Length / 2; i++)
+
+                // 벽 출력하기
+                for (int wallId = 0; wallId < WALL_COUNT; ++wallId)
                 {
-                    Console.SetCursorPosition(boxList[i, 0], boxList[i, 1]);
+                    Console.SetCursorPosition(wallPositionsX[wallId], wallPositionsY[wallId]);
+                    Console.Write(WALL);
+                }
+
+                // 박스 출력하기
+                for (int boxId = 0; boxId < BOX_COUNT; ++boxId)
+                {
+                    Console.SetCursorPosition(boxPositionsX[boxId], boxPositionsY[boxId]);
                     Console.Write(BOX);
                 }
 
-                // 벽 출력하기
-                for (int i = 0; i < wallList.Length / 2; i++)
-                {
-                    Console.SetCursorPosition(wallList[i, 0], wallList[i, 1]);
-                    Console.Write(WALL);
-                }
                 // 골인 지점 출력하기
-                for (int i = 0; i < goalList.Length / 2; i++)
+                for (int goalId = 0; goalId < GOAL_COUNT; ++goalId)
                 {
-                    Console.SetCursorPosition(goalList[i, 0], goalList[i, 1]);
-                    Console.Write(GOAL);
+                    for (int boxId = 0; boxId < BOX_COUNT; ++boxId)
+                    {
+                        if (goalPositionsX[goalId] == boxPositionsX[boxId] && goalPositionsY[goalId] == boxPositionsY[boxId])
+                        {
+                            Console.SetCursorPosition(goalPositionsX[goalId], goalPositionsY[goalId]);
+                            Console.Write(GOALIN);
+                            break;
+                        }
+                        else
+                        {
+                            Console.SetCursorPosition(goalPositionsX[goalId], goalPositionsY[goalId]);
+                            Console.Write(GOAL);
+                        }
+                    }
                 }
 
                 // ----------------------------------ProcessInput---------------------------------- 
@@ -117,53 +133,57 @@
                 }
                 #endregion
 
-                #region 박스 업데이트
+                #region 박스 <=> 플레이어 상호작용
                 // 박스 업데이트
+
                 // 플레이어가 이동한 후
-                for(int i = 0; i < boxList.Length / 2; i++)
+                for(int boxId = 0; boxId < BOX_COUNT; ++boxId)
                 {
-                    if(playerX == boxList[i, 0] && playerY == boxList[i, 1])
+                    int boxX = boxPositionsX[boxId];
+                    int boxY = boxPositionsY[boxId];
+                    if(playerX == boxX && playerY == boxY)
                     {
+                        pushedBoxId = boxId;
                         switch (playerDirection)
                         {
                             case Direction.Left:         // 플레이어가 왼쪽으로 이동중
-                                if (boxList[i, 0] == MAP_LEFT_END)
+                                if (boxX == MAP_LEFT_END)
                                 {
                                     playerX = MAP_LEFT_END + 1;
                                 }
                                 else
                                 {
-                                    boxList[i, 0] -= 1;
+                                    boxX -= 1;
                                 }
                                 break;
                             case Direction.Right:         // 플레이어가 오른쪽으로 이동 중
-                                if (boxList[i, 0] == MAP_RIGHT_END)
+                                if (boxX == MAP_RIGHT_END)
                                 {
                                     playerX = MAP_RIGHT_END - 1;
                                 }
                                 else
                                 {
-                                    boxList[i, 0] += 1;
+                                    boxX += 1;
                                 }
                                 break;
                             case Direction.Up:         // 플레이어가 위로 이동 중
-                                if (boxList[i, 1] == MAP_UP_END)
+                                if (boxY == MAP_UP_END)
                                 {
                                     playerY = MAP_UP_END + 1;
                                 }
                                 else
                                 {
-                                    boxList[i, 1] -= 1;
+                                    boxY -= 1;
                                 }
                                 break;
                             case Direction.Down:         // 플레이어가 아래로 이동 중
-                                if (boxList[i, 1] == MAP_DOWN_END)
+                                if (boxY == MAP_DOWN_END)
                                 {
                                     playerY = MAP_DOWN_END - 1;
                                 }
                                 else
                                 {
-                                    boxList[i, 1] += 1;
+                                    boxY += 1;
                                 }
                                 break;
                             default:
@@ -171,41 +191,51 @@
                                 Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다. {playerDirection}");
                                 return;
                         }
+                        boxPositionsX[boxId] = boxX;
+                        boxPositionsY[boxId] = boxY;
+                        break;
                     }
+                    
                 }
                 #endregion
 
                 #region 박스 <=> 박스 상호작용
-                for(int i = 0; i < (boxList.Length / 2) - 1; i++)
+                for (int collisionBoxId = 0; collisionBoxId < BOX_COUNT; collisionBoxId++)
                 {
-                    for(int j = i + 1;  j < boxList.Length / 2; j++)
+                    int pushedBoxX = boxPositionsX[pushedBoxId];
+                    int pushedBoxY = boxPositionsY[pushedBoxId];
+                    if (pushedBoxId != collisionBoxId)
                     {
-                        if(boxList[i, 0] == boxList[j, 0] && boxList[i, 1] == boxList[j, 1])
+                        if (boxPositionsX[pushedBoxId] == boxPositionsX[collisionBoxId] && boxPositionsY[pushedBoxId] == boxPositionsY[collisionBoxId])
                         {
-                            switch(playerDirection)
+                            int collisionBoxX = boxPositionsX[collisionBoxId];
+                            int collisionBoxY = boxPositionsY[collisionBoxId];
+                            switch (playerDirection)
                             {
                                 case Direction.Left:
-                                    boxList[i, 0] = boxList[j, 0] + 1;
-                                    playerX = boxList[i, 0] + 1;
+                                    pushedBoxX = collisionBoxX + 1;
+                                    playerX = pushedBoxX + 1;
                                     break;
                                 case Direction.Right:
-                                    boxList[i, 0] = boxList[j, 0] - 1;
-                                    playerX = boxList[i, 0] - 1;
+                                    pushedBoxX = collisionBoxX - 1;
+                                    playerX = pushedBoxX - 1;
                                     break;
                                 case Direction.Up:
-                                    boxList[i, 1] = boxList[j, 1] + 1;
-                                    playerY = boxList[i, 1] + 1;
+                                    pushedBoxY = collisionBoxY + 1;
+                                    playerY = pushedBoxY + 1;
                                     break;
                                 case Direction.Down:
-                                    boxList[i, 1] = boxList[j, 1] - 1;
-                                    playerY = boxList[i, 1] - 1;
+                                    pushedBoxY = collisionBoxY - 1;
+                                    playerY = pushedBoxY - 1;
                                     break;
                                 default:
                                     return;
-
                             }
                         }
+                        boxPositionsX[pushedBoxId] = pushedBoxX;
+                        boxPositionsY[pushedBoxId] = pushedBoxY;
                     }
+                    
                 }
 
 
@@ -213,23 +243,23 @@
 
                 #region 플레이어 <=> 벽 상호작용
                 // 벽 상호작용
-                for (int i = 0; i < wallList.Length / 2; i++)
+                for (int wallId = 0; wallId < WALL_COUNT; ++wallId)
                 {
-                    if (playerX == wallList[i, 0] && playerY == wallList[i, 1])
+                    if (playerX == wallPositionsX[wallId] && playerY == wallPositionsY[wallId])
                     {
                         switch (playerDirection)
                         {
                             case Direction.Right:
-                                playerX = wallList[i, 0] - 1;
+                                playerX = wallPositionsX[wallId] - 1;
                                 break;
                             case Direction.Left:
-                                playerX = wallList[i, 0] + 1;
+                                playerX = wallPositionsX[wallId] + 1;
                                 break;
                             case Direction.Up:
-                                playerY = wallList[i , 1] + 1;
+                                playerY = wallPositionsY[wallId] + 1;
                                 break;
                             case Direction.Down:
-                                playerY = wallList[i, 1] - 1;
+                                playerY = wallPositionsY[wallId] - 1;
                                 break;
                             default:
                                 return;
@@ -240,29 +270,29 @@
                 #endregion
 
                 #region 박스 <=> 벽 상호작용
-                for(int i = 0; i < boxList.Length / 2; i++)
+                for(int boxId = 0; boxId < BOX_COUNT; ++boxId)
                 {
-                    for(int j = 0; j < wallList.Length / 2; j++)
+                    for(int wallId = 0; wallId < WALL_COUNT; ++wallId)
                     {
-                        if (boxList[i, 0] == wallList[j, 0] && boxList[i, 1] == wallList[j, 1])
+                        if (boxPositionsX[boxId] == wallPositionsX[wallId] && boxPositionsY[boxId] == wallPositionsY[wallId])
                         {
                             switch(playerDirection)
                             {
                                 case Direction.Right:
-                                    boxList[i, 0] = wallList[j, 0] - 1;
-                                    playerX = boxList[i, 0] - 1;
+                                    boxPositionsX[boxId] = wallPositionsX[wallId] - 1;
+                                    playerX = boxPositionsX[boxId] - 1;
                                     break;
                                 case Direction.Left:
-                                    boxList[i, 0] = wallList[j, 0] + 1;
-                                    playerX = boxList[i, 0] + 1;
+                                    boxPositionsX[boxId] = wallPositionsX[wallId] + 1;
+                                    playerX = boxPositionsX[boxId] + 1;
                                     break;
                                 case Direction.Up:
-                                    boxList[i, 1] = wallList[j, 1] + 1;
-                                    playerY = boxList[i, 1] + 1;
+                                    boxPositionsY[boxId] = wallPositionsY[wallId] + 1;
+                                    playerY = boxPositionsY[boxId] + 1;
                                     break;
                                 case Direction.Down:
-                                    boxList[i, 1] = wallList[j, 1] - 1;
-                                    playerY = boxList[j, 1] - 1;
+                                    boxPositionsY[boxId] = wallPositionsY[wallId] - 1;
+                                    playerY = boxPositionsY[boxId] - 1;
                                     break;
                                 default:
                                     return;
@@ -271,28 +301,46 @@
                     }
                 }
                 #endregion
-                
+
                 #region 골인 구현
-                for(int i = 0; i < boxList.Length / 2; i++)
+                
+                bool[] goaledArr = new bool[GOAL_COUNT];
+                bool isGameClear = false;
+
+                for (int goalId = 0; goalId < GOAL_COUNT; ++goalId)
                 {
-                    for(int j = 0; j < goalList.Length / 2; j++)
+                    for(int boxId = 0; boxId < BOX_COUNT; ++boxId)
                     {
-                        if (boxList[i, 0] == goalList[j, 0] && boxList[i, 1] == goalList[j, 1])
+                        if (goalPositionsX[goalId] == boxPositionsX[boxId] && goalPositionsY[goalId] == boxPositionsY[boxId])
                         {
-                            goaledArr[j] = true;
+                            goaledArr[goalId] = true;
+                            break;
                         }
                     }
                 }
 
-                if (goaledArr[0] == true && goaledArr[1] == true && goaledArr[2] == true)
+                for(int goalId = 0; goalId < GOAL_COUNT; ++goalId)
+                {
+                    if (goaledArr[goalId] == false)
+                    {
+                        isGameClear = false;
+                        break;
+                    }
+                    else
+                    {
+                        isGameClear = true;
+                    }
+                }
+
+                if(isGameClear == true)
                 {
                     Console.Clear();
-                    Console.WriteLine("GAME CLEAR");
+                    Console.WriteLine("GAME CLEAR!");
                     break;
                 }
+
                 #endregion
             }
         }
     }
 }
-
