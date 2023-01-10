@@ -100,7 +100,7 @@ namespace Sokoban
                             break;
                         }
                     }
-                    
+
                     if (isBoxOnGoal[boxId])
                     {
                         Console.Write("C");
@@ -113,8 +113,8 @@ namespace Sokoban
 
 
                 // 벽을 그린다.
-                    Console.SetCursorPosition(wallX, wallY);
-                    Console.Write("W");
+                Console.SetCursorPosition(wallX, wallY);
+                Console.Write("W");
 
                 // --------------------------------- ProcessInput -----------------------------------------
                 ConsoleKey key = Console.ReadKey().Key;
@@ -147,30 +147,30 @@ namespace Sokoban
                 }
 
                 // 플레이어와 벽의 충돌 처리
-                    if (playerX == wallX && playerY == wallY)
+                if (playerX == wallX && playerY == wallY)
+                {
+                    switch (playerMoveDirection)
                     {
-                        switch (playerMoveDirection)
-                        {
-                            case Direction.Left:
-                                playerX = wallX + 1;
-                                break;
-                            case Direction.Right:
-                                playerX = wallX - 1;
-                                break;
-                            case Direction.Up:
-                                playerY = wallY + 1;
-                                break;
-                            case Direction.Down:
-                                playerY = wallY - 1;
-                                break;
-                            default:
-                                Console.Clear();
-                                Console.WriteLine($"[Error] 플레이어 이동 방향 데이터가 오류입니다. : {playerMoveDirection}");
+                        case Direction.Left:
+                            playerX = wallX + 1;
+                            break;
+                        case Direction.Right:
+                            playerX = wallX - 1;
+                            break;
+                        case Direction.Up:
+                            playerY = wallY + 1;
+                            break;
+                        case Direction.Down:
+                            playerY = wallY - 1;
+                            break;
+                        default:
+                            Console.Clear();
+                            Console.WriteLine($"[Error] 플레이어 이동 방향 데이터가 오류입니다. : {playerMoveDirection}");
 
-                                return;
-                        }
+                            return;
                     }
-                
+                }
+
                 // 박스 이동 처리
                 // 플레이어가 박스를 밀었을 때라는 게 무엇을 의미하는가? => 플레이어가 이동했는데 플레이어의 위치와 박스 위치가 겹쳤다.
                 for (int i = 0; i < BOX_COUNT; ++i)
@@ -334,7 +334,7 @@ namespace Sokoban
 
                 // 박스와 골의 처리
                 int boxOnGoalCount = 0;
-                
+
                 for (int goalId = 0; goalId < GOAL_COUNT; ++goalId) // 모든 골 지점에 대해서
                 {
                     for (int boxId = 0; boxId < BOX_COUNT; ++boxId) // 모든 박스에 대해서
@@ -355,26 +355,6 @@ namespace Sokoban
                     Console.WriteLine("축하합니다. 클리어 하셨습니다.");
 
                     break;
-                }
-                // a와 b중 최댓값을 구한다.
-                int Max(int a, int b)
-                {
-                    return (a > b) ? a : b;
-                }
-                // a와 b중 최솟값을 구한다.
-                int Min(int a, int b) => a < b ? a : b;
-                
-                int a = 10;
-                int b = 20;
-                Swap(ref a, ref b);
-                //a(20) / b(10) 으로 바꾸기
-
-                //둘의 데이터를 바꾼다.
-                void Swap(ref int a, ref int b)
-                {
-                    int number = a;
-                    a = b;
-                    b = number;
                 }
             }
         }
