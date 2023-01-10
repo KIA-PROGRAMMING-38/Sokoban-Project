@@ -19,6 +19,41 @@ namespace Sokoban
     {
         static void Main()
         {
+            // a와 b 중 최댓값을 구한다.
+            int Max(int a, int b)
+            {
+                int result = 0;
+                if (a < b)
+                {
+                    result = b;
+                }
+                else
+                {
+                    result = a;
+                }
+
+                return result;
+            }
+
+            int Min(int a, int b) => (a < b) ? a : b; // 괄호 없어도 ㄷ
+
+            // int 타입의 데이터를 여러 개 받을 수 있다.
+            int VariadicMax(params int[] numbers)
+            {
+                
+                int result = numbers[0];
+
+                for (int i = 1; i < numbers.Length; ++i)
+                {
+                    if (result < numbers[i])
+                    {
+                        result = numbers[i];
+                    }
+                }
+                return result;
+            }
+            
+
             // 초기 세팅
             Console.ResetColor(); // 컬러를 초기화 하는 것
             Console.CursorVisible = false; // 커서를 숨기기
@@ -119,25 +154,25 @@ namespace Sokoban
                 // 플레이어 이동 처리
                 if (key == ConsoleKey.LeftArrow)
                 {
-                    playerX = Math.Max(0, playerX - 1);
+                    playerX = Max(0, playerX - 1);
                     playerMoveDirection = Direction.Left;
                 }
 
                 if (key == ConsoleKey.RightArrow)
                 {
-                    playerX = Math.Min(playerX + 1, 20);
+                    playerX = Min(playerX + 1, 20);
                     playerMoveDirection = Direction.Right;
                 }
 
                 if (key == ConsoleKey.UpArrow)
                 {
-                    playerY = Math.Max(0, playerY - 1);
+                    playerY = Max(0, playerY - 1);
                     playerMoveDirection = Direction.Up;
                 }
 
                 if (key == ConsoleKey.DownArrow)
                 {
-                    playerY = Math.Min(playerY + 1, 10);
+                    playerY = Min(playerY + 1, 10);
                     playerMoveDirection = Direction.Down;
                 }
 
