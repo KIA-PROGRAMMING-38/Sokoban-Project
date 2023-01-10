@@ -1,326 +1,365 @@
 ﻿namespace Sokoban
 {
-    enum Direction // 플레이어 이동 방향
+    #region 열거형 모음
+    enum PlayerDirection // 방향을 저장하는 타입
     {
+        NONE,
         LEFT,
         RIGHT,
         UP,
         DOWN
     }
+    #endregion
 
     class Program
     {
         static void Main()
         {
-            // 초기 세팅
-            Console.ResetColor();                              // 컬러를 초기화한다
-            Console.CursorVisible = false;                     // 커서를 켜고 끄는 것, 불리언 타입이다
-            Console.Title = "마이노의 라비린스 월";               // 타이틀 명을 바꾸어주는 이름
-            Console.BackgroundColor = ConsoleColor.DarkBlue;  // 배경색을 설정한다
-            Console.ForegroundColor = ConsoleColor.Yellow;     // 글꼴색을 설정한다
-            Console.Clear();                                   // 출력된 모든 내용을 지운다
+            #region 초기 세팅
+            Console.ResetColor();   // 컬러 초기화
+            Console.CursorVisible = false;  // 커서 숨기기
+            Console.Title = "마이노이 라비린스 월.mk2";  // 타이틀 설정
+            Console.BackgroundColor = ConsoleColor.Green;   // 배경색 설정
+            Console.ForegroundColor = ConsoleColor.Black;   // 글꼴색 설정
+            Console.Clear();    // 출력된 내용 지우기
+            #endregion
 
-            // 맵의 가장자리 구현
-            const int MAPFRONTIER_LEFT = 0;
-            const int MAPFRONTIER_RIGHT = 30;
-            const int MAPFRONTIER_UP = 0;
-            const int MAPFRONTIER_DOWN = 20;
+            #region 상수 모음
+            // 플레이어 관련 상수
+            const int playerInitialX = 10;
+            const int playerInitialY = 5;
+            const string playerSymbol = "P";
 
-            // 인게임 심볼 모음
-            const string WALL_X = "|";
-            const string WALL_Y = "-";
-            const string BOX_LITERAL = "O";
-            const string PLAYER_LITERAL = "P";
-            const string OBSTACLE_LITERAL = "W";
-            const string GOAL_LITERAL = "G";
+            // 플레이어 이동 방향 저장 변수
+            PlayerDirection playerDirectionMoveNumber = PlayerDirection.NONE;
 
-            // 플레이어 초기 좌표 상수화
-            const int PLAYER1_X = 15;
-            const int PLAYER2_Y = 10;
+            // 박스 관련 상수
+            const int FirstBox_X = 5;
+            const int FirstBox_Y = 5;
+            const int SecondBox_X = 9;
+            const int SecondBox_Y = 9;
+            const int ThirdBox_X = 3;
+            const int ThirdBox_Y = 3;
+            const string boxSymbol = "O";
+            const int BOX_COUNT = 3;
 
-            // 골 지점 초기 좌표 상수화
-            const int GOAL1_INITIAL_X = 15;
-            const int GOAL1_INITIAL_Y = 13;
-            const int GOAL2_INITIAL_X = 4;
-            const int GOAL2_INITIAL_Y = 3;
-            const int GOAL3_INITIAL_X = 28;
-            const int GOAL3_INITIAL_Y = 11;
+            // 벽 관련 상수
+            const int wallX_LEFT = 0;
+            const int wallX_RIGHT = 21;
+            const int wallY_UP = 0;
+            const int wallY_DOWN = 16;
+            const string wallSymbol = "$";
 
-            // 장애물 초기 좌표 상수화
-            const int OBSTACLE1_X = 10;
-            const int OBSTACLE1_Y = 8;
-            const int OBSTACLE2_X = 9;
-            const int OBSTACLE2_Y = 9;
-            const int OBSTACLE3_X = 8;
-            const int OBSTACLE3_Y = 10;
+            // 장애물 관련 상수
+            const int FIRST_OBTICLE_X = 12;
+            const int FIRST_OBTICLE_Y = 8;
+            const int SECOND_OBTICLE_X = 13;
+            const int SECOND_OBTICLE_Y = 8;
+            const int THIRD_OBTICLE_X = 12;
+            const int THIRD_OBTICLE_Y = 7;
+            const int FOURTH_OBTICLE_X = 13;
+            const int FOURTH_OBTICLE_Y = 7;
 
-            // 박스 초기 좌표 상수화
-            const int BOX1_X = 15;
-            const int BOX1_Y = 3;
-            const int BOX2_X = 25;
-            const int BOX2_Y = 17;
-            const int BOX3_X = 11;
-            const int BOX3_Y = 3;
+            const int FIFTH_OBTICLE_X = 2;
+            const int FIFTH_OBTICLE_Y = 10;
+            const int SIXTH_OBTICLE_X = 3;
+            const int SIXTH_OBTICLE_Y = 10;
+            const int SEVEN_OBTICLE_X = 4;
+            const int SEVEN_OBTICLE_Y = 10;
+            const int EIGHTH_OBTICLE_X = 5;
+            const int EIGHTH_OBTICLE_Y = 10;
+            const int NINTH_OBTICLE_X = 6;
+            const int NINTH_OBTICLE_Y = 10;
+            const int TENTH_OBTICLE_X = 7;
+            const int TENTH_OBTICLE_Y = 10;
+            const string obticleSymbol = "W";
+            const int OBTICLE_COUNT = 10;
 
-            // 장애물 좌표
-            int[] obstacle_X = { OBSTACLE1_X, OBSTACLE2_X, OBSTACLE3_X };
-            int[] obstacle_Y = { OBSTACLE1_Y, OBSTACLE2_Y, OBSTACLE3_Y };
+            // 골 관련 상수
+            const int FIRST_GOAL_X = 14;
+            const int FIRST_GOAL_Y = 7;
+            const int SECOND_GOAL_X = 2;
+            const int SECOND_GOAL_Y = 4;
+            const int THIRD_GOAL_X = 4;
+            const int THIRD_GOAL_Y = 5;
+            const string goalSymbol = "G";
+            const int GOAL_COUNT = 3;
+            int count = 0;
 
-            // 골 지점 좌표, 이름
-            int[] goalCoordinate_X = { GOAL1_INITIAL_X, GOAL2_INITIAL_X, GOAL3_INITIAL_X };
-            int[] goalCoordinate_Y = { GOAL1_INITIAL_Y, GOAL2_INITIAL_Y, GOAL3_INITIAL_Y };
+            // 인 게임 변수모음
+            int playerX = playerInitialX;
+            int playerY = playerInitialY;
 
-            // 플레이어의 좌표 이동
-            int player_X = PLAYER1_X;
-            int player_Y = PLAYER2_Y;
-            Direction playerDirection = default; // 0: None, 1: Left, 2: Right, 3: Up, 4: Down
+            int[] boxX = { FirstBox_X, SecondBox_X, ThirdBox_X };
+            int[] boxY = { FirstBox_Y, SecondBox_Y, ThirdBox_Y };
 
-            // 박스의 좌표 이동
-            int[] box_X = { BOX1_X, BOX2_X, BOX3_X };
-            int[] box_Y = { BOX1_Y, BOX2_Y, BOX3_Y };
+            int[] obticleX = { FIRST_OBTICLE_X, SECOND_OBTICLE_X, THIRD_OBTICLE_X, FOURTH_OBTICLE_X, FIFTH_OBTICLE_X, SIXTH_OBTICLE_X, SEVEN_OBTICLE_X, EIGHTH_OBTICLE_X, NINTH_OBTICLE_X, TENTH_OBTICLE_X };
+            int[] obticleY = { FIRST_OBTICLE_Y, SECOND_OBTICLE_Y, THIRD_OBTICLE_Y, FOURTH_OBTICLE_Y, FIFTH_OBTICLE_Y, SIXTH_OBTICLE_Y, SEVEN_OBTICLE_Y, EIGHTH_OBTICLE_Y, NINTH_OBTICLE_Y, TENTH_OBTICLE_Y };
 
-            // 게임 루프 == 프레임(Frame)
+            int[] goalX = { FIRST_GOAL_X, SECOND_GOAL_X, THIRD_GOAL_X };
+            int[] goalY = { FIRST_GOAL_Y, SECOND_GOAL_Y, THIRD_GOAL_Y };
+
+            bool[] isBoxOnGoal = new bool[GOAL_COUNT];
+            #endregion
+
+            // 프레임 워크 구성
             while (true)
             {
-                Console.Clear();
+                #region Render
+                // Render------------------------------------------------------------------------------------------
+                Console.Clear();    // 이전 프레임 지우기
 
-                //-------------------------------------- Render -------------------------------------------------
-                // 플레이어 출력하기
-                Console.SetCursorPosition(player_X, player_Y);
-                Console.Write(PLAYER_LITERAL);
+                Console.SetCursorPosition(playerX, playerY);
+                Console.Write(playerSymbol);
 
-                // 박스 출력하기
-                for (int boxNumbers = 0; boxNumbers < box_X.Length; ++boxNumbers)
+                // 골 구현
+                for (int i = 0; i < GOAL_COUNT; ++i)
                 {
-                    Console.SetCursorPosition(box_X[boxNumbers], box_Y[boxNumbers]);
-                    Console.Write(BOX_LITERAL);
+                    Console.SetCursorPosition(goalX[i], goalY[i]);
+                    Console.Write(goalSymbol);
                 }
 
-                // 장애물 출력하기
-                for (int obstacleNumbers = 0; obstacleNumbers < obstacle_X.Length; ++obstacleNumbers)
+                // 박스 출력
+                for (int i = 0; i < BOX_COUNT; ++i)
                 {
-                    Console.SetCursorPosition(obstacle_X[obstacleNumbers], obstacle_Y[obstacleNumbers]);
-                    Console.Write(OBSTACLE_LITERAL);
-                }
+                    Console.SetCursorPosition(boxX[i], boxY[i]);
 
-                // 골 출력
-                for (int goalNumbers = 0; goalNumbers < goalCoordinate_X.Length; ++goalNumbers)
-                {
-                    Console.SetCursorPosition(goalCoordinate_X[goalNumbers], goalCoordinate_Y[goalNumbers]);
-                    Console.Write(GOAL_LITERAL);
-                }
-
-                // X 가장자리 출력
-                for (int wall_Xs = 0; wall_Xs < MAPFRONTIER_DOWN + 1; ++wall_Xs)
-                {
-                    Console.SetCursorPosition(MAPFRONTIER_RIGHT + 1, wall_Xs);
-                    Console.Write(WALL_X);
-                }
-
-                // Y 가장자리 출력
-                for (int wall_Ys = 0; wall_Ys < MAPFRONTIER_RIGHT + 1; ++wall_Ys)
-                {
-                    Console.SetCursorPosition(wall_Ys, MAPFRONTIER_DOWN + 1);
-                    Console.Write(WALL_Y);
-                }
-
-                //-------------------------------------- ProcessInput -------------------------------------------
-                ConsoleKeyInfo inputKey = Console.ReadKey();
-                ConsoleKey key = inputKey.Key;
-                // 이것은 ConsoleKey inputKey = Console.ReadKey().Key; 와 같다
-
-                //-------------------------------------- Update -------------------------------------------------
-                // 플레이어 업데이트
-                if (key == ConsoleKey.LeftArrow && player_X > MAPFRONTIER_LEFT)
-                {
-                    player_X = Math.Max(MAPFRONTIER_LEFT, player_X - 1);
-                    playerDirection = Direction.LEFT;
-                }
-
-                if (key == ConsoleKey.RightArrow && player_X < MAPFRONTIER_RIGHT)
-                {
-                    player_X = Math.Min(player_X + 1, MAPFRONTIER_RIGHT);
-                    playerDirection = Direction.RIGHT;
-                }
-
-                if (key == ConsoleKey.UpArrow && player_Y > MAPFRONTIER_UP)
-                {
-                    player_Y = Math.Max(MAPFRONTIER_UP, player_Y - 1);
-                    playerDirection = Direction.UP;
-                }
-
-                if (key == ConsoleKey.DownArrow && player_Y < MAPFRONTIER_DOWN)
-                {
-                    player_Y = Math.Min(player_Y + 1, MAPFRONTIER_DOWN);
-                    playerDirection = Direction.DOWN;
-                }
-
-                // 박스 업데이트
-                for (int boxCount = 0; boxCount < box_X.Length; ++boxCount)
-                {
-
-                    if (player_X == box_X[boxCount] && player_Y == box_Y[boxCount])
+                    if (isBoxOnGoal[i])
                     {
-                        switch (playerDirection)
+                        Console.Write("@");
+                    }
+                    else
+                    {
+                        Console.Write(boxSymbol);
+                    }
+                }
+
+                // 좌우 벽 구현
+                for (int i = 1; i < wallY_DOWN; ++i)
+                {
+                    Console.SetCursorPosition(wallX_LEFT, i);
+                    Console.Write(wallSymbol);
+
+                    Console.SetCursorPosition(wallX_RIGHT, i);
+                    Console.Write(wallSymbol);
+                }
+                for (int i = 0; i - 1 < wallX_RIGHT; ++i)
+                {
+                    Console.SetCursorPosition(i, wallY_UP);
+                    Console.Write(wallSymbol);
+
+                    Console.SetCursorPosition(i, wallY_DOWN);
+                    Console.Write(wallSymbol);
+                }
+
+                // 장애물 구현
+                for (int i = 0; i < OBTICLE_COUNT; ++i)
+                {
+                    Console.SetCursorPosition(obticleX[i], obticleY[i]);
+                    Console.Write(obticleSymbol);
+                }
+                #endregion
+
+                #region ProcessInput
+                // ProcessInput------------------------------------------------------------------------------------
+                ConsoleKey key = Console.ReadKey().Key;
+                #endregion
+
+                #region Update
+                // Update------------------------------------------------------------------------------------------
+                #region 방향키 이동시
+                if (key == ConsoleKey.LeftArrow)
+                {
+                    playerX = Math.Max(1, playerX - 1);
+                    playerDirectionMoveNumber = PlayerDirection.LEFT;
+                }
+
+                if (key == ConsoleKey.RightArrow)
+                {
+                    playerX = Math.Min(playerX + 1, 20);
+                    playerDirectionMoveNumber = PlayerDirection.RIGHT;
+                }
+
+                if (key == ConsoleKey.UpArrow)
+                {
+                    playerY = Math.Max(1, playerY - 1);
+                    playerDirectionMoveNumber = PlayerDirection.UP;
+                }
+
+                if (key == ConsoleKey.DownArrow)
+                {
+                    playerY = Math.Min(playerY + 1, 15);
+                    playerDirectionMoveNumber = PlayerDirection.DOWN;
+                }
+                #endregion
+
+                #region 플레이어 업데이트
+                // 플레이어가 장애물을 만난 상황
+                for (int i = 0; i < obticleX.Length; ++i)
+                {
+                    if (playerX == obticleX[i] && playerY == obticleY[i])
+                    {
+                        switch (playerDirectionMoveNumber)
                         {
-                            // 박스를 움직여주면 됨
-                            case Direction.LEFT: // 플레이어가 왼쪽으로 이동 중
-                                if (box_X[boxCount] == MAPFRONTIER_LEFT)
-                                {
-                                    player_X = MAPFRONTIER_LEFT + 1;
-                                }
-                                else
-                                {
-                                    box_X[boxCount] = box_X[boxCount] - 1;
-                                }
+                            case PlayerDirection.LEFT:
+                                playerX = obticleX[i] + 1;
                                 break;
-                            case Direction.RIGHT: // 플레이어가 오른쪽으로 이동 중
-                                if (box_X[boxCount] == MAPFRONTIER_RIGHT)
-                                {
-                                    player_X = MAPFRONTIER_RIGHT - 1;
-                                }
-                                else
-                                {
-                                    box_X[boxCount] = box_X[boxCount] + 1;
-                                }
+                            case PlayerDirection.RIGHT:
+                                playerX = obticleX[i] - 1;
                                 break;
-                            case Direction.UP: // 플레이어가 위쪽으로 이동 중
-                                if (box_Y[boxCount] == MAPFRONTIER_UP)
-                                {
-                                    player_Y = MAPFRONTIER_UP + 1;
-                                }
-                                else
-                                {
-                                    box_Y[boxCount] = box_Y[boxCount] - 1;
-                                }
+                            case PlayerDirection.UP:
+                                playerY = obticleY[i] + 1;
                                 break;
-                            case Direction.DOWN: // 플레이어가 아래쪽으로 이동 중
-                                if (box_Y[boxCount] == MAPFRONTIER_DOWN)
-                                {
-                                    player_Y = MAPFRONTIER_DOWN - 1;
-                                }
-                                else
-                                {
-                                    box_Y[boxCount] = box_Y[boxCount] + 1;
-                                }
+                            case PlayerDirection.DOWN:
+                                playerY = obticleY[i] - 1;
                                 break;
-                            default: // 예외 처리
+                        }
+                    }
+                }
+                #endregion
+
+                #region 박스 업데이트
+                // 박스가 플레이어와 만난 상황
+                for (int i = 0; i < BOX_COUNT; ++i)
+                {
+                    if (boxX[i] == playerX && boxY[i] == playerY)
+                    {
+                        switch (playerDirectionMoveNumber)
+                        {
+                            case PlayerDirection.LEFT:
+                                boxX[i] = Math.Max(1, boxX[i] - 1);
+                                playerX = boxX[i] + 1;
+                                break;
+                            case PlayerDirection.RIGHT:
+                                boxX[i] = Math.Min(boxX[i] + 1, 20);
+                                playerX = boxX[i] - 1;
+                                break;
+                            case PlayerDirection.UP:
+                                boxY[i] = Math.Max(1, boxY[i] - 1);
+                                playerY = boxY[i] + 1;
+                                break;
+                            case PlayerDirection.DOWN:
+                                boxY[i] = Math.Min(boxY[i] + 1, 15);
+                                playerY = boxY[i] - 1;
+                                break;
+                            default:
                                 Console.Clear();
-                                Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다 {playerDirection}");
-                                break;
+                                Console.WriteLine($"[Error] 플레이어 이동 방향 데이터가 오류입니다. : {playerDirectionMoveNumber}");
+                                return;
                         }
-                    }
 
+                        break;
+                    }
                 }
 
-                // 박스끼리의 충돌시
-                for (int count1 = 0; count1 < box_X.Length; ++count1)
+                // 박스가 장애물을 만난 상황
+                for (int i = 0; i < BOX_COUNT; ++i)
                 {
-                    for (int count2 = 0; count2 < box_X.Length; ++count2)
+                    for (int j = 0; j < OBTICLE_COUNT; ++j)
                     {
-                        if (count1 != count2 && box_X[count1] == box_X[count2] && box_Y[count1] == box_Y[count2])
+                        if (boxX[i] == obticleX[j] && boxY[i] == obticleY[j])
                         {
-                            switch (playerDirection)
+                            switch (playerDirectionMoveNumber)
                             {
-                                case Direction.LEFT:
-                                    box_X[count1] += 1;
-                                    player_X += 1;
+                                case PlayerDirection.LEFT:
+                                    boxX[i] = boxX[i] + 1;
+                                    playerX = boxX[i] + 1;
+
                                     break;
-                                case Direction.RIGHT:
-                                    box_X[count1] -= 1;
-                                    player_X -= 1;
+                                case PlayerDirection.RIGHT:
+                                    boxX[i] = boxX[i] - 1;
+                                    playerX = boxX[i] - 1;
+
                                     break;
-                                case Direction.UP:
-                                    box_Y[count1] += 1;
-                                    player_Y += 1;
+                                case PlayerDirection.UP:
+                                    boxY[i] = boxY[i] + 1;
+                                    playerY = boxY[i] + 1;
+
                                     break;
-                                case Direction.DOWN:
-                                    box_Y[count1] -= 1;
-                                    player_Y -= 1;
+                                case PlayerDirection.DOWN:
+                                    boxY[i] = boxY[i] - 1;
+                                    playerY = boxY[i] - 1;
+
                                     break;
+                                default:
+                                    Console.Clear();
+                                    Console.WriteLine($"[Error] 플레이어 이동 방향 데이터가 오류입니다. : {playerDirectionMoveNumber}");
+
+                                    return;
+
                             }
                         }
                     }
                 }
 
-                // 플레이어가 장애물에 부딪힘
-                for (int player_against_obstacle = 0; player_against_obstacle < 3; ++player_against_obstacle)
+                // 박스와 박스가 만난 상황
+                for (int i = 0; i < BOX_COUNT; ++i)
                 {
-                    if (player_X == obstacle_X[player_against_obstacle] && player_Y == obstacle_Y[player_against_obstacle])
+                    for (int j = 0; j < BOX_COUNT; ++j)
                     {
-                        switch (playerDirection)
+                        if (i != j && boxX[i] == boxX[j] && boxY[i] == boxY[j])
                         {
-                            case Direction.LEFT:
-                                player_X = player_X + 1;
-                                break;
-                            case Direction.RIGHT:
-                                player_X = player_X - 1;
-                                break;
-                            case Direction.UP:
-                                player_Y = player_Y + 1;
-                                break;
-                            case Direction.DOWN:
-                                player_Y = player_Y - 1;
-                                break;
-                        }
-                    }
-                }
-
-                // 박스가 장애물에 부딪함
-                for (int count1 = 0; count1 < box_X.Length; ++count1)
-                {
-                    for (int count2 = 0; count2 < box_X.Length; ++count2)
-                    {
-                        if (box_X[count1] == obstacle_X[count2] && box_Y[count1] == obstacle_Y[count2])
-                        {
-                            switch (playerDirection)
+                            switch (playerDirectionMoveNumber)
                             {
-                                case Direction.LEFT:
-                                    player_X += 1;
-                                    box_X[count1] += 1;
+                                case PlayerDirection.LEFT:
+                                    boxX[i] += 1;
+                                    playerX += 1;
+
                                     break;
-                                case Direction.RIGHT:
-                                    player_X -= 1;
-                                    box_X[count1] -= 1;
+                                case PlayerDirection.RIGHT:
+                                    boxX[i] -= 1;
+                                    playerX -= 1;
+
                                     break;
-                                case Direction.UP:
-                                    player_Y += 1;
-                                    box_Y[count1] += 1;
+                                case PlayerDirection.UP:
+                                    boxY[i] += 1;
+                                    playerY += 1;
+
                                     break;
-                                case Direction.DOWN:
-                                    player_Y -= 1;
-                                    box_Y[count1] -= 1;
+                                case PlayerDirection.DOWN:
+                                    boxY[i] -= 1;
+                                    playerY -= 1;
+
                                     break;
+                                default:
+                                    Console.Clear();
+                                    Console.WriteLine($"[Error] 플레이어 이동 방향 데이터가 오류입니다. : {playerDirectionMoveNumber}");
+
+                                    return;
                             }
+
+                            break;
                         }
                     }
                 }
 
-                // 박스가 골에 들어갔을 때
-                int goalRepo = 0;
-                for (int count1 = 0; count1 < goalCoordinate_X.Length; ++count1)
+                // 박스가 골에 들어간 상황
+                count = 0;
+                for (int i = 0; i < BOX_COUNT; ++i)
                 {
-                    for (int count2 = 0; count2 < goalCoordinate_X.Length; ++count2)
-                    {
-                        if (box_X[count1] == goalCoordinate_X[count2] && box_Y[count1] == goalCoordinate_Y[count2])
-                        {
-                            ++goalRepo;
+                    isBoxOnGoal[i] = false;
 
-                            if (goalRepo == goalCoordinate_X.Length)
-                            {
-                                goto clearGame;
-                            }
+                    for (int j = 0; j < GOAL_COUNT; ++j)
+                    {
+                        if (goalX[j] == boxX[i] && goalY[j] == boxY[i])
+                        {
+                            ++count;
+                            isBoxOnGoal[i] = true;
+                            break;
                         }
                     }
                 }
-                
 
+                if (count == GOAL_COUNT)
+                {
+                    Console.Clear();
+                    Console.WriteLine("축하드립니다!");
+                    return;
+                }
+                #endregion
+
+                #endregion
             }
-
-            clearGame:
-
-            Console.Clear();
-            Console.WriteLine("축하드립니다! 당신은 성공했습니다");
         }
     }
 }
