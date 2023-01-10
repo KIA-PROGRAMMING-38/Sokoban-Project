@@ -3,9 +3,9 @@
     enum Direction
     {
         None,
-        Up, 
-        Down, 
-        Left, 
+        Up,
+        Down,
+        Left,
         Right,
         Max
     }
@@ -87,7 +87,7 @@
             {
                 // -------------------------------------- Render ------------------------------------------------
                 Console.Clear();
-                
+
                 //플레이어
                 Console.SetCursorPosition(playerX, playerY);
                 Console.Write(PLAYER_SYMBOL);
@@ -139,8 +139,8 @@
                 }
                 // -------------------------------------- ProcessInput ------------------------------------------------
                 ConsoleKey playerKey = Console.ReadKey().Key; // ConsoleKeyInfo keyInfo = Console.ReadKey(); ConsoleKey playerKey = keyInfo.Key;
-                // -------------------------------------- Update ------------------------------------------------
-                
+                                                              // -------------------------------------- Update ------------------------------------------------
+
                 // 플레이어
 
                 // 플레이어의 이동
@@ -208,20 +208,20 @@
                             switch (playerDirection)
                             {
                                 case Direction.Up:
-                                        boxY[boxId] = boxY[collidedBoxId] + 1;
-                                        playerY = boxY[boxId] + 1;
+                                    boxY[boxId] = boxY[collidedBoxId] + 1;
+                                    playerY = boxY[boxId] + 1;
                                     break;
                                 case Direction.Down:
-                                        boxY[boxId] = boxY[collidedBoxId] - 1;
-                                        playerY = boxY[boxId] - 1;
+                                    boxY[boxId] = boxY[collidedBoxId] - 1;
+                                    playerY = boxY[boxId] - 1;
                                     break;
                                 case Direction.Left:
-                                        boxX[boxId] = boxX[collidedBoxId] + 1;
-                                        playerX = boxX[boxId] + 1;
+                                    boxX[boxId] = boxX[collidedBoxId] + 1;
+                                    playerX = boxX[boxId] + 1;
                                     break;
                                 case Direction.Right:
-                                        boxX[boxId] = boxX[collidedBoxId] - 1;
-                                        playerX = boxX[boxId] - 1;
+                                    boxX[boxId] = boxX[collidedBoxId] - 1;
+                                    playerX = boxX[boxId] - 1;
                                     break;
                                 default:
                                     Console.Clear();
@@ -233,7 +233,7 @@
                         }
                     }
                 }
-               
+
                 // 벽
                 for (int wallId = 0; wallId < TOTAL_WALL_NUM; ++wallId)
                 {
