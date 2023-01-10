@@ -2,6 +2,15 @@
 
 namespace ChoiSeonMun.Sokoban;
 
+enum Direction
+{
+    None,
+    Left,
+    Right,
+    Up,
+    Down
+}
+
 class Program
 {
     static void Main(string[] args)
@@ -14,12 +23,18 @@ class Program
         Console.ForegroundColor = ConsoleColor.Gray;        // 글꼴색을 설정한다.
         Console.Clear();                                    // 콘솔 창에 출력된 내용을 모두 지운다.
 
+        // 기호 상수 정의
+        const int MIN_X = 0;
+        const int MAX_X = 15;
+        const int MIN_Y = 0;
+        const int MAX_Y = 20;
+
         // 플레이어 위치 좌표
         int playerX = 0;
         int playerY = 0;
 
         // 플레이어의 이동 방향
-        int playerMoveDirection = 0; // 0 : None /  1 : Left / 2 : Right / 3 : Up / 4 : Down
+        Direction playerMoveDirection = Direction.None;
 
         // 박스 좌표
         int boxX = 5;
@@ -49,26 +64,26 @@ class Program
             // 플레이어 이동 처리
             if (key == ConsoleKey.LeftArrow)
             {
-                playerX = (int)Math.Max(0, playerX - 1);
-                playerMoveDirection = 1;
+                playerX = (int)Math.Max(MIN_X, playerX - 1);
+                playerMoveDirection = Direction.Left;
             }
 
             if (key == ConsoleKey.RightArrow)
             {
-                playerX = (int)Math.Min(playerX + 1, 15);
-                playerMoveDirection = 2;
+                playerX = (int)Math.Min(playerX + 1, MAX_X);
+                playerMoveDirection = Direction.Right;
             }
 
             if (key == ConsoleKey.UpArrow)
             {
-                playerY = (int)Math.Max(0, playerY - 1);
-                playerMoveDirection = 3;
+                playerY = (int)Math.Max(MIN_Y, playerY - 1);
+                playerMoveDirection = Direction.Up;
             }
 
             if (key == ConsoleKey.DownArrow)
             {
-                playerY = (int)Math.Min(playerY + 1, 20);
-                playerMoveDirection = 4;
+                playerY = (int)Math.Min(playerY + 1, MAX_Y);
+                playerMoveDirection = Direction.Down;
             }
 
             // 박스 업데이트
@@ -76,23 +91,23 @@ class Program
             {
                 switch (playerMoveDirection)
                 {
-                    case 1:     // Left
-                        boxX = Math.Max(0, boxX - 1);
+                    case Direction.Left:
+                        boxX = Math.Max(MIN_X, boxX - 1);
                         playerX = boxX + 1;
 
                         break;
-                    case 2:     // Right
-                        boxX = Math.Min(boxX + 1, 15);
+                    case Direction.Right:
+                        boxX = Math.Min(boxX + 1, MAX_X);
                         playerX = boxX - 1;
 
                         break;
-                    case 3:     // Up
-                        boxY = Math.Max(0, boxY - 1);
+                    case Direction.Up:
+                        boxY = Math.Max(MIN_X, boxY - 1);
                         playerY = playerY + 1;
 
                         break;
-                    case 4:     // Down
-                        boxY = Math.Min(boxY + 1, 20);
+                    case Direction.Down:
+                        boxY = Math.Min(boxY + 1, MAX_Y);
                         playerY = boxY - 1;
 
                         break;
