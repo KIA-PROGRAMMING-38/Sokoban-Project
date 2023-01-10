@@ -81,68 +81,122 @@
             bool[] isBoxOnGoal = new bool[TOTAL_BOX_NUM];
 
             Direction playerDirection = Direction.None;
+            ConsoleKey playerKey;
 
+            bool isGameDoing = true;
             // 게임 루프 == 프레임(Frame)
-            while (true)
+            while (isGameDoing)
             {
-                // -------------------------------------- Render ------------------------------------------------
                 Console.Clear();
+                Render();
+                ProcessInput();
+                Update();
+            }
+            Console.ResetColor();
+            Console.Clear();
+            Console.WriteLine("Game Clear!");
 
-                //플레이어
-                Console.SetCursorPosition(playerX, playerY);
-                Console.Write(PLAYER_SYMBOL);
+            // Render
+            void Render()
+            {
+                PlayerRender();
+                GoalRender();
+                BoxRender();
+                WallRender();
+                MapOutlineRender();
+            }
 
-                //골
+
+            void SymbolDraw(int X, int Y, string objectSymbol)
+            {
+                Console.SetCursorPosition(X, Y);
+                Console.Write(objectSymbol);
+            }
+
+
+            void PlayerRender()
+            {
+                SymbolDraw(playerX, playerY, PLAYER_SYMBOL);
+            }
+
+            void GoalRender()
+            {
                 for (int goalId = 0; goalId < TOTAL_GOAL_NUM; ++goalId)
                 {
-                    Console.SetCursorPosition(goalX[goalId], goalY[goalId]);
-                    Console.Write(GOAL_SYMBOL);
+                    SymbolDraw(goalX[goalId], goalY[goalId], GOAL_SYMBOL);
                 }
+            }
 
+            void BoxRender()
+            {
                 //박스
                 for (int boxId = 0; boxId < TOTAL_BOX_NUM; ++boxId)
                 {
-                    Console.SetCursorPosition(boxX[boxId], boxY[boxId]);
-                    //골에 박스
+                    string symbol = null;
                     if (isBoxOnGoal[boxId])
                     {
-                        Console.Write(GOALIN_SYMBOL);
+                        symbol = GOALIN_SYMBOL;
                     }
                     else
                     {
-                        Console.Write(BOX_SYMBOL);
+                        symbol = BOX_SYMBOL;
                     }
+
+                    SymbolDraw(boxX[boxId], boxY[boxId], symbol);
                 }
 
+            }
+
+            void WallRender()
+            {
                 //벽
                 for (int wallId = 0; wallId < TOTAL_WALL_NUM; ++wallId)
                 {
-                    Console.SetCursorPosition(wallX[wallId], wallY[wallId]);
-                    Console.Write(WALL_SYMBOL);
+                    SymbolDraw(wallX[wallId], wallY[wallId], WALL_SYMBOL);
                 }
+            }
 
-
+            void MapOutlineRender()
+            {
                 //맵 테두리
                 for (int i = -1; i <= OUTLINE_LENGTH_X; ++i)
                 {
-                    Console.SetCursorPosition(MAP_MIN_X + i, MAP_MIN_Y - 1);
-                    Console.Write(MAP_OUTLINE_SYMBOL);
-                    Console.SetCursorPosition(MAP_MIN_X + i, MAP_MAX_Y + 1);
-                    Console.Write(MAP_OUTLINE_SYMBOL);
+                    SymbolDraw(MAP_MIN_X + i, MAP_MIN_Y - 1, MAP_OUTLINE_SYMBOL);
+                    SymbolDraw(MAP_MIN_X + i, MAP_MAX_Y + 1, MAP_OUTLINE_SYMBOL);
                 }
                 for (int i = 0; i <= OUTLINE_LENGTH_Y; ++i)
                 {
-                    Console.SetCursorPosition(MAP_MIN_X - 1, MAP_MIN_Y + i);
-                    Console.Write(MAP_OUTLINE_SYMBOL);
-                    Console.SetCursorPosition(MAP_MAX_X + 1, MAP_MIN_Y + i);
-                    Console.Write(MAP_OUTLINE_SYMBOL);
+                    SymbolDraw(MAP_MIN_X - 1, MAP_MIN_Y + i, MAP_OUTLINE_SYMBOL);
+                    SymbolDraw(MAP_MAX_X + 1, MAP_MIN_Y + i, MAP_OUTLINE_SYMBOL);
                 }
-                // -------------------------------------- ProcessInput ------------------------------------------------
-                ConsoleKey playerKey = Console.ReadKey().Key; // ConsoleKeyInfo keyInfo = Console.ReadKey(); ConsoleKey playerKey = keyInfo.Key;
-                                                              // -------------------------------------- Update ------------------------------------------------
+            }
 
+            // ProcessInput
+            void ProcessInput()
+            {
+                PlayerInput();
+            }
+
+
+            void PlayerInput()
+            {
+                playerKey = Console.ReadKey().Key; // ConsoleKeyInfo keyInfo = Console.ReadKey(); ConsoleKey playerKey = keyInfo.Key;
+            }
+
+            // Update
+            void Update()
+            {
+                PlayerUpdate();
+                BoxUpdate();
+                WallUpdate();
+                GoalUpdate();
+
+            }
+
+
+            void PlayerUpdate()
+            {
                 // 플레이어
-
                 // 플레이어의 이동
                 if (playerKey == ConsoleKey.UpArrow)
                 {
@@ -164,95 +218,75 @@
                     playerX = Math.Min(++playerX, MAP_MAX_X);
                     playerDirection = Direction.Right;
                 }
+            }
 
-                // 박스
+            void BoxUpdate()
+            {
                 for (int boxId = 0; boxId < TOTAL_BOX_NUM; ++boxId)
                 {
-                    // 박스에 플레이어
-                    if (playerX == boxX[boxId] && playerY == boxY[boxId])
+                    PlayerPushBox(boxId);
+                    BoxPushBox(boxId);
+                }
+            }
+            void PlayerPushBox(int boxIndex)
+            {
+                // 박스에 플레이어
+                if (playerX == boxX[boxIndex] && playerY == boxY[boxIndex])
+                {
+                    switch (playerDirection)
                     {
-                        switch (playerDirection)
-                        {
-                            case Direction.Up:
-                                boxY[boxId] = Math.Max(MAP_MIN_Y, --boxY[boxId]);
-                                playerY = boxY[boxId] + 1;
-                                break;
-                            case Direction.Down:
-                                boxY[boxId] = Math.Min(++boxY[boxId], MAP_MAX_Y);
-                                playerY = boxY[boxId] - 1;
-                                break;
-                            case Direction.Left:
-                                boxX[boxId] = Math.Max(MAP_MIN_X, --boxX[boxId]);
-                                playerX = boxX[boxId] + 1;
-                                break;
-                            case Direction.Right:
-                                boxX[boxId] = Math.Min(++boxX[boxId], MAP_MAX_X);
-                                playerX = boxX[boxId] - 1;
-                                break;
-                            default:
-                                Console.Clear();
-                                Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
-
-                                return;
-                        }
-                    }
-                    // 박스에 박스
-                    for (int collidedBoxId = 0; collidedBoxId < TOTAL_BOX_NUM; ++collidedBoxId)
-                    {
-                        if (boxId == collidedBoxId)
-                        {
-                            continue;
-                        }
-                        if (boxX[boxId] == boxX[collidedBoxId] && boxY[boxId] == boxY[collidedBoxId])
-                        {
-                            switch (playerDirection)
-                            {
-                                case Direction.Up:
-                                    boxY[boxId] = boxY[collidedBoxId] + 1;
-                                    playerY = boxY[boxId] + 1;
-                                    break;
-                                case Direction.Down:
-                                    boxY[boxId] = boxY[collidedBoxId] - 1;
-                                    playerY = boxY[boxId] - 1;
-                                    break;
-                                case Direction.Left:
-                                    boxX[boxId] = boxX[collidedBoxId] + 1;
-                                    playerX = boxX[boxId] + 1;
-                                    break;
-                                case Direction.Right:
-                                    boxX[boxId] = boxX[collidedBoxId] - 1;
-                                    playerX = boxX[boxId] - 1;
-                                    break;
-                                default:
-                                    Console.Clear();
-                                    Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
-
-                                    return;
-                            }
+                        case Direction.Up:
+                            boxY[boxIndex] = Math.Max(MAP_MIN_Y, --boxY[boxIndex]);
+                            playerY = boxY[boxIndex] + 1;
                             break;
-                        }
+                        case Direction.Down:
+                            boxY[boxIndex] = Math.Min(++boxY[boxIndex], MAP_MAX_Y);
+                            playerY = boxY[boxIndex] - 1;
+                            break;
+                        case Direction.Left:
+                            boxX[boxIndex] = Math.Max(MAP_MIN_X, --boxX[boxIndex]);
+                            playerX = boxX[boxIndex] + 1;
+                            break;
+                        case Direction.Right:
+                            boxX[boxIndex] = Math.Min(++boxX[boxIndex], MAP_MAX_X);
+                            playerX = boxX[boxIndex] - 1;
+                            break;
+                        default:
+                            Console.Clear();
+                            Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
+
+                            return;
                     }
                 }
-
-                // 벽
-                for (int wallId = 0; wallId < TOTAL_WALL_NUM; ++wallId)
+            }
+            void BoxPushBox(int boxIndex)
+            {
+                // 박스에 박스
+                for (int collidedBoxId = 0; collidedBoxId < TOTAL_BOX_NUM; ++collidedBoxId)
                 {
-                    // 벽에 플레이어
-                    if (playerX == wallX[wallId] && playerY == wallY[wallId])
+                    if (boxIndex == collidedBoxId)
+                    {
+                        continue;
+                    }
+                    if (boxX[boxIndex] == boxX[collidedBoxId] && boxY[boxIndex] == boxY[collidedBoxId])
                     {
                         switch (playerDirection)
                         {
                             case Direction.Up:
-                                playerY = wallY[wallId] + 1;
+                                boxY[boxIndex] = boxY[collidedBoxId] + 1;
+                                playerY = boxY[boxIndex] + 1;
                                 break;
                             case Direction.Down:
-                                playerY = wallY[wallId] - 1;
+                                boxY[boxIndex] = boxY[collidedBoxId] - 1;
+                                playerY = boxY[boxIndex] - 1;
                                 break;
                             case Direction.Left:
-                                playerX = wallX[wallId] + 1;
+                                boxX[boxIndex] = boxX[collidedBoxId] + 1;
+                                playerX = boxX[boxIndex] + 1;
                                 break;
                             case Direction.Right:
-                                playerX = wallX[wallId] - 1;
+                                boxX[boxIndex] = boxX[collidedBoxId] - 1;
+                                playerX = boxX[boxIndex] - 1;
                                 break;
                             default:
                                 Console.Clear();
@@ -262,40 +296,83 @@
                         }
                         break;
                     }
-                    // 벽에 박스
-                    for (int boxId = 0; boxId < TOTAL_BOX_NUM; ++boxId)
-                    {
-                        if (boxX[boxId] == wallX[wallId] && boxY[boxId] == wallY[wallId])
-                        {
-                            switch (playerDirection)
-                            {
-                                case Direction.Up:
-                                    boxY[boxId] = wallY[wallId] + 1;
-                                    playerY = boxY[boxId] + 1;
-                                    break;
-                                case Direction.Down:
-                                    boxY[boxId] = wallY[wallId] - 1;
-                                    playerY = boxY[boxId] - 1;
-                                    break;
-                                case Direction.Left:
-                                    boxX[boxId] = wallX[wallId] + 1;
-                                    playerX = boxX[boxId] + 1;
-                                    break;
-                                case Direction.Right:
-                                    boxX[boxId] = wallX[wallId] - 1;
-                                    playerX = boxX[boxId] - 1;
-                                    break;
-                                default:
-                                    Console.Clear();
-                                    Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
+                }
+            }
 
-                                    return;
-                            }
+            void WallUpdate()
+            {
+                // 벽
+                for (int wallId = 0; wallId < TOTAL_WALL_NUM; ++wallId)
+                {
+                    PlayerPushWall(wallId);
+                    BoxPushWall(wallId);
+                }
+            }
+            void PlayerPushWall(int wallIndex)
+            {
+                // 벽에 플레이어
+                if (playerX == wallX[wallIndex] && playerY == wallY[wallIndex])
+                {
+                    switch (playerDirection)
+                    {
+                        case Direction.Up:
+                            playerY = wallY[wallIndex] + 1;
                             break;
-                        }
+                        case Direction.Down:
+                            playerY = wallY[wallIndex] - 1;
+                            break;
+                        case Direction.Left:
+                            playerX = wallX[wallIndex] + 1;
+                            break;
+                        case Direction.Right:
+                            playerX = wallX[wallIndex] - 1;
+                            break;
+                        default:
+                            Console.Clear();
+                            Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
+
+                            return;
                     }
                 }
 
+            }
+            void BoxPushWall(int wallIndex)
+            {
+                // 벽에 박스
+                for (int boxId = 0; boxId < TOTAL_BOX_NUM; ++boxId)
+                {
+                    if (boxX[boxId] == wallX[wallIndex] && boxY[boxId] == wallY[wallIndex])
+                    {
+                        switch (playerDirection)
+                        {
+                            case Direction.Up:
+                                boxY[boxId] = wallY[wallIndex] + 1;
+                                playerY = boxY[boxId] + 1;
+                                break;
+                            case Direction.Down:
+                                boxY[boxId] = wallY[wallIndex] - 1;
+                                playerY = boxY[boxId] - 1;
+                                break;
+                            case Direction.Left:
+                                boxX[boxId] = wallX[wallIndex] + 1;
+                                playerX = boxX[boxId] + 1;
+                                break;
+                            case Direction.Right:
+                                boxX[boxId] = wallX[wallIndex] - 1;
+                                playerX = boxX[boxId] - 1;
+                                break;
+                            default:
+                                Console.Clear();
+                                Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다.");
+
+                                return;
+                        }
+                        break;
+                    }
+                }
+            }
+            void GoalUpdate()
+            {
                 // 골
                 int goalCount = 0;
                 for (int boxId = 0; boxId < TOTAL_BOX_NUM; ++boxId)
@@ -313,12 +390,9 @@
                 }
                 if (goalCount == TOTAL_GOAL_NUM)
                 {
-                    break;
+                    isGameDoing = false;
                 }
             }
-            Console.ResetColor();
-            Console.Clear();
-            Console.WriteLine("Game Clear!");
         }
     }
 }
