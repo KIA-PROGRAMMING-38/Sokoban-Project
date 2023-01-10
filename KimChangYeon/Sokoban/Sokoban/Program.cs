@@ -66,21 +66,22 @@ namespace sokoban
 
             PLAYER_DIRECTION playerDir = new PLAYER_DIRECTION();
 
-
-
             // 게임 루프 == 프레임(Frame)
             while (clearJudge)
             {
                 // --------------------------------------------- Render -------------------------------------------------------
-                // 플레이어 출력하기
 
-
-                MapRender();
-                GoalRender();
-                WallRender();
-                PlayerRender();
-                ChangeRender();
-               
+                Render();
+                
+                
+                void Render()
+                {
+                    MapRender();
+                    GoalRender();
+                    WallRender();
+                    PlayerRender();
+                    ChangeRender();
+                }
                 void MapRender()
                 {
                     Console.Clear();
@@ -142,10 +143,6 @@ namespace sokoban
                 // --------------------------------------------- ProcessInput -------------------------------------------------
                 ConsoleKey key = Console.ReadKey().Key;
                 // --------------------------------------------- Update -------------------------------------------------------
-
-                //
-                //이동부
-
                 MoveRight();
                 MoveLeft();
                 MoveDown();
@@ -344,6 +341,16 @@ namespace sokoban
                         }
                     }
                 }
+               
+                void JudgeClear()
+                {
+                    if (boxCount == goalLength) // 클리어 판정
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Clear!");
+                        clearJudge = false;
+                    }
+                }
 
                 int Max(int a, int b)
                 {
@@ -358,17 +365,6 @@ namespace sokoban
                 }
 
                 int Min(int a, int b) => a < b ? a : b;
-
-                void JudgeClear()
-                {
-                    if (boxCount == goalLength) // 클리어 판정
-                    {
-                        Console.Clear();
-                        Console.WriteLine("Clear!");
-                        clearJudge = false;
-                    }
-                }
-                
             }
         }   
     }
