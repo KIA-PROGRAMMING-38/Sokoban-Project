@@ -23,12 +23,14 @@ namespace prototype
         DOWN = 4
     }
 
-    #region 사용 키
-
-    // space = 박스 당기기
-    // 방향키 = 이동하기
-
-    #endregion
+    enum REVERSE_DIRECTION
+    {
+        NONE = 0,
+        REVERSERIGHT = 1,
+        REVERSELEFT = 2,
+        REVERSEUP = 3,
+        REVERSEDOWN = 4
+    }
 
 
     class program
@@ -44,6 +46,10 @@ namespace prototype
             Console.Title = "어코반"; // 제목을 지어줌
             Console.Clear(); // 원래 밑에 뜨는 그 뭐 많은 것들 지워주는거임
 
+            #endregion
+
+            #region 게임종료 시 ㅊㅋ메세지
+            string congrats = " ⊂_ヽ\r\n　 ＼＼ Λ＿Λ\r\n　　 ＼( ‘ㅅ’ ) 두둠칫\r\n　　　 >　⌒ヽ\r\n　　　/ 　 へ＼\r\n　　 /　　/　＼＼\r\n　　 ﾚ　ノ　　 ヽ_つ\r\n　　/　/두둠칫\r\n　 /　/|\r\n　(　(ヽ\r\n　|　|、＼\r\n　| 丿 ＼ ⌒)\r\n　| |　　) /\r\n`ノ )　　Lﾉ";
             #endregion
 
             #region 변수 좌표 및 기호
@@ -183,26 +189,40 @@ namespace prototype
             POSITION[] position = new POSITION[box_X.Length];
             #endregion
 
+            REVERSE_DIRECTION reverse_movement = REVERSE_DIRECTION.NONE;
+
             #region 골안 박스 바꿔주는 기호
             string success = "♬";
             #endregion
 
+            #region 골 위 박스의 유무를 저장하는 배열
             bool[] isboxongoal = new bool[box_X.Length]; // n번째 박스가 골위에 있는지를 저장하는 bool배열
+            #endregion
 
             int movecount = 0; // 이동한 횟수를 저장하는 변수
 
             #region 포탈 기호 및 좌표
 
-            string portal = "O";
-            const int portal1X = 4;
+            string portal = "?";
+            const int portal1X = 5;
             const int portal1Y = 8;
 
             const int portal2X = 23;
             const int portal2Y = 2;
 
-            int[] portal_X = new int[] { portal1X, portal2X };
-            int[] portal_Y = new int[] { portal1Y, portal2Y };
+            int[] portal1_X = new int[] { portal1X, portal2X };
+            int[] portal1_Y = new int[] { portal1Y, portal2Y };
 
+            #endregion
+
+
+            #region 아이템 기호 및 좌표
+            string confusion = "♥";
+            int confusionX = 7;
+            int confusionY = 5;
+
+            bool ate = false;
+            int last = 0;
             #endregion
 
 
@@ -225,7 +245,7 @@ namespace prototype
                 Console.Write("'A' = 발로 차기 ");
 
                 Console.SetCursorPosition(Map_minX + 2, Map_maxY + 5);
-                Console.Write("'O' = 포탈 ");
+                Console.Write("'?' = 포탈 ");
 
                 Console.SetCursorPosition(Map_minX + 2, Map_maxY + 8);
                 Console.Write("Hint = 13+26+4-30+3-12+7-6+1-2");
@@ -233,6 +253,21 @@ namespace prototype
                 Console.SetCursorPosition(Map_maxX + 5, Map_minY + 2);
                 Console.Write($"움직인 횟수 = {movecount}");
 
+                #region 아이템 그려주기
+                if (ate == true)
+                {
+                    // 한번 먹었으면 안그리기
+                }
+                else // 안먹었으면 그려주기
+                {
+                    Console.SetCursorPosition(confusionX, confusionY);
+                    Console.Write(confusion);
+                }
+
+                Console.SetCursorPosition(Map_maxX + 5, 5);
+                Console.Write($"Confusion Left = {last}");
+
+                #endregion
 
                 #region 프레임 그려주기
                 for (int i = 1; i < Map_maxY + 1; ++i) // Y축 그려주기 = X는 고정이고 Y만 달라지는거임
@@ -270,11 +305,12 @@ namespace prototype
                 #region 나무 여러개 그려주기
                 for (int i = 0; i < tree_X.Length; ++i)
                 {
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.SetCursorPosition(tree_X[i], tree_Y[i]);
 
-                    Console.ForegroundColor = ConsoleColor.Green;
+                    
                     Console.Write(tree);
-                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    
                 }
 
 
@@ -314,11 +350,9 @@ namespace prototype
 
                 #region 포탈 그려주기
 
-
-
-                for (int i = 0; i < portal_X.Length; ++i)
+                for (int i = 0; i < portal1_X.Length; ++i)
                 {
-                    Console.SetCursorPosition(portal_X[i], portal_Y[i]);
+                    Console.SetCursorPosition(portal1_X[i], portal1_Y[i]);
                     Console.Write(portal);
                 }
 
@@ -330,8 +364,6 @@ namespace prototype
                 // 인풋
 
                 ConsoleKey key = Console.ReadKey().Key;
-
-
                 #endregion
 
                 #region 업데이트
@@ -345,156 +377,105 @@ namespace prototype
 
                 #endregion
 
-                #region 플레이어 이동 구현
+                #region 플레이어 이동 구현 + 플레이어가 포탈 타는 거 구현 +  아이템 먹으면 5프레임 반대로 움직임 구현
 
-                if (key == ConsoleKey.RightArrow)
+                if (player_X == confusionX && player_Y == confusionY)
                 {
-                    player_X = Math.Min(player_X + 1, Map_maxX);
-                    direction = DIRECTION.RIGHT;
-                    if (player_X == portal_X[0] && player_Y == portal_Y[0])
-                    {
-                        player_X = portal_X[1] + 1;
-                        player_Y = portal_Y[1];
-                    }
-                    else if (player_X == portal_X[1] && player_Y == portal_Y[1])
-                    {
-                        player_X = portal_X[0] + 1;
-                        player_Y = portal_Y[0];
-                    }
+                    ate = true;
+                    last = 5;
+                    confusionX = 50;
+                    confusionY = 50;
+                    Console.SetCursorPosition(confusionX, confusionY);
+
+
                 }
 
-                if (key == ConsoleKey.LeftArrow)
+                if (ate == true && 0 < last)
                 {
-                    player_X = Math.Max(player_X - 1, Map_minX);
-                    direction = DIRECTION.LEFT;
-                    if (player_X == portal_X[0] && player_Y == portal_Y[0])
+                    if (key == ConsoleKey.RightArrow)
                     {
-                        player_X = portal_X[1] - 1;
-                        player_Y = portal_Y[1];
+                        --player_X;
                     }
-                    else if (player_X == portal_X[1] && player_Y == portal_Y[1])
+                    if (key == ConsoleKey.LeftArrow)
                     {
-                        player_X = portal_X[0] - 1;
-                        player_Y = portal_Y[0];
+                        ++player_X;
                     }
+                    if (key == ConsoleKey.UpArrow)
+                    {
+                        ++player_Y;
+                    }
+                    if (key == ConsoleKey.DownArrow)
+                    {
+                        --player_Y;
+                    }
+                    --last;
                 }
-
-                if (key == ConsoleKey.UpArrow)
+                else
                 {
-                    player_Y = Math.Max(player_Y - 1, Map_minY);
-                    direction = DIRECTION.UP;
-                    if (player_X == portal_X[0] && player_Y == portal_Y[0])
+                    if (key == ConsoleKey.RightArrow)
                     {
-                        player_X = portal_X[1];
-                        player_Y = portal_Y[1] - 1;
-                    }
-                    else if (player_X == portal_X[1] && player_Y == portal_Y[1])
-                    {
-                        player_X = portal_X[0];
-                        player_Y = portal_Y[0] - 1;
-                    }
-                }
-
-                if (key == ConsoleKey.DownArrow)
-                {
-                    player_Y = Math.Min(player_Y + 1, Map_maxY);
-                    direction = DIRECTION.DOWN;
-                    if (player_X == portal_X[0] && player_Y == portal_Y[0])
-                    {
-                        player_X = portal_X[1];
-                        player_Y = portal_Y[1] + 1;
-                    }
-                    else if (player_X == portal_X[1] && player_Y == portal_Y[1])
-                    {
-                        player_X = portal_X[0];
-                        player_Y = portal_Y[0] + 1;
-                    }
-                }
-
-                #endregion
-
-                #region 플레이어가 박스 여러개 미는 거 구현 + 박스도 벽에 막힘
-
-                for (int i = 0; i < box_X.Length; ++i)
-                {
-
-                    if (player_X == box_X[i] && player_Y == box_Y[i])
-                    {
-                        switch (direction)
+                        player_X = Math.Min(player_X + 1, Map_maxX);
+                        direction = DIRECTION.RIGHT;
+                        if (player_X == portal1_X[0] && player_Y == portal1_Y[0])
                         {
-                            case DIRECTION.RIGHT:
-
-                                box_X[i] = Math.Min(player_X + 1, Map_maxX);
-                                player_X = box_X[i] - 1;
-                                if (box_X[i] == portal_X[0] && box_Y[i] == portal_Y[0])
-                                {
-                                    box_X[i] = portal_X[1] + 1;
-                                    box_Y[i] = portal_Y[1];
-                                }
-                                else if (box_X[i] == portal_X[1] && box_Y[i] == portal_Y[1])
-                                {
-                                    box_X[i] = portal_X[0] + 1;
-                                    box_Y[i] = portal_Y[0];
-                                }
-                                break;
-
-                            case DIRECTION.LEFT:
-
-                                box_X[i] = Math.Max(player_X - 1, Map_minX);
-                                player_X = box_X[i] + 1;
-                                if (box_X[i] == portal_X[0] && box_Y[i] == portal_Y[0])
-                                {
-                                    box_X[i] = portal_X[1] - 1;
-                                    box_Y[i] = portal_Y[1];
-                                }
-                                else if (box_X[i] == portal_X[1] && box_Y[i] == portal_Y[1])
-                                {
-                                    box_X[i] = portal_X[0] - 1;
-                                    box_Y[i] = portal_Y[0];
-                                }
-                                break;
-
-                            case DIRECTION.UP:
-
-                                box_Y[i] = Math.Max(player_Y - 1, Map_minY);
-                                player_Y = box_Y[i] + 1;
-                                if (box_X[i] == portal_X[0] && box_Y[i] == portal_Y[0])
-                                {
-                                    box_Y[i] = portal_Y[1] - 1;
-                                    box_X[i] = portal_X[1];
-                                }
-                                else if (box_X[i] == portal_X[1] && box_Y[i] == portal_Y[1])
-                                {
-                                    box_Y[i] = portal_Y[0] - 1;
-                                    box_X[i] = portal_X[0];
-                                }
-                                break;
-
-                            case DIRECTION.DOWN:
-
-                                box_Y[i] = Math.Min(player_Y + 1, Map_maxY);
-                                player_Y = box_Y[i] - 1;
-                                if (box_X[i] == portal_X[0] && box_Y[i] == portal_Y[0])
-                                {
-                                    box_Y[i] = portal_Y[1] + 1;
-                                    box_X[i] = portal_X[1];
-                                }
-                                else if (box_X[i] == portal_X[1] && box_Y[i] == portal_Y[1])
-                                {
-                                    box_Y[i] = portal_Y[0] + 1;
-                                    box_X[i] = portal_X[0];
-                                }
-                                break;
+                            player_X = portal1_X[1] + 1;
+                            player_Y = portal1_Y[1];
+                        }
+                        else if (player_X == portal1_X[1] && player_Y == portal1_Y[1])
+                        {
+                            player_X = portal1_X[0] + 1;
+                            player_Y = portal1_Y[0];
                         }
                     }
 
+                    if (key == ConsoleKey.LeftArrow)
+                    {
+                        player_X = Math.Max(player_X - 1, Map_minX);
+                        direction = DIRECTION.LEFT;
+                        if (player_X == portal1_X[0] && player_Y == portal1_Y[0])
+                        {
+                            player_X = portal1_X[1] - 1;
+                            player_Y = portal1_Y[1];
+                        }
+                        else if (player_X == portal1_X[1] && player_Y == portal1_Y[1])
+                        {
+                            player_X = portal1_X[0] - 1;
+                            player_Y = portal1_Y[0];
+                        }
+                    }
 
+                    if (key == ConsoleKey.UpArrow)
+                    {
+                        player_Y = Math.Max(player_Y - 1, Map_minY);
+                        direction = DIRECTION.UP;
+                        if (player_X == portal1_X[0] && player_Y == portal1_Y[0])
+                        {
+                            player_X = portal1_X[1];
+                            player_Y = portal1_Y[1] - 1;
+                        }
+                        else if (player_X == portal1_X[1] && player_Y == portal1_Y[1])
+                        {
+                            player_X = portal1_X[0];
+                            player_Y = portal1_Y[0] - 1;
+                        }
+                    }
+
+                    if (key == ConsoleKey.DownArrow)
+                    {
+                        player_Y = Math.Min(player_Y + 1, Map_maxY);
+                        direction = DIRECTION.DOWN;
+                        if (player_X == portal1_X[0] && player_Y == portal1_Y[0])
+                        {
+                            player_X = portal1_X[1];
+                            player_Y = portal1_Y[1] + 1;
+                        }
+                        else if (player_X == portal1_X[1] && player_Y == portal1_Y[1])
+                        {
+                            player_X = portal1_X[0];
+                            player_Y = portal1_Y[0] + 1;
+                        }
+                    }
                 }
-
-
-
-
-
 
 
                 #endregion
@@ -526,6 +507,83 @@ namespace prototype
                     {
                         position[i] = POSITION.UP;
                         break;
+                    }
+                }
+                #endregion
+
+                #region 플레이어가 박스 여러개 미는 거 구현 + 박스도 벽에 막힘
+
+                for (int i = 0; i < box_X.Length; ++i)
+                {
+
+                    if (player_X == box_X[i] && player_Y == box_Y[i])
+                    {
+                        switch (direction)
+                        {
+                            case DIRECTION.RIGHT:
+
+                                box_X[i] = Math.Min(player_X + 1, Map_maxX);
+                                player_X = box_X[i] - 1;
+                                if (box_X[i] == portal1_X[0] && box_Y[i] == portal1_Y[0])
+                                {
+                                    box_X[i] = portal1_X[1] + 1;
+                                    box_Y[i] = portal1_Y[1];
+                                }
+                                else if (box_X[i] == portal1_X[1] && box_Y[i] == portal1_Y[1])
+                                {
+                                    box_X[i] = portal1_X[0] + 1;
+                                    box_Y[i] = portal1_Y[0];
+                                }
+                                break;
+
+                            case DIRECTION.LEFT:
+
+                                box_X[i] = Math.Max(player_X - 1, Map_minX);
+                                player_X = box_X[i] + 1;
+                                if (box_X[i] == portal1_X[0] && box_Y[i] == portal1_Y[0])
+                                {
+                                    box_X[i] = portal1_X[1] - 1;
+                                    box_Y[i] = portal1_Y[1];
+                                }
+                                else if (box_X[i] == portal1_X[1] && box_Y[i] == portal1_Y[1])
+                                {
+                                    box_X[i] = portal1_X[0] - 1;
+                                    box_Y[i] = portal1_Y[0];
+                                }
+                                break;
+
+                            case DIRECTION.UP:
+
+                                box_Y[i] = Math.Max(player_Y - 1, Map_minY);
+                                player_Y = box_Y[i] + 1;
+                                if (box_X[i] == portal1_X[0] && box_Y[i] == portal1_Y[0])
+                                {
+                                    box_Y[i] = portal1_Y[1] - 1;
+                                    box_X[i] = portal1_X[1];
+                                }
+                                else if (box_X[i] == portal1_X[1] && box_Y[i] == portal1_Y[1])
+                                {
+                                    box_Y[i] = portal1_Y[0] - 1;
+                                    box_X[i] = portal1_X[0];
+                                }
+                                break;
+
+                            case DIRECTION.DOWN:
+
+                                box_Y[i] = Math.Min(player_Y + 1, Map_maxY);
+                                player_Y = box_Y[i] - 1;
+                                if (box_X[i] == portal1_X[0] && box_Y[i] == portal1_Y[0])
+                                {
+                                    box_Y[i] = portal1_Y[1] + 1;
+                                    box_X[i] = portal1_X[1];
+                                }
+                                else if (box_X[i] == portal1_X[1] && box_Y[i] == portal1_Y[1])
+                                {
+                                    box_Y[i] = portal1_Y[0] + 1;
+                                    box_X[i] = portal1_X[0];
+                                }
+                                break;
+                        }
                     }
                 }
                 #endregion
@@ -605,9 +663,6 @@ namespace prototype
                 }
                 #endregion
 
-
-
-
                 #region 플레이어가 나무에 막히는 거 구현
 
                 for (int i = 0; i < tree_X.Length; ++i)
@@ -645,8 +700,6 @@ namespace prototype
                 }
 
                 #endregion
-
-
 
                 #region 박스가 나무에 막히는 거 구현
                 for (int i = 0; i < tree_X.Length; ++i)
@@ -766,13 +819,14 @@ namespace prototype
 
             // 목적 달성하면 나오는 화면
             Console.Clear();
-            Console.WriteLine("ㅊㅋㅊㅋㅊㅋㅊㅋㅊㅋㅊㅋ");
+            Console.WriteLine(congrats);
 
-
+            
         }
 
     }
 }
+
 
 
 
