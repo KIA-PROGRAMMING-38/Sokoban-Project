@@ -10,7 +10,6 @@ namespace Sokoban
         Down
     }
 
-
     class Program
     {
 
@@ -49,8 +48,8 @@ namespace Sokoban
             const string BOX_STRING = "B";
 
             // 박스의 초기 좌표
-            const int INITIAL_BOX_X = 5;
-            const int INITIAL_BOX_Y = 5;
+            const int INITIAL_BOX_X = 2;
+            const int INITIAL_BOX_Y = 2;
 
             //벽의 좌표
             const int INITIAL_WALL_X = 7;
@@ -58,21 +57,23 @@ namespace Sokoban
             //벽의 기호 
             const string WALL_STRING = "H";
             // 골인 좌표
-            const int INITIAL_GOLL_X = 15;
-            const int INITIAL_GOLL_Y = 10;
+            const int INITIAL_GOAL_X = 15;
+            const int INITIAL_GOAL_Y = 10;
 
-            const int INITIAL_GOLL1_X = 0;
-            const int INITIAL_GOLL1_Y = 10;
+            const int INITIAL_GOAL1_X = 0;
+            const int INITIAL_GOAL1_Y = 10;
            
-            const int INITIAL_GOLL2_X = 15;
-            const int INITIAL_GOLL2_Y = 0;
+            const int INITIAL_GOAL2_X = 15;
+            const int INITIAL_GOAL2_Y = 0;
             
-            const int INITIAL_GOLL3_X = 6;
-            const int INITIAL_GOLL3_Y = 2;
+            const int INITIAL_GOAL3_X = 6;
+            const int INITIAL_GOAL3_Y = 2;
             // 골인 기호
-            const string GOLL_STRING = "G";
+            const string GOAL_STRING = "G";
             // 박스 골인시 기호 
-            const string GOLLIN_STRING = "★";
+            const string GOALIN_STRING = "C";
+            // 박스 골인시 좌표
+            
 
             int playerX = 0;
             int playerY = 0;
@@ -80,7 +81,7 @@ namespace Sokoban
             //박스 좌표설정
             int boxX = 5;
             int boxY = 5;
-        
+           
 
             // 가로 15 세로 10
             //게임 루프 == 프레임
@@ -92,16 +93,38 @@ namespace Sokoban
                 Console.SetCursorPosition(playerX, playerY);
                 Console.Write(PLAYER_STRING);
                 //박스 출력하기
+                Console.SetCursorPosition(INITIAL_BOX_X, INITIAL_BOX_Y);
+                Console.Write(BOX_STRING);
+
                 Console.SetCursorPosition(boxX, boxY);
                 Console.Write(BOX_STRING);
+
+                Console.SetCursorPosition(boxX, boxY);
+                Console.Write(BOX_STRING);
+
+                Console.SetCursorPosition(boxX, boxY);
+                Console.Write(BOX_STRING);
+
                 //벽 출력하기
                 Console.SetCursorPosition(INITIAL_WALL_X, INITIAL_WALL_Y);
                 Console.Write(WALL_STRING);
                 //골 출력하기
-                Console.SetCursorPosition(INITIAL_GOLL_X, INITIAL_GOLL_Y);
-                Console.Write(GOLL_STRING);
+                Console.SetCursorPosition(INITIAL_GOAL_X, INITIAL_GOAL_Y);
+                Console.Write(GOAL_STRING);
 
-                
+                Console.SetCursorPosition(INITIAL_GOAL1_X, INITIAL_GOAL1_Y);
+                Console.Write(GOAL_STRING);
+
+                Console.SetCursorPosition(INITIAL_GOAL2_X, INITIAL_GOAL2_Y);
+                Console.Write(GOAL_STRING);
+
+                Console.SetCursorPosition(INITIAL_GOAL3_X, INITIAL_GOAL3_Y);
+                Console.Write(GOAL_STRING);
+
+
+
+                //골 판단하기
+
 
 
                 //------------ Processintput---------
@@ -214,6 +237,7 @@ namespace Sokoban
                             Console.WriteLine($"[Error] 플레이어의 이동 방향이 잘못되었습니다. {playerDirection}");
 
                             return; // 프로그램 종료
+                            
                     }
 
                 }
@@ -245,18 +269,21 @@ namespace Sokoban
 
                 }
                 // 골인 지점 만들기
-                if (boxX == INITIAL_GOLL_X && boxY == INITIAL_GOLL_Y)
-                {
-                    Console.Clear();
-                    Console.WriteLine("축하합니다!");
-                    return;
-                }
-                
-
-
+                   if (boxX == INITIAL_GOAL_X && boxY == INITIAL_GOAL_Y )
+                   {
+                    
+                    Console.SetCursorPosition(INITIAL_GOAL_X, INITIAL_GOAL_Y);
+                    Console.Write(GOALIN_STRING);
+                   }
                 
 
             }
+
+
+
+
+
         }
     }
 }
+    
