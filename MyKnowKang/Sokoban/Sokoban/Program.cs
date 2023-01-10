@@ -26,8 +26,16 @@ namespace KMH_Sokoban
 
 	class Program
 	{
+		public static void Test( ref int a )
+		{
+			int b = 0;
+		}
+
 		static void Main()
 		{
+			int[] arr = new int[5] { 1, 2, 3, 4, 5 };
+			Test( ref 10 );
+
 			// ------------------------------------------- 초기화(객체 생성 및 초기화).. -------------------------------------------
 			#region Initialize
 			#region 상수 초기화
