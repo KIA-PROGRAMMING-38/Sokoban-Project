@@ -41,8 +41,8 @@ class Program
         int boxY = 5;
 
         // 벽 좌표
-        int wallX = 7;
-        int wallY = 7;
+        int[] wallPositionsX = { 7, 11 };
+        int[] wallPositionsY = { 7, 5 };
         
         // 골 좌표
         int goalX = 10;
@@ -68,9 +68,13 @@ class Program
             Console.Write("B");
 
             // 벽을 그린다
-            Console.SetCursorPosition(wallX, wallY);
-            Console.Write("W");
-
+            int wallCount = wallPositionsX.Length;
+            for (int i = 0; i < wallCount; ++i)
+            {
+                Console.SetCursorPosition(wallPositionsX[i], wallPositionsY[i]);
+                Console.Write("W");
+            }
+            
             // ======================= ProcessInput =======================
             // 유저로부터 입력을 받는다 
             ConsoleKeyInfo keyInfo = Console.ReadKey();
@@ -103,35 +107,40 @@ class Program
             }
 
             // 플레이어와 벽의 충돌 처리
-            if (playerX == wallX && playerY == wallY)
+            for (int i = 0; i < wallCount; ++i)
             {
+                if (playerX != wallPositionsX[i] || playerY != wallPositionsY[i])
+                {
+                    continue;
+                }
+
                 switch (playerMoveDirection)
                 {
-                    case Direction.Left:
-                        playerX = wallX + 1;
+                        case Direction.Left:
+                            playerX = wallPositionsX[i] + 1;
 
-                        break;
-                    case Direction.Right:
-                        playerX = wallX - 1;
+                            break;
+                        case Direction.Right:
+                            playerX = wallPositionsX[i] - 1;
 
-                        break;
-                    case Direction.Up:
-                        playerY = wallY + 1;
+                            break;
+                        case Direction.Up:
+                            playerY = wallPositionsY[i] + 1;
 
-                        break;
-                    case Direction.Down:
-                        playerY = wallY - 1;
+                            break;
+                        case Direction.Down:
+                            playerY = wallPositionsY[i] - 1;
 
-                        break;
-                    default:    // Error
-                        Console.Clear();
-                        Console.WriteLine($"[Error] 플레이어 방향 : {playerMoveDirection}");
-                        Environment.Exit(1);    // 프로그램을 종료한다.
+                            break;
+                        default:    // Error
+                            Console.Clear();
+                            Console.WriteLine($"[Error] 플레이어 방향 : {playerMoveDirection}");
+                            Environment.Exit(1);    // 프로그램을 종료한다.
 
-                        break;
+                            break;
                 }
             }
-
+            
             // 박스 업데이트
             if (playerX == boxX && playerY == boxY)
             {
@@ -167,27 +176,32 @@ class Program
             }
 
             // 박스와 벽의 충돌 처리
-            if (boxX == wallX && boxY == wallY)
+            for (int i = 0; i < wallCount; ++i)
             {
+                if (boxX != wallPositionsX[i] || boxY != wallPositionsY[i])
+                {
+                    continue;
+                }
+
                 switch (playerMoveDirection)
                 {
                     case Direction.Left:
-                        boxX = wallX + 1;
+                        boxX = wallPositionsX[i] + 1;
                         playerX = boxX + 1;
 
                         break;
                     case Direction.Right:
-                        boxX = wallX - 1;
+                        boxX = wallPositionsX[i] - 1;
                         playerX = boxX - 1;
 
                         break;
                     case Direction.Up:
-                        boxY = wallY + 1;
+                        boxY = wallPositionsY[i] + 1;
                         playerY = boxY + 1;
 
                         break;
                     case Direction.Down:
-                        boxY = wallY - 1;
+                        boxY = wallPositionsY[i] - 1;
                         playerY = boxY - 1;
 
                         break;
