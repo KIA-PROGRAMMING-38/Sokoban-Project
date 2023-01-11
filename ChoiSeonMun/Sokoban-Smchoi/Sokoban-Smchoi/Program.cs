@@ -43,6 +43,10 @@ class Program
         // 벽 좌표
         int wallX = 7;
         int wallY = 7;
+        
+        // 골 좌표
+        int goalX = 10;
+        int goalY = 10;
 
         // 게임 루프
         while (true)
@@ -54,6 +58,10 @@ class Program
             // 플레이어를 그린다
             Console.SetCursorPosition(playerX, playerY);
             Console.Write("P");
+
+            // 골을 그린다
+            Console.SetCursorPosition(goalX, goalY);
+            Console.Write("G");
 
             // 박스를 그린다
             Console.SetCursorPosition(boxX, boxY);
@@ -191,7 +199,19 @@ class Program
                         break;
                 }
             }
+
+            // 박스가 골 위로 올라왔는지 확인
+            if (boxX == goalX && boxY == goalY)
+            {
+                break;
+            }
         }
+
+        Console.Clear();
+        Console.WriteLine("축하합니다. 게임을 클리어하셨습니다.");
+
+        // 게임이 끝났으니 콘솔 세팅을 다시 정상화한다.
+        Console.ResetColor(); 
     }
 }
 
