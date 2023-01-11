@@ -113,7 +113,6 @@
                 Console.Write(objectSymbol);
             }
 
-
             void PlayerRender()
             {
                 SymbolDraw(playerX, playerY, PLAYER_SYMBOL);
@@ -304,11 +303,11 @@
                 // 벽
                 for (int wallId = 0; wallId < TOTAL_WALL_NUM; ++wallId)
                 {
-                    PlayerPushWall(wallId);
-                    BoxPushWall(wallId);
+                    PlayerBeatWall(wallId);
+                    BoxBeatWall(wallId);
                 }
             }
-            void PlayerPushWall(int wallIndex)
+            void PlayerBeatWall(int wallIndex)
             {
                 // 벽에 플레이어
                 if (playerX == wallX[wallIndex] && playerY == wallY[wallIndex])
@@ -334,9 +333,8 @@
                             return;
                     }
                 }
-
             }
-            void BoxPushWall(int wallIndex)
+            void BoxBeatWall(int wallIndex)
             {
                 // 벽에 박스
                 for (int boxId = 0; boxId < TOTAL_BOX_NUM; ++boxId)
@@ -371,6 +369,7 @@
                     }
                 }
             }
+
             void GoalUpdate()
             {
                 // 골
