@@ -40,6 +40,10 @@ class Program
         int boxX = 5;
         int boxY = 5;
 
+        // 벽 좌표
+        int wallX = 7;
+        int wallY = 7;
+
         // 게임 루프
         while (true)
         {
@@ -54,6 +58,10 @@ class Program
             // 박스를 그린다
             Console.SetCursorPosition(boxX, boxY);
             Console.Write("B");
+
+            // 벽을 그린다
+            Console.SetCursorPosition(wallX, wallY);
+            Console.Write("W");
 
             // ======================= ProcessInput =======================
             // 유저로부터 입력을 받는다 
@@ -86,6 +94,36 @@ class Program
                 playerMoveDirection = Direction.Down;
             }
 
+            // 플레이어와 벽의 충돌 처리
+            if (playerX == wallX && playerY == wallY)
+            {
+                switch (playerMoveDirection)
+                {
+                    case Direction.Left:
+                        playerX = wallX + 1;
+
+                        break;
+                    case Direction.Right:
+                        playerX = wallX - 1;
+
+                        break;
+                    case Direction.Up:
+                        playerY = wallY + 1;
+
+                        break;
+                    case Direction.Down:
+                        playerY = wallY - 1;
+
+                        break;
+                    default:    // Error
+                        Console.Clear();
+                        Console.WriteLine($"[Error] 플레이어 방향 : {playerMoveDirection}");
+                        Environment.Exit(1);    // 프로그램을 종료한다.
+
+                        break;
+                }
+            }
+
             // 박스 업데이트
             if (playerX == boxX && playerY == boxY)
             {
@@ -103,11 +141,45 @@ class Program
                         break;
                     case Direction.Up:
                         boxY = Math.Max(MIN_X, boxY - 1);
-                        playerY = playerY + 1;
+                        playerY = boxY + 1;
 
                         break;
                     case Direction.Down:
                         boxY = Math.Min(boxY + 1, MAX_Y);
+                        playerY = boxY - 1;
+
+                        break;
+                    default:    // Error
+                        Console.Clear();
+                        Console.WriteLine($"[Error] 플레이어 방향 : {playerMoveDirection}");
+                        Environment.Exit(1);    // 프로그램을 종료한다.
+
+                        break;
+                }
+            }
+
+            // 박스와 벽의 충돌 처리
+            if (boxX == wallX && boxY == wallY)
+            {
+                switch (playerMoveDirection)
+                {
+                    case Direction.Left:
+                        boxX = wallX + 1;
+                        playerX = boxX + 1;
+
+                        break;
+                    case Direction.Right:
+                        boxX = wallX - 1;
+                        playerX = boxX - 1;
+
+                        break;
+                    case Direction.Up:
+                        boxY = wallY + 1;
+                        playerY = boxY + 1;
+
+                        break;
+                    case Direction.Down:
+                        boxY = wallY - 1;
                         playerY = boxY - 1;
 
                         break;
