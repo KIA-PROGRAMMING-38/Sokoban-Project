@@ -40,6 +40,9 @@ class Program
         int boxX = 5;
         int boxY = 5;
 
+        // 박스가 골 위에 올라와있는지 저장한다 
+        bool isBoxOnGoal = false;
+
         // 벽 좌표
         int[] wallPositionsX = { 7, 11 };
         int[] wallPositionsY = { 7, 5 };
@@ -47,6 +50,8 @@ class Program
         // 골 좌표
         int[] goalPositionsX = { 10, 3 };
         int[] goalPositionsY = { 10, 6 };
+
+        
         
         // 게임 루프
         while (true)
@@ -69,7 +74,7 @@ class Program
             
             // 박스를 그린다
             Console.SetCursorPosition(boxX, boxY);
-            Console.Write("B");
+            Console.Write(isBoxOnGoal ? "O" : "B");
 
             // 벽을 그린다
             int wallCount = wallPositionsX.Length;
@@ -225,6 +230,7 @@ class Program
                 if (boxX == goalPositionsX[i] && boxY == goalPositionsY[i])
                 {
                     ++boxOnGoalCount;
+                    isBoxOnGoal = true;
                 }
             }
 
