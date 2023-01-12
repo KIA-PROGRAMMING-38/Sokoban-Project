@@ -62,31 +62,28 @@ class Program
             Console.Clear();
 
             // 플레이어를 그린다
-            Console.SetCursorPosition(playerX, playerY);
-            Console.Write("P");
+            RenderObject(playerX, playerY, "P");
 
             // 골을 그린다
             int goalCount = goalPositionsX.Length;
             for (int i = 0; i < goalCount; ++i)
             {
-                Console.SetCursorPosition(goalPositionsX[i], goalPositionsY[i]);
-                Console.Write("G");
+                RenderObject(goalPositionsX[i], goalPositionsY[i], "G");
             }
 
             // 박스를 그린다
             int boxCount = boxPositionsX.Length;
             for (int i = 0; i < boxCount; ++i)
             {
-                Console.SetCursorPosition(boxPositionsX[i], boxPositionsY[i]);
-                Console.Write(isBoxOnGoal[i] ? "O" : "B");
+                string boxIcon = isBoxOnGoal[i] ? "O" : "B";
+                RenderObject(boxPositionsX[i], boxPositionsY[i], boxIcon);
             }
 
             // 벽을 그린다
             int wallCount = wallPositionsX.Length;
             for (int i = 0; i < wallCount; ++i)
             {
-                Console.SetCursorPosition(wallPositionsX[i], wallPositionsY[i]);
-                Console.Write("W");
+                RenderObject(wallPositionsX[i], wallPositionsY[i], "W");
             }
             
             // ======================= ProcessInput =======================
@@ -314,7 +311,16 @@ class Program
         Console.WriteLine("축하합니다. 게임을 클리어하셨습니다.");
 
         // 게임이 끝났으니 콘솔 세팅을 다시 정상화한다.
-        Console.ResetColor(); 
+        Console.ResetColor();
+
+
+        // 오브젝트를 그린다
+        void RenderObject(int x, int y, string icon)
+        {
+            Console.SetCursorPosition(x, y);
+            Console.Write(icon);
+        }
+
     }
 }
 
