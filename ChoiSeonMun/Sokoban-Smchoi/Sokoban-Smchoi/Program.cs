@@ -43,11 +43,11 @@ class Program
         // 벽 좌표
         int[] wallPositionsX = { 7, 11 };
         int[] wallPositionsY = { 7, 5 };
-        
-        // 골 좌표
-        int goalX = 10;
-        int goalY = 10;
 
+        // 골 좌표
+        int[] goalPositionsX = { 10, 3 };
+        int[] goalPositionsY = { 10, 6 };
+        
         // 게임 루프
         while (true)
         {
@@ -60,9 +60,13 @@ class Program
             Console.Write("P");
 
             // 골을 그린다
-            Console.SetCursorPosition(goalX, goalY);
-            Console.Write("G");
-
+            int goalCount = goalPositionsX.Length;
+            for (int i = 0; i < goalCount; ++i)
+            {
+                Console.SetCursorPosition(goalPositionsX[i], goalPositionsY[i]);
+                Console.Write("G");
+            }
+            
             // 박스를 그린다
             Console.SetCursorPosition(boxX, boxY);
             Console.Write("B");
@@ -215,7 +219,16 @@ class Program
             }
 
             // 박스가 골 위로 올라왔는지 확인
-            if (boxX == goalX && boxY == goalY)
+            int boxOnGoalCount = 0;
+            for (int i = 0; i < goalCount; ++i)
+            {
+                if (boxX == goalPositionsX[i] && boxY == goalPositionsY[i])
+                {
+                    ++boxOnGoalCount;
+                }
+            }
+
+            if (boxOnGoalCount == goalCount)
             {
                 break;
             }
