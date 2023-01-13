@@ -92,30 +92,7 @@ class Program
             ConsoleKey key = keyInfo.Key;   // 실제 키는 ConsoleKeyInfo에 Key에 있다 
 
             // ======================= Update =======================
-            // 플레이어 이동 처리
-            if (key == ConsoleKey.LeftArrow)
-            {
-                playerX = (int)Math.Max(MIN_X, playerX - 1);
-                playerMoveDirection = Direction.Left;
-            }
-
-            if (key == ConsoleKey.RightArrow)
-            {
-                playerX = (int)Math.Min(playerX + 1, MAX_X);
-                playerMoveDirection = Direction.Right;
-            }
-
-            if (key == ConsoleKey.UpArrow)
-            {
-                playerY = (int)Math.Max(MIN_Y, playerY - 1);
-                playerMoveDirection = Direction.Up;
-            }
-
-            if (key == ConsoleKey.DownArrow)
-            {
-                playerY = (int)Math.Min(playerY + 1, MAX_Y);
-                playerMoveDirection = Direction.Down;
-            }
+            MovePlayer(key, ref playerX, ref playerY, ref playerMoveDirection);
 
             // 플레이어와 벽의 충돌 처리
             for (int i = 0; i < wallCount; ++i)
@@ -321,6 +298,33 @@ class Program
             Console.Write(icon);
         }
 
+        // 플레이어를 움직인다
+        void MovePlayer(ConsoleKey key, ref int x, ref int y, ref Direction moveDirection)
+        {
+            if (key == ConsoleKey.LeftArrow)
+            {
+                x = (int)Math.Max(MIN_X, x - 1);
+                moveDirection = Direction.Left;
+            }
+
+            if (key == ConsoleKey.RightArrow)
+            {
+                x = (int)Math.Min(x + 1, MAX_X);
+                moveDirection = Direction.Right;
+            }
+
+            if (key == ConsoleKey.UpArrow)
+            {
+                y = (int)Math.Max(MIN_Y, y - 1);
+                moveDirection = Direction.Up;
+            }
+
+            if (key == ConsoleKey.DownArrow)
+            {
+                y = (int)Math.Min(y + 1, MAX_Y);
+                moveDirection = Direction.Down;
+            }
+        }
     }
 }
 
