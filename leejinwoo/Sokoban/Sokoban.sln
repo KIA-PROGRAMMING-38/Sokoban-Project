@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.33027.164
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sokoban", "Sokoban\Sokoban.csproj", "{BB21F521-F551-4B8D-9E46-FC44D0D219E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "socobanS", "socobanS\socobanS.csproj", "{0382EA66-AC0B-4736-AB69-551586847BBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "socobanS", "socobanS\socobanS.csproj", "{0382EA66-AC0B-4736-AB69-551586847BBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
