@@ -105,19 +105,19 @@ class Program
                 switch (playerMoveDirection)
                 {
                         case Direction.Left:
-                            playerX = wallPositionsX[i] + 1;
+                            MoveToRightOfTarget(out playerX, in wallPositionsX[i]);
 
                             break;
                         case Direction.Right:
-                            playerX = wallPositionsX[i] - 1;
+                            MoveToLeftOfTarget(out playerX, in wallPositionsX[i]);
 
                             break;
                         case Direction.Up:
-                            playerY = wallPositionsY[i] + 1;
+                            MoveToDownOfTarget(out playerY, in wallPositionsY[i]);
 
                             break;
                         case Direction.Down:
-                            playerY = wallPositionsY[i] - 1;
+                            MoveToUpOfTarget(out playerY, in wallPositionsY[i]);
 
                             break;
                         default:    // Error
@@ -138,24 +138,20 @@ class Program
                 switch (playerMoveDirection)
                 {
                     case Direction.Left:
-                        boxPositionsX[i] = Math.Max(MIN_X, boxPositionsX[i] - 1);
-                        playerX = boxPositionsX[i] + 1;
+                        MoveToLeftOfTarget(out boxPositionsX[i], in playerX);
 
                         break;
                     case Direction.Right:
-                        boxPositionsX[i] = Math.Min(boxPositionsX[i] + 1, MAX_X);
-                        playerX = boxPositionsX[i] - 1;
+                        MoveToRightOfTarget(out boxPositionsX[i], in playerX);
 
                         break;
                     case Direction.Up:
-                        boxPositionsY[i] = Math.Max(MIN_X, boxPositionsY[i] - 1);
-                        playerY = boxPositionsY[i] + 1;
-
+                        MoveToUpOfTarget(out boxPositionsY[i], in playerY);
+                        
                         break;
                     case Direction.Down:
-                        boxPositionsY[i] = Math.Min(boxPositionsY[i] + 1, MAX_Y);
-                        playerY = boxPositionsY[i] - 1;
-
+                        MoveToDownOfTarget(out boxPositionsY[i], in playerY);
+                        
                         break;
                     default:    // Error
                         ExitWithError($"[Error] 플레이어 방향 : {playerMoveDirection}");
@@ -187,23 +183,23 @@ class Program
                 switch (playerMoveDirection)
                 {
                     case Direction.Left:
-                        boxPositionsX[pushedBoxIndex] = boxPositionsX[i] + 1;
-                        playerX = boxPositionsX[pushedBoxIndex] + 1;
-
+                        MoveToRightOfTarget(out boxPositionsX[pushedBoxIndex], in boxPositionsX[i]);
+                        MoveToRightOfTarget(out playerX, in boxPositionsX[pushedBoxIndex]);
+                        
                         break;
                     case Direction.Right:
-                        boxPositionsX[pushedBoxIndex] = boxPositionsX[i] - 1;
-                        playerX = boxPositionsX[pushedBoxIndex] - 1;
+                        MoveToLeftOfTarget(out boxPositionsX[pushedBoxIndex], in boxPositionsX[i]);
+                        MoveToLeftOfTarget(out playerX, in boxPositionsX[pushedBoxIndex]);
 
                         break;
                     case Direction.Up:
-                        boxPositionsY[pushedBoxIndex] = boxPositionsY[i] + 1;
-                        playerY = boxPositionsY[pushedBoxIndex] + 1;
+                        MoveToDownOfTarget(out boxPositionsY[pushedBoxIndex], in boxPositionsX[i]);
+                        MoveToDownOfTarget(out playerY, in boxPositionsY[pushedBoxIndex]);
 
                         break;
                     case Direction.Down:
-                        boxPositionsY[pushedBoxIndex] = boxPositionsY[i] - 1;
-                        playerY = boxPositionsY[pushedBoxIndex] - 1;
+                        MoveToUpOfTarget(out boxPositionsY[pushedBoxIndex], in boxPositionsY[i]);
+                        MoveToUpOfTarget(out playerY, in boxPositionsY[pushedBoxIndex]);
 
                         break;
                     default:    // Error
@@ -225,23 +221,23 @@ class Program
                 switch (playerMoveDirection)
                 {
                     case Direction.Left:
-                        boxPositionsX[pushedBoxIndex] = wallPositionsX[i] + 1;
-                        playerX = boxPositionsX[pushedBoxIndex] + 1;
+                        MoveToRightOfTarget(out boxPositionsX[pushedBoxIndex], in wallPositionsX[i]);
+                        MoveToRightOfTarget(out playerX, in boxPositionsX[pushedBoxIndex]);
 
                         break;
                     case Direction.Right:
-                        boxPositionsX[pushedBoxIndex] = wallPositionsX[i] - 1;
-                        playerX = boxPositionsX[pushedBoxIndex] - 1;
+                        MoveToLeftOfTarget(out boxPositionsX[pushedBoxIndex], in wallPositionsX[i]);
+                        MoveToLeftOfTarget(out playerX, in boxPositionsX[pushedBoxIndex]);
 
                         break;
                     case Direction.Up:
-                        boxPositionsY[pushedBoxIndex] = wallPositionsY[i] + 1;
-                        playerY = boxPositionsY[pushedBoxIndex] + 1;
+                        MoveToDownOfTarget(out boxPositionsY[pushedBoxIndex], in wallPositionsY[i]);
+                        MoveToDownOfTarget(out playerY, in boxPositionsY[i]);
 
                         break;
                     case Direction.Down:
-                        boxPositionsY[pushedBoxIndex] = wallPositionsY[i] - 1;
-                        playerY = boxPositionsY[pushedBoxIndex] - 1;
+                        MoveToUpOfTarget(out boxPositionsY[pushedBoxIndex], in wallPositionsY[i]);
+                        MoveToUpOfTarget(out playerY, in boxPositionsY[pushedBoxIndex]);
 
                         break;
                     default:    // Error
@@ -292,6 +288,12 @@ class Program
             Console.SetCursorPosition(x, y);
             Console.Write(icon);
         }
+
+        // target 근처로 이동시킨다 
+        void MoveToLeftOfTarget(out int x, in int target) => x = Math.Max(MIN_X, target - 1);
+        void MoveToRightOfTarget(out int x, in int target) => x = Math.Min(target + 1, MAX_X);
+        void MoveToUpOfTarget(out int y, in int target) => y = Math.Min(MIN_Y, target - 1);
+        void MoveToDownOfTarget(out int y, in int target) => y = Math.Max(target + 1, MAX_Y);
 
         // 플레이어를 움직인다
         void MovePlayer(ConsoleKey key, ref int x, ref int y, ref Direction moveDirection)
