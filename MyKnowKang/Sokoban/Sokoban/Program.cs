@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sokoban;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -15,13 +16,6 @@ namespace KMH_Sokoban
 		, PlayerStand   // 플레이어가 있는 곳..
 		, BoxStand      // 박스가 있는 곳..
 		, Portal		// 포탈이 있는 곳..
-	}
-
-	public enum BoxState
-	{
-		Idle,
-		Move,
-		GrabByPlayer
 	}
 
 	class Program
@@ -59,13 +53,13 @@ namespace KMH_Sokoban
 			// 플레이어 관련 상수 설정..
 			const int INITIAL_PLAYER_X = 1;
 			const int INITIAL_PLAYER_Y = 1;
-			const char PLAYER_IMAGE = '♀';
+			const string PLAYER_IMAGE = "♀";
 			const ConsoleColor PLAYER_COLOR = ConsoleColor.Blue;
 			#endregion
 
 			#region Box
 			// 박스 관련 상수 설정..
-			const char BOX_IMAGE = '◎';
+			const string BOX_IMAGE = "◎";
 			const ConsoleColor BOX_COLOR = ConsoleColor.Yellow;
 			#endregion
 
@@ -77,8 +71,8 @@ namespace KMH_Sokoban
 
 			#region Goal
 			// 골인 지점 관련 상수..
-			const char GOAL_IMAGE = '∏';
-			const char GOALIN_IMAGE = '∏';
+			const string GOAL_IMAGE = "∏";
+            const string GOALIN_IMAGE = "∏";
 			const ConsoleColor GOAL_COLOR = ConsoleColor.Gray;
 			const ConsoleColor GOALIN_COLOR = ConsoleColor.DarkGray;
 			#endregion
@@ -87,14 +81,14 @@ namespace KMH_Sokoban
 			const int PORTAL_GATE_COUNT = 2;	// 한 개의 포탈에 이동할 수 있는 게이트의 개수??( 입구 <-> 출구 로 이동하니까 2개 )
 			const int PORTAL_COUNT = 8;
 
-			const char PORTAL_IMAGE = 'Ⅱ';
+			const string PORTAL_IMAGE = "Ⅱ";
 			#endregion
 
 			#region Switch
 			const int SWITCH_COUNT = 1;
 			const ConsoleColor SWITCH_COLOR = ConsoleColor.DarkMagenta;
-			const char SWITCH_IMAGE = 'ㅣ';
-			const char SWITCH_PUSH_IMAGE = '*';
+			const string SWITCH_IMAGE = "ㅣ";
+			const string SWITCH_PUSH_IMAGE = "*";
 			#endregion
 			#endregion
 
@@ -105,25 +99,28 @@ namespace KMH_Sokoban
 
 			#region Player 관련 변수 설정
 			// 플레이어 관련 변수 설정..
-			int playerX = INITIAL_PLAYER_X;
-			int playerY = INITIAL_PLAYER_Y;
-			int prevPlayerX = playerX;
-			int prevPlayerY = playerY;
-
-			int pushedBoxIdx = -1;      // 현재 밀고 있는 박스 인덱스( 아무것도 안밀고 있으면 -1 )..
+			Player player = new Player
+			{
+				X = INITIAL_PLAYER_X, Y = INITIAL_PLAYER_Y, PrevX = INITIAL_PLAYER_X, PrevY = INITIAL_PLAYER_Y,
+				Image = PLAYER_IMAGE, Color = PLAYER_COLOR
+			};
 			#endregion
 
 			#region Box 관련 변수 설정
 			// 박스 관련 변수 설정..
 			const int BOX_COUNT = 5;
-			int[] boxesX = new int[BOX_COUNT] { 5, 5, 5, 5, 10 };
-			int[] boxesY = new int[BOX_COUNT] { 2, 3, 4, 5, 7 };
-			int[] prevBoxesX = new int[BOX_COUNT];
-			int[] prevBoxesY = new int[BOX_COUNT];
-			// 박스 상태와 그에 관련된 변수 설정..
-			BoxState[] boxState = new BoxState[BOX_COUNT];
-			int[] boxDirX = new int[BOX_COUNT];
-			int[] boxDirY = new int[BOX_COUNT];
+			int[] INIT_BOXES_X = new int[BOX_COUNT] { 5, 5, 5, 5, 10 };
+			int[] INIT_BOXES_Y = new int[BOX_COUNT] { 2, 3, 4, 5, 7 };
+
+			Box[] boxes = new Box[BOX_COUNT];
+			for( int boxIndex = 0; boxIndex < BOX_COUNT; ++boxIndex )
+			{
+				boxes[boxIndex] = new Box
+				{
+					X = INIT_BOXES_X[boxIndex], Y = INIT_BOXES_Y[boxIndex], PrevX = INIT_BOXES_X[boxIndex], PrevY = INIT_BOXES_Y[boxIndex],
+					Image = BOX_IMAGE, Color = BOX_COLOR, CurState = Box.State.Idle, DirX = 0, DirY = 0
+                };
+			}
 			#endregion
 
 			#region Map 관련 변수 설정
@@ -218,17 +215,23 @@ namespace KMH_Sokoban
 
 
 			// 시작 전에 맵 데이터에 플레이어 박스 위치 저장..
-			mapDatas[playerY, playerX] = MapSpaceType.PlayerStand;
+			mapDatas[player.Y, player.X] = MapSpaceType.PlayerStand;
 			for ( int i = 0; i < BOX_COUNT; ++i )
-				mapDatas[boxesY[i], boxesX[i]] = MapSpaceType.BoxStand;
+			{
+                mapDatas[boxes[i].Y, boxes[i].X] = MapSpaceType.BoxStand;
+            }
 
 			// 맵 데이터에 벽 위치 저장..
 			for ( int i = 0; i < WALL_COUNT; ++i )
 			{
 				if ( isWallActive[i] )
-					mapDatas[wallsY[i], wallsX[i]] = MapSpaceType.DontPass;
+				{
+                    mapDatas[wallsY[i], wallsX[i]] = MapSpaceType.DontPass;
+                }
 				else
-					mapDatas[wallsY[i], wallsX[i]] = MapSpaceType.Pass;
+				{
+                    mapDatas[wallsY[i], wallsX[i]] = MapSpaceType.Pass;
+                }
 			}
 
 			// 맵 데이터에 포탈 위치 저장..
@@ -286,37 +289,40 @@ namespace KMH_Sokoban
 					// ================================= Player Update.. =================================
 					#region Player Update
 					// 플레이어 이전위치 갱신..
-					prevPlayerX = playerX;
-					prevPlayerY = playerY;
+					player.PrevX = player.X;
+					player.PrevY = player.Y;
 
 					// 1. 입력 키 처리..
 					switch ( inputKey )
 					{
 						case ConsoleKey.RightArrow:
 						case ConsoleKey.LeftArrow:
-							playerX += (int)inputKey - 38;
+							player.X += (int)inputKey - 38;
 
 							break;
 						case ConsoleKey.DownArrow:
 						case ConsoleKey.UpArrow:
-							playerY += (int)inputKey - 39;
+							player.Y += (int)inputKey - 39;
 
 							break;
 						case ConsoleKey.Spacebar:
 							for ( int i = 0; i < BOX_COUNT; ++i )
 							{
-								int boxX = boxesX[i];
-								int boxY = boxesY[i];
+								int boxX = boxes[i].X;
+								int boxY = boxes[i].Y;
+								Box.State boxState = boxes[i].CurState;
 
-								int xDist = Math.Abs( playerX - boxX );
-								int yDist = Math.Abs( playerY - boxY );
+								int xDist = Math.Abs( player.X - boxX );
+								int yDist = Math.Abs( player.Y - boxY );
 
 								if ( 1 == xDist + yDist )
 								{
-									if (BoxState.GrabByPlayer == boxState[i])
-										boxState[i] = BoxState.Idle;
+									if ( Box.State.GrabByPlayer == boxState )
+                                        boxState = Box.State.Idle;
 									else
-                                        boxState[i] = BoxState.GrabByPlayer;
+                                        boxState = Box.State.GrabByPlayer;
+
+									boxes[i].CurState = boxState;
                                 }
 							}
 
@@ -324,27 +330,24 @@ namespace KMH_Sokoban
 						case ConsoleKey.A:
 							for ( int i = 0; i < BOX_COUNT; ++i )
 							{
-								int boxX = boxesX[i];
-								int boxY = boxesY[i];
+                                int boxX = boxes[i].X;
+                                int boxY = boxes[i].Y;
 
-								int xDist = Math.Abs( playerX - boxX );
-								int yDist = Math.Abs( playerY - boxY );
+                                int xDist = Math.Abs( player.X - boxX );
+								int yDist = Math.Abs( player.Y - boxY );
 
 								if ( 1 == xDist + yDist )
 								{
 									int curBoxIndex = i;
 
 									// 박스 상태 변경 및 그와 관련된 값 설정..
-									boxState[curBoxIndex] = BoxState.Move;
+									boxes[curBoxIndex].CurState = Box.State.Move;
 
-									int curX = boxesX[curBoxIndex];
-									int curY = boxesY[curBoxIndex];
+									int dirX = player.X - boxX;
+									int dirY = player.Y - boxY;
 
-									int dirX = playerX - curX;
-									int dirY = playerY - curY;
-
-									boxDirX[curBoxIndex] = dirX;
-									boxDirY[curBoxIndex] = dirY;
+									boxes[curBoxIndex].DirX = dirX;
+                                    boxes[curBoxIndex].DirY = dirY;
 								}
 							}
 
@@ -355,52 +358,49 @@ namespace KMH_Sokoban
 					#region Box Update
 					// ================================= Box Update.. =================================
 					// 박스 업데이트..
-					pushedBoxIdx = -1;
 					for ( int i = 0; i < BOX_COUNT; ++i )
 					{
 						// 박스 이전위치 갱신..
-						prevBoxesX[i] = boxesX[i];
-						prevBoxesY[i] = boxesY[i];
+						boxes[i].PrevX = boxes[i].X;
+						boxes[i].PrevY = boxes[i].Y;
 
-						switch ( boxState[i] )
+						switch ( boxes[i].CurState )
 						{
-							case BoxState.Idle:
-								if ( playerX == boxesX[i] && playerY == boxesY[i] )   // 플레이어와 박스가 같을 때..
+							case Box.State.Idle:
+								if ( player.X == boxes[i].X && player.Y == boxes[i].Y )   // 플레이어와 박스가 같을 때..
 								{
 									// 박스가 이동할 위치를 계산( 현재위치 - 이전위치 = 이동할 방향 )..
-									int boxMoveDirX = playerX - prevPlayerX;
-									int boxMoveDirY = playerY - prevPlayerY;
+									int boxMoveDirX = player.X - player.PrevX;
+									int boxMoveDirY = player.Y - player.PrevY;
 
 									// 박스 현재위치 갱신.. 
-									boxesX[i] += boxMoveDirX;
-									boxesY[i] += boxMoveDirY;
-
-									pushedBoxIdx = i;
+									boxes[i].X += boxMoveDirX;
+									boxes[i].Y += boxMoveDirY;
 
 									break;
 								}
 
 								break;
-							case BoxState.Move:
-								boxesX[i] -= boxDirX[i];
-								boxesY[i] -= boxDirY[i];
+							case Box.State.Move:
+								boxes[i].X -= boxes[i].DirX;
+								boxes[i].Y -= boxes[i].DirY;
 
 								isSkipRender = false;
 
 								break;
 
-							case BoxState.GrabByPlayer:
+							case Box.State.GrabByPlayer:
 							{
-								prevBoxesX[i] = boxesX[i];
-								prevBoxesY[i] = boxesY[i];
+								boxes[i].PrevX = boxes[i].X;
+								boxes[i].PrevY = boxes[i].Y;
 
 								// 박스가 이동할 위치를 계산( 현재위치 - 이전위치 = 이동할 방향 )..
-								int boxMoveDirX = playerX - prevPlayerX;
-								int boxMoveDirY = playerY - prevPlayerY;
+								int boxMoveDirX = player.X - player.PrevX;
+								int boxMoveDirY = player.Y - player.PrevY;
 
 								// 박스 현재위치 갱신.. 
-								boxesX[i] += boxMoveDirX;
-								boxesY[i] += boxMoveDirY;
+								boxes[i].X += boxMoveDirX;
+                                boxes[i].Y += boxMoveDirY;
 							}
 
 								break;
@@ -414,16 +414,16 @@ namespace KMH_Sokoban
 					// 박스가 특정 물체와 겹쳤다( 박스 or 벽 or 맵 외곽 )..
 					for ( int i = 0; i < BOX_COUNT; ++i )
 					{
-						MapSpaceType curStandSpaceType = mapDatas[boxesY[i], boxesX[i]];
+						MapSpaceType curStandSpaceType = mapDatas[boxes[i].Y, boxes[i].X];
 
 						// 박스가 현재 위치에 다른 물체가 있을 때는 이전 위치로 이동..
 						switch(curStandSpaceType)
 						{
 							case MapSpaceType.DontPass:
-								boxesX[i] = prevBoxesX[i];
-								boxesY[i] = prevBoxesY[i];
+								boxes[i].X = boxes[i].PrevX;
+								boxes[i].Y = boxes[i].PrevY;
 
-								boxState[i] = BoxState.Idle;
+								boxes[i].CurState = Box.State.Idle;
 
 								break;
 							case MapSpaceType.BoxStand:
@@ -431,13 +431,13 @@ namespace KMH_Sokoban
 								{
 									if ( curBoxIdx == i )
 										continue;
-									if ( boxesX[i] != boxesX[curBoxIdx] || boxesY[i] != boxesY[curBoxIdx] )
+									if ( boxes[i].X != boxes[curBoxIdx].X || boxes[i].Y != boxes[curBoxIdx].Y )
 										continue;
 
-									boxesX[i] = prevBoxesX[i];
-									boxesY[i] = prevBoxesY[i];
+									boxes[i].X = boxes[i].PrevX;
+                                    boxes[i].Y = boxes[i].PrevY;
 
-									boxState[i] = BoxState.Idle;
+                                    boxes[i].CurState = Box.State.Idle;
 
 									break;
 								}
@@ -445,12 +445,12 @@ namespace KMH_Sokoban
 								break;
 
 							case MapSpaceType.PlayerStand:
-								if( BoxState.GrabByPlayer != boxState[i] )
+								if( Box.State.GrabByPlayer != boxes[i].CurState )
 								{
-									boxesX[i] = prevBoxesX[i];
-									boxesY[i] = prevBoxesY[i];
+									boxes[i].X = boxes[i].PrevX;
+                                    boxes[i].Y = boxes[i].PrevY;
 
-									boxState[i] = BoxState.Idle;
+                                    boxes[i].CurState = Box.State.Idle;
 								}
 
 								break;
@@ -464,19 +464,19 @@ namespace KMH_Sokoban
 										int curPortalX = portalX[portalIdx, portalGateIdx];
 										int curPortalY = portalY[portalIdx, portalGateIdx];
 
-										if ( curPortalX == boxesX[i] && curPortalY == boxesY[i] )
+										if ( curPortalX == boxes[i].X && curPortalY == boxes[i].Y )
 										{
 											curPortalX = portalX[portalIdx, (portalGateIdx + 1) % 2];
 											curPortalY = portalY[portalIdx, (portalGateIdx + 1) % 2];
 
-											int dirX = boxesX[i] - prevBoxesX[i];
-											int dirY = boxesY[i] - prevBoxesY[i];
+											int dirX = boxes[i].X - boxes[i].PrevX;
+											int dirY = boxes[i].Y - boxes[i].PrevY;
 
-											boxesX[i] = curPortalX + dirX;
-											boxesY[i] = curPortalY + dirY;
+											boxes[i].X = curPortalX + dirX;
+                                            boxes[i].Y = curPortalY + dirY;
 
-											if ( BoxState.GrabByPlayer == boxState[i] )
-												boxState[i] = BoxState.Idle;
+											if ( Box.State.GrabByPlayer == boxes[i].CurState )
+                                                boxes[i].CurState = Box.State.Idle;
 
 											i -= 1;
 
@@ -497,26 +497,26 @@ namespace KMH_Sokoban
 
 					#region Player Collision
 					// 플레이어가 특정 물체와 겹쳤다( 박스 or 벽 등등 )..
-					MapSpaceType overlapSpaceType = mapDatas[playerY, playerX];
+					MapSpaceType overlapSpaceType = mapDatas[player.Y, player.X];
 					switch(overlapSpaceType)
 					{
 						case MapSpaceType.DontPass:
-							playerX = prevPlayerX;
-							playerY = prevPlayerY;
+							player.X = player.PrevX;
+							player.Y = player.PrevY;
 
 							break;
 						case MapSpaceType.BoxStand:
 							for( int boxIdx = 0; boxIdx < BOX_COUNT; ++boxIdx)
 							{
-                                int boxX = boxesX[boxIdx];
-                                int boxY = boxesY[boxIdx];
+                                int boxX = boxes[boxIdx].X;
+                                int boxY = boxes[boxIdx].Y;
 
                                 // 만약 플레이어와 박스의 위치가 같을 때 이전 위치로..
                                 // 맵 데이터가 갱신이 안되있는 상태기 때문에 이 검사를 하는 것..
-                                if (playerX == boxX && playerY == boxY)
+                                if (player.X == boxX && player.Y == boxY)
                                 {
-                                    playerX = prevPlayerX;
-                                    playerY = prevPlayerY;
+                                    player.X = player.PrevX;
+                                    player.Y = player.PrevY;
                                 }
                             }
 
@@ -529,22 +529,22 @@ namespace KMH_Sokoban
 									int curPortalX = portalX[portalIdx, portalGateIdx];
 									int curPortalY = portalY[portalIdx, portalGateIdx];
 
-									if (curPortalX == playerX && curPortalY == playerY)
+									if (curPortalX == player.X && curPortalY == player.Y)
 									{
                                         curPortalX = portalX[portalIdx, (portalGateIdx + 1) % 2];
 										curPortalY = portalY[portalIdx, (portalGateIdx + 1) % 2];
 
-										int dirX = playerX - prevPlayerX;
-										int dirY = playerY - prevPlayerY;
+										int dirX = player.X - player.PrevX;
+										int dirY = player.Y - player.PrevY;
 
-										playerX = curPortalX + dirX;
-										playerY = curPortalY + dirY;
+										player.X = curPortalX + dirX;
+										player.Y = curPortalY + dirY;
 
-										overlapSpaceType = mapDatas[playerY, playerX];
+										overlapSpaceType = mapDatas[player.Y, player.X];
 										if( MapSpaceType.Pass != overlapSpaceType )
 										{
-											playerX = prevPlayerX;
-											playerY = prevPlayerY;
+											player.X = player.PrevX;
+											player.Y = player.PrevY;
 										}
 
 										break;
@@ -618,8 +618,8 @@ namespace KMH_Sokoban
 					#region Map Update
 					// ================================= 전체적인 위치의 갱신이 끝났다면 맵에 데이터 저장.. =================================
 					// 플레이어 정보 갱신..
-					mapDatas[prevPlayerY, prevPlayerX] = MapSpaceType.Pass;
-					mapDatas[playerY, playerX] = MapSpaceType.PlayerStand;
+					mapDatas[player.PrevY, player.PrevX] = MapSpaceType.Pass;
+					mapDatas[player.Y, player.X] = MapSpaceType.PlayerStand;
 
 					// Box 정보 갱신..
 					for ( int i = 0; i < BOX_COUNT; ++i )
@@ -655,133 +655,16 @@ namespace KMH_Sokoban
 					for ( int i = 0; i < SWITCH_COUNT; ++i )
 						mapDatas[switchY[i], switchX[i]] = MapSpaceType.DontPass;
 
-					#endregion
-
-					#endregion
-
-					#region Render
-					// ------------------------------------------------------------------ Render.. ------------------------------------------------------------------
-					if ( isSkipRender )	// Render 를 스킵해야 한다면( 무한 깜빡임 방지 )..
-						continue;
-
-					isSkipRender = true;
-
-					// 이전 프레임 지우기..
-					Console.Clear();
-
-					#region Switch Render
-					for ( int i = 0; i < SWITCH_COUNT; ++i )
-					{
-						int posX = switchX[i];
-						int posY = switchY[i];
-
-						Console.ForegroundColor = SWITCH_COLOR;
-						Console.SetCursorPosition( posX, posY );
-						Console.Write( SWITCH_IMAGE );
-
-						posX += switchPushOffsetX[i];
-						posY += switchPushOffsetY[i];
-
-						Console.SetCursorPosition( posX, posY );
-						Console.Write( SWITCH_PUSH_IMAGE );
-					}
-					#endregion
-
-					#region Portal Render
-					for ( int curPortalIdx = 0; curPortalIdx < PORTAL_COUNT; ++curPortalIdx)
-                    {
-                        for (int curPortalGateIdx = 0; curPortalGateIdx < PORTAL_GATE_COUNT; ++curPortalGateIdx)
-                        {
-                            int portalGateX = portalX[curPortalIdx, curPortalGateIdx];
-                            int portalGateY = portalY[curPortalIdx, curPortalGateIdx];
-
-                            Console.SetCursorPosition(portalGateX, portalGateY);
-							Console.ForegroundColor = portalColor[curPortalIdx];
-							Console.WriteLine( PORTAL_IMAGE );
-                        }
-                    }
                     #endregion
 
-                    #region Box Render
-                    // 박스 출력하기..
-                    for ( int i = 0; i < BOX_COUNT; ++i )
-					{
-						Console.SetCursorPosition( boxesX[i], boxesY[i] );
-						Console.ForegroundColor = BOX_COLOR;
-						Console.Write( BOX_IMAGE );
-					}
-					#endregion
+                    #endregion
 
-					#region Goal Render
-					// 골인 지점 출력하기..
-					for ( int i = 0; i < GOAL_COUNT; ++i )
-					{
-						Console.SetCursorPosition( goalsX[i], goalsY[i] );
+                    if ( isSkipRender ) // Render 를 스킵해야 한다면( 무한 깜빡임 방지 )..
+                        continue;
 
-						if ( isGoalIn[i] )
-						{
-							Console.ForegroundColor = GOALIN_COLOR;
-							Console.Write( GOALIN_IMAGE );
-						}
-						else
-						{
-							Console.ForegroundColor = GOAL_COLOR;
-							Console.Write( GOAL_IMAGE );
-						}
-					}
-					#endregion
+                    isSkipRender = true;
 
-					#region Player Render
-					// 플레이어 출력하기..
-					Console.ForegroundColor = PLAYER_COLOR;
-					Console.SetCursorPosition( playerX, playerY );
-					Console.Write( PLAYER_IMAGE );
-					#endregion
-
-					#region Wall Render
-					// 벽 출력하기..
-					for ( int i = 0; i < WALL_COUNT; ++i )
-					{
-						if ( false == isWallActive[i] )
-							continue;
-
-						Console.SetCursorPosition( wallsX[i], wallsY[i] );
-						Console.ForegroundColor = WALL_COLOR;
-						Console.Write( WALL_IMAGE );
-					}
-					#endregion
-
-					#region Map Render
-					// 맵 출력하기..
-					Console.ForegroundColor = BORDERLINE_COLOR;
-					for ( int i = MAP_RANGE_MIN_X - 1; i < MAP_RANGE_MAX_X; ++i )
-					{
-						Console.SetCursorPosition( i, MAP_RANGE_MIN_Y - 1 );
-						Console.Write( '▦' );
-						Console.SetCursorPosition( i, MAP_RANGE_MAX_Y - 1 );
-						Console.Write( '▦' );
-					}
-					for ( int i = MAP_RANGE_MIN_Y - 1; i < MAP_RANGE_MAX_Y; ++i )
-					{
-						Console.SetCursorPosition( MAP_RANGE_MIN_X - 1, i );
-						Console.Write( '▦' );
-						Console.SetCursorPosition( MAP_RANGE_MAX_X - 1, i );
-						Console.Write( '▦' );
-					}
-					#endregion
-
-					#region LOG
-					int logYOffset = 0;
-					foreach ( var message in logMessage )
-					{
-						Console.ForegroundColor = ConsoleColor.Green;
-						Console.SetCursorPosition( logStartX, logStartY + logYOffset );
-						Console.Write( message.Value );
-
-						logYOffset += message.Key;
-					}
-					#endregion
-					#endregion
+                    Render();
 				}
 			}
 			#endregion
@@ -926,6 +809,110 @@ namespace KMH_Sokoban
 			}
 
 			#endregion
+
+			void Render()
+			{
+                // 이전 프레임 지우기..
+                Console.Clear();
+
+                for ( int i = 0; i < SWITCH_COUNT; ++i )
+                {
+                    int posX = switchX[i];
+                    int posY = switchY[i];
+
+                    RenderObject( posX, posY, SWITCH_IMAGE, SWITCH_COLOR );
+
+                    posX += switchPushOffsetX[i];
+                    posY += switchPushOffsetY[i];
+
+                    RenderObject( posX, posY, SWITCH_PUSH_IMAGE, SWITCH_COLOR );
+                }
+
+                for ( int curPortalIdx = 0; curPortalIdx < PORTAL_COUNT; ++curPortalIdx )
+                {
+                    for ( int curPortalGateIdx = 0; curPortalGateIdx < PORTAL_GATE_COUNT; ++curPortalGateIdx )
+                    {
+                        int portalGateX = portalX[curPortalIdx, curPortalGateIdx];
+                        int portalGateY = portalY[curPortalIdx, curPortalGateIdx];
+						ConsoleColor color = portalColor[curPortalIdx];
+
+						RenderObject( portalGateX, portalGateY, PORTAL_IMAGE, color );
+                    }
+                }
+
+                // 박스 출력하기..
+                for ( int i = 0; i < BOX_COUNT; ++i )
+                {
+					RenderObject( boxes[i].X, boxes[i].Y, BOX_IMAGE, BOX_COLOR );
+                }
+
+                // 골인 지점 출력하기..
+                for ( int i = 0; i < GOAL_COUNT; ++i )
+                {
+                    if ( isGoalIn[i] )
+                    {
+						RenderObject( goalsX[i], goalsY[i], GOALIN_IMAGE, GOALIN_COLOR );
+                    }
+                    else
+                    {
+                        RenderObject( goalsX[i], goalsY[i], GOAL_IMAGE, GOAL_COLOR );
+                    }
+                }
+
+				// 플레이어 출력하기..
+				RenderObject( player.X, player.Y, player.Image, player.Color );
+
+                // 벽 출력하기..
+                for ( int i = 0; i < WALL_COUNT; ++i )
+                {
+                    if ( false == isWallActive[i] )
+                        continue;
+
+                    Console.SetCursorPosition( wallsX[i], wallsY[i] );
+                    Console.ForegroundColor = WALL_COLOR;
+                    Console.Write( WALL_IMAGE );
+                }
+
+
+                // 맵 출력하기..
+                Console.ForegroundColor = BORDERLINE_COLOR;
+                for ( int i = MAP_RANGE_MIN_X - 1; i < MAP_RANGE_MAX_X; ++i )
+                {
+                    Console.SetCursorPosition( i, MAP_RANGE_MIN_Y - 1 );
+                    Console.Write( '▦' );
+                    Console.SetCursorPosition( i, MAP_RANGE_MAX_Y - 1 );
+                    Console.Write( '▦' );
+                }
+                for ( int i = MAP_RANGE_MIN_Y - 1; i < MAP_RANGE_MAX_Y; ++i )
+                {
+                    Console.SetCursorPosition( MAP_RANGE_MIN_X - 1, i );
+                    Console.Write( '▦' );
+                    Console.SetCursorPosition( MAP_RANGE_MAX_X - 1, i );
+                    Console.Write( '▦' );
+                }
+
+                // Log Render..
+                int logYOffset = 0;
+                foreach ( var message in logMessage )
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.SetCursorPosition( logStartX, logStartY + logYOffset );
+                    Console.Write( message.Value );
+
+                    logYOffset += message.Key;
+                }
+            }
+
+            void RenderObject(int x, int y, string image, ConsoleColor color)
+			{
+				ConsoleColor prevColor = Console.ForegroundColor;
+
+                Console.ForegroundColor = color;
+                Console.SetCursorPosition( x, y );
+				Console.Write( image );
+
+				Console.ForegroundColor = prevColor;
+			}
 		}
 	}
 }
