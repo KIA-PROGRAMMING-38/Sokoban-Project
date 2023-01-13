@@ -121,10 +121,8 @@ class Program
 
                             break;
                         default:    // Error
-                            Console.Clear();
-                            Console.WriteLine($"[Error] 플레이어 방향 : {playerMoveDirection}");
-                            Environment.Exit(1);    // 프로그램을 종료한다.
-
+                            ExitWithError($"[Error] 플레이어 방향 : {playerMoveDirection}")
+                            
                             break;
                 }
             }
@@ -160,14 +158,12 @@ class Program
 
                         break;
                     default:    // Error
-                        Console.Clear();
-                        Console.WriteLine($"[Error] 플레이어 방향 : {playerMoveDirection}");
-                        Environment.Exit(1);    // 프로그램을 종료한다.
+                        ExitWithError($"[Error] 플레이어 방향 : {playerMoveDirection}");
 
                         break;
                 }
 
-                // 어떤 박스를 밀었는지 저장해야 한
+                // 어떤 박스를 밀었는지 저장해야 한다 
                 pushedBoxIndex = i;
 
                 break;
@@ -210,10 +206,8 @@ class Program
 
                         break;
                     default:    // Error
-                        Console.Clear();
-                        Console.WriteLine($"[Error] 플레이어 방향 : {playerMoveDirection}");
-                        Environment.Exit(1);    // 프로그램을 종료한다.
-
+                        ExitWithError($"[Error] 플레이어 방향 : {playerMoveDirection}");
+                        
                         break;
                 }
             }
@@ -249,10 +243,8 @@ class Program
 
                         break;
                     default:    // Error
-                        Console.Clear();
-                        Console.WriteLine($"[Error] 플레이어 방향 : {playerMoveDirection}");
-                        Environment.Exit(1);    // 프로그램을 종료한다.
-
+                        ExitWithError($"[Error] 플레이어 방향 : {playerMoveDirection}");
+                        
                         break;
                 }
 
@@ -324,6 +316,13 @@ class Program
                 y = (int)Math.Min(y + 1, MAX_Y);
                 moveDirection = Direction.Down;
             }
+        }
+
+        void ExitWithError(string errorMessage)
+        {
+            Console.Clear();
+            Console.WriteLine(errorMessage);
+            Environment.Exit(1);
         }
     }
 }
