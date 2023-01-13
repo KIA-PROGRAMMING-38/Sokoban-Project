@@ -97,7 +97,7 @@ class Program
             // 플레이어와 벽의 충돌 처리
             for (int i = 0; i < wallCount; ++i)
             {
-                if (playerX != wallPositionsX[i] || playerY != wallPositionsY[i])
+                if (false == IsCollided(playerX, playerY, wallPositionsX[i], wallPositionsY[i]))
                 {
                     continue;
                 }
@@ -121,7 +121,7 @@ class Program
 
                             break;
                         default:    // Error
-                            ExitWithError($"[Error] 플레이어 방향 : {playerMoveDirection}")
+                            ExitWithError($"[Error] 플레이어 방향 : {playerMoveDirection}");
                             
                             break;
                 }
@@ -130,7 +130,7 @@ class Program
             // 박스 업데이트
             for (int i = 0; i < boxCount; ++i)
             {
-                if (playerX != boxPositionsX[i] || playerY != boxPositionsY[i])
+                if (false == IsCollided(playerX, playerY, boxPositionsX[i], boxPositionsY[i]))
                 {
                     continue;
                 }
@@ -178,7 +178,8 @@ class Program
                     continue;
                 }
 
-                if (boxPositionsX[pushedBoxIndex] != boxPositionsX[i] || boxPositionsY[pushedBoxIndex] != boxPositionsY[i])
+                if (false == IsCollided(boxPositionsX[pushedBoxIndex], boxPositionsY[pushedBoxIndex],
+                                    boxPositionsX[i], boxPositionsY[i]))
                 {
                     continue;
                 }
@@ -215,7 +216,8 @@ class Program
             // 박스와 벽의 충돌 처리
             for (int i = 0; i < wallCount; ++i)
             {
-                if (boxPositionsX[pushedBoxIndex] != wallPositionsX[i] || boxPositionsY[pushedBoxIndex] != wallPositionsY[i])
+                if (false == IsCollided(boxPositionsX[pushedBoxIndex], boxPositionsY[pushedBoxIndex],
+                                    wallPositionsX[i], wallPositionsY[i]))
                 {
                     continue;
                 }
@@ -260,7 +262,8 @@ class Program
 
                 for (int goalId = 0; goalId < goalCount; ++goalId)
                 {
-                    if (boxPositionsX[boxId] == goalPositionsX[goalId] && boxPositionsY[boxId] == goalPositionsY[goalId])
+                    if (IsCollided(boxPositionsX[boxId], boxPositionsY[boxId],
+                                    goalPositionsX[goalId], goalPositionsY[goalId]))
                     {
                         ++boxOnGoalCount;
                         isBoxOnGoal[boxId] = true;
@@ -318,11 +321,25 @@ class Program
             }
         }
 
+        // 에러 메시지와 함께 애플리케이션을 종료한다 
         void ExitWithError(string errorMessage)
         {
             Console.Clear();
             Console.WriteLine(errorMessage);
             Environment.Exit(1);
+        }
+
+        // 충돌했는지 검사한다 
+        bool IsCollided(int x1, int y1, int x2, int y2)
+        {
+            if (x1 == x2 && y1 == y2)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
