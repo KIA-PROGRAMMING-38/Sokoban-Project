@@ -102,29 +102,9 @@ class Program
                     continue;
                 }
 
-                switch (playerMoveDirection)
-                {
-                        case Direction.Left:
-                            MoveToRightOfTarget(out playerX, in wallPositionsX[i]);
-
-                            break;
-                        case Direction.Right:
-                            MoveToLeftOfTarget(out playerX, in wallPositionsX[i]);
-
-                            break;
-                        case Direction.Up:
-                            MoveToDownOfTarget(out playerY, in wallPositionsY[i]);
-
-                            break;
-                        case Direction.Down:
-                            MoveToUpOfTarget(out playerY, in wallPositionsY[i]);
-
-                            break;
-                        default:    // Error
-                            ExitWithError($"[Error] 플레이어 방향 : {playerMoveDirection}");
-                            
-                            break;
-                }
+                OnCollision(playerMoveDirection,
+                    ref playerX, ref playerY,
+                    in wallPositionsX[i], in wallPositionsY[i]);
             }
             
             // 박스 업데이트
@@ -180,33 +160,12 @@ class Program
                     continue;
                 }
 
-                switch (playerMoveDirection)
-                {
-                    case Direction.Left:
-                        MoveToRightOfTarget(out boxPositionsX[pushedBoxIndex], in boxPositionsX[i]);
-                        MoveToRightOfTarget(out playerX, in boxPositionsX[pushedBoxIndex]);
-                        
-                        break;
-                    case Direction.Right:
-                        MoveToLeftOfTarget(out boxPositionsX[pushedBoxIndex], in boxPositionsX[i]);
-                        MoveToLeftOfTarget(out playerX, in boxPositionsX[pushedBoxIndex]);
-
-                        break;
-                    case Direction.Up:
-                        MoveToDownOfTarget(out boxPositionsY[pushedBoxIndex], in boxPositionsX[i]);
-                        MoveToDownOfTarget(out playerY, in boxPositionsY[pushedBoxIndex]);
-
-                        break;
-                    case Direction.Down:
-                        MoveToUpOfTarget(out boxPositionsY[pushedBoxIndex], in boxPositionsY[i]);
-                        MoveToUpOfTarget(out playerY, in boxPositionsY[pushedBoxIndex]);
-
-                        break;
-                    default:    // Error
-                        ExitWithError($"[Error] 플레이어 방향 : {playerMoveDirection}");
-                        
-                        break;
-                }
+                OnCollision(playerMoveDirection,
+                    ref boxPositionsX[pushedBoxIndex], ref boxPositionsY[pushedBoxIndex],
+                    in boxPositionsX[i], in boxPositionsY[i]);
+                OnCollision(playerMoveDirection,
+                    ref playerX, ref playerY,
+                    in boxPositionsX[pushedBoxIndex], in boxPositionsY[pushedBoxIndex]);
             }
 
             // 박스와 벽의 충돌 처리
@@ -218,34 +177,12 @@ class Program
                     continue;
                 }
 
-                switch (playerMoveDirection)
-                {
-                    case Direction.Left:
-                        MoveToRightOfTarget(out boxPositionsX[pushedBoxIndex], in wallPositionsX[i]);
-                        MoveToRightOfTarget(out playerX, in boxPositionsX[pushedBoxIndex]);
-
-                        break;
-                    case Direction.Right:
-                        MoveToLeftOfTarget(out boxPositionsX[pushedBoxIndex], in wallPositionsX[i]);
-                        MoveToLeftOfTarget(out playerX, in boxPositionsX[pushedBoxIndex]);
-
-                        break;
-                    case Direction.Up:
-                        MoveToDownOfTarget(out boxPositionsY[pushedBoxIndex], in wallPositionsY[i]);
-                        MoveToDownOfTarget(out playerY, in boxPositionsY[i]);
-
-                        break;
-                    case Direction.Down:
-                        MoveToUpOfTarget(out boxPositionsY[pushedBoxIndex], in wallPositionsY[i]);
-                        MoveToUpOfTarget(out playerY, in boxPositionsY[pushedBoxIndex]);
-
-                        break;
-                    default:    // Error
-                        ExitWithError($"[Error] 플레이어 방향 : {playerMoveDirection}");
-                        
-                        break;
-                }
-
+                OnCollision(playerMoveDirection,
+                    ref boxPositionsX[pushedBoxIndex], ref boxPositionsY[pushedBoxIndex],
+                    in wallPositionsX[i], in wallPositionsY[i]);
+                OnCollision(playerMoveDirection,
+                    ref playerX, ref playerY,
+                    in boxPositionsX[pushedBoxIndex], in boxPositionsY[pushedBoxIndex]);
                 break;
             }
 
@@ -292,34 +229,59 @@ class Program
         // target 근처로 이동시킨다 
         void MoveToLeftOfTarget(out int x, in int target) => x = Math.Max(MIN_X, target - 1);
         void MoveToRightOfTarget(out int x, in int target) => x = Math.Min(target + 1, MAX_X);
-        void MoveToUpOfTarget(out int y, in int target) => y = Math.Min(MIN_Y, target - 1);
-        void MoveToDownOfTarget(out int y, in int target) => y = Math.Max(target + 1, MAX_Y);
+        void MoveToUpOfTarget(out int y, in int target) => y = Math.Max(MIN_Y, target - 1);
+        void MoveToDownOfTarget(out int y, in int target) => y = Math.Min(target + 1, MAX_Y);
 
         // 플레이어를 움직인다
         void MovePlayer(ConsoleKey key, ref int x, ref int y, ref Direction moveDirection)
         {
             if (key == ConsoleKey.LeftArrow)
             {
-                x = (int)Math.Max(MIN_X, x - 1);
+                MoveToLeftOfTarget(out x, in x);
                 moveDirection = Direction.Left;
             }
 
             if (key == ConsoleKey.RightArrow)
             {
-                x = (int)Math.Min(x + 1, MAX_X);
+                MoveToRightOfTarget(out x, in x);
                 moveDirection = Direction.Right;
             }
 
             if (key == ConsoleKey.UpArrow)
             {
-                y = (int)Math.Max(MIN_Y, y - 1);
+                MoveToUpOfTarget(out y, in y);
                 moveDirection = Direction.Up;
             }
 
             if (key == ConsoleKey.DownArrow)
             {
-                y = (int)Math.Min(y + 1, MAX_Y);
+                MoveToDownOfTarget(out y, in y);
                 moveDirection = Direction.Down;
+            }
+        }
+
+        // 충돌을 처리한다
+        void OnCollision(Direction playerMoveDirection,
+            ref int objX, ref int objY, in int collidedObjX, in int collidedObjY)
+        {
+            switch (playerMoveDirection)
+            {
+                case Direction.Left:
+                    MoveToRightOfTarget(out objX, in collidedObjX);
+
+                    break;
+                case Direction.Right:
+                    MoveToLeftOfTarget(out objX, in collidedObjX);
+
+                    break;
+                case Direction.Up:
+                    MoveToDownOfTarget(out objY, in collidedObjY);
+
+                    break;
+                case Direction.Down:
+                    MoveToUpOfTarget(out objY, in collidedObjY);
+
+                    break;
             }
         }
 
