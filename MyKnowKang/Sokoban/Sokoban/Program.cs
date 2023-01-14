@@ -16,165 +16,274 @@ namespace KMH_Sokoban
 		, PlayerStand   // 플레이어가 있는 곳..
 		, BoxStand      // 박스가 있는 곳..
 		, Portal		// 포탈이 있는 곳..
+		, Item			// 아이템이 있는 곳..
+		, Trap          // 트랩이 있는 곳..
 	}
 
 	class Program
 	{
-
 		static void Main()
 		{
+			bool isWin11 = false;
+			while ( true )
+			{
+				Console.Clear();
+				for ( int i = 0; i < 5; ++i ) Console.WriteLine( "Win11 인 경우 1번, 아닌 경우 2번을 눌러주세요" );
+                ConsoleKey key = Console.ReadKey().Key;
+				if(key == ConsoleKey.D1)
+				{
+					isWin11 = true;
+					break;
+				}
+				else if(key == ConsoleKey.D2)
+				{
+					isWin11 = false;
+					break;
+                }
+            }
+
 			// ------------------------------------------- 초기화(객체 생성 및 초기화).. -------------------------------------------
 			#region Initialize
-			#region 상수 초기화
+
 			// ============================================================================================================================================
 			// 상수 초기화..
 			// ============================================================================================================================================
+			#region 상수 초기화
 
 			// 초기 세팅 관련 상수 설정..
-			#region 콘솔 세팅
 			const bool CURSOR_VISIBLE = false;                      // 커서를 숨긴다..
 			const string TITLE_NAME = "Welcome To Liverpool";       // 타이틀을 설정한다..
 			const ConsoleColor BACKGROUND_COLOR = ConsoleColor.Black;   // Background 색을 설정한다..
 			const ConsoleColor FOREGROUND_COLOR = ConsoleColor.White;     // 글꼴색을 설정한다..
-			const ConsoleColor BORDERLINE_COLOR = ConsoleColor.DarkRed;
-			#endregion
 
-			#region Map Size
-			// 맵 사이즈 관련 상수 설정..
+			// Map 관련 상수 설정..
 			const int MAP_WIDTH = 50;
 			const int MAP_HEIGHT = 22;
 			const int MAP_RANGE_MIN_X = 1;
 			const int MAP_RANGE_MIN_Y = 1;
 			const int MAP_RANGE_MAX_X = MAP_RANGE_MIN_X + MAP_WIDTH;
 			const int MAP_RANGE_MAX_Y = MAP_RANGE_MIN_Y + MAP_HEIGHT;
-			#endregion
+			// Map 관련 초기 세팅..
+            const ConsoleColor BORDERLINE_COLOR = ConsoleColor.DarkRed;
+			const string BORDERLINE_IMAGE_WIN11 = "▦";
+			const string BORDERLINE_IMAGE_WIN10 = "W";
+			string initBorderLineImage = (isWin11) ? BORDERLINE_IMAGE_WIN11 : BORDERLINE_IMAGE_WIN10;
 
-			#region Player
-			// 플레이어 관련 상수 설정..
+			// Player 관련 상수 설정..
+			const string PLAYER_IMAGE_WIN11 = "♀";
+			const string PLAYER_IMAGE_WIN10 = "P";
+			const ConsoleColor PLAYER_COLOR = ConsoleColor.Blue;
+			// Player 초기 세팅..
 			const int INITIAL_PLAYER_X = 1;
 			const int INITIAL_PLAYER_Y = 1;
-			const string PLAYER_IMAGE = "♀";
-			const ConsoleColor PLAYER_COLOR = ConsoleColor.Blue;
-			#endregion
+			string initPlayerImage = (isWin11) ? PLAYER_IMAGE_WIN11 : PLAYER_IMAGE_WIN10;
 
-			#region Box
-			// 박스 관련 상수 설정..
-			const string BOX_IMAGE = "◎";
-			const ConsoleColor BOX_COLOR = ConsoleColor.Yellow;
-			#endregion
+			// Box 관련 상수 설정.. 
+			const int BOX_COUNT = 5;
+			const string BOX_IMAGE_WIN11 = "◎";
+            const string BOX_IMAGE_WIN10 = "B";
+            const ConsoleColor BOX_COLOR = ConsoleColor.Yellow;
+			// Box 초기 세팅..
+			int[] INIT_BOXES_X = new int[BOX_COUNT] { 5, 5, 5, 5, 10 };
+			int[] INIT_BOXES_Y = new int[BOX_COUNT] { 2, 3, 4, 5, 7 };
+			string initBoxImage = (isWin11) ? BOX_IMAGE_WIN11 : BOX_IMAGE_WIN10;
 
-			#region Wall
-			// 벽 관련 상수 설정..
-			const char WALL_IMAGE = '▣';
-			const ConsoleColor WALL_COLOR = ConsoleColor.DarkRed;
-			#endregion
+			// Wall 관련 상수 설정..
+			const int WALL_COUNT = 15;
+			const string WALL_IMAGE_WIN11 = "▣";
+            const string WALL_IMAGE_WIN10 = "W";
+            const ConsoleColor WALL_COLOR = ConsoleColor.DarkRed;
+			// Wall 초기 세팅..
+			int[] INIT_WALLS_X = new int[WALL_COUNT] { 3, 3, 3, 42, 42, 42, 42, 42, 43, 44, 45, 46, 47, 48, 49 };
+			int[] INIT_WALLS_Y = new int[WALL_COUNT] { 8, 7, 9, 18, 19, 20, 21, 17, 17, 17, 17, 17, 17, 17, 17 };
+			string initWallImage = (isWin11) ? WALL_IMAGE_WIN11 : WALL_IMAGE_WIN10;
 
-			#region Goal
-			// 골인 지점 관련 상수..
-			const string GOAL_IMAGE = "∏";
-            const string GOALIN_IMAGE = "∏";
-			const ConsoleColor GOAL_COLOR = ConsoleColor.Gray;
+			// Goal 지점 관련 상수..
+			const int GOAL_COUNT = BOX_COUNT;
+			const string GOAL_IMAGE_WIN11 = "∏";
+            const string GOAL_IMAGE_WIN10 = "G";
+            const ConsoleColor GOAL_COLOR = ConsoleColor.Gray;
 			const ConsoleColor GOALIN_COLOR = ConsoleColor.DarkGray;
-			#endregion
+			// Goal 초기 세팅..
+			int[] INIT_GOALS_X = new int[GOAL_COUNT] { 49, 49, 49, 49, 40 };
+			int[] INIT_GOALS_Y = new int[GOAL_COUNT] { 18, 19, 20, 21, 7 };
+			string initGoalImage = (isWin11) ? GOAL_IMAGE_WIN11 : GOAL_IMAGE_WIN10;
 
-			#region Portal
+			// Portal 관련 상수 설정..
 			const int PORTAL_GATE_COUNT = 2;	// 한 개의 포탈에 이동할 수 있는 게이트의 개수??( 입구 <-> 출구 로 이동하니까 2개 )
 			const int PORTAL_COUNT = 8;
+			const string PORTAL_IMAGE_WIN11 = "Ⅱ";
+            const string PORTAL_IMAGE_WIN10 = "X";
+			// Portal 초기 세팅..
+			int[,] INIT_PORTALGATE_X = new int[PORTAL_COUNT, 2]
+			{ { 35, 5 }, { 35, 5 }, { 35, 5 }, { 35, 5 }, { 4, 40 }, { 10, 20 }, { 20, 30 }, { 30, 10 } };
+			int[,] INIT_PORTALGATE_Y = new int[PORTAL_COUNT, 2]
+			{ { 2, 18 }, { 3, 19 }, { 4, 20 }, { 5, 21 }, { 6, 16 }, { 1, 12 }, { 1, 12 }, { 1, 12 } };
+			string initPortalImage = (isWin11) ? PORTAL_IMAGE_WIN11 : PORTAL_IMAGE_WIN10;
+			ConsoleColor[] INIT_PORTAL_COLOR = new ConsoleColor[PORTAL_COUNT]
+			{
+				ConsoleColor.Green, ConsoleColor.DarkMagenta, ConsoleColor.Gray, ConsoleColor.Blue, ConsoleColor.Yellow
+				, ConsoleColor.Green, ConsoleColor.Gray, ConsoleColor.Blue
+			};
 
-			const string PORTAL_IMAGE = "Ⅱ";
-			#endregion
-
-			#region Switch
+			// Switch 관련 상수 설정..
 			const int SWITCH_COUNT = 1;
 			const ConsoleColor SWITCH_COLOR = ConsoleColor.DarkMagenta;
 			const string SWITCH_IMAGE = "ㅣ";
 			const string SWITCH_PUSH_IMAGE = "*";
-			#endregion
+			// Switch 초기 세팅..
+			int[] INIT_SWITCHES_X = new int[SWITCH_COUNT] { 41 };
+			int[] INIT_SWITCHES_Y = new int[SWITCH_COUNT] { 17 };
+			int[] INIT_SWITCHESBUTTON_OFFSETX = new int[SWITCH_COUNT] { -1 };
+			int[] INIT_SWITCHESBUTTON_OFFSETY = new int[SWITCH_COUNT] { 0 };
+			// 스위치 누르거나 땔 때 열거나 닫는 벽 인덱스..
+			int[][] INIT_OPENCLOSE_WALL_INDEX = new int[SWITCH_COUNT][];
+			INIT_OPENCLOSE_WALL_INDEX[0] = new int[4] { 3, 4, 5, 6 };
+
+			// Trap 관련 상수 설정..
+			const int TRAP_COUNT = 1;
+			const ConsoleColor TRAP_COLOR = ConsoleColor.DarkMagenta;
+			const string TRAP_IMAGE_WIN11 = "Y";
+			const string TRAP_IMAGE_WIN10 = "Y";
+			// Trap 초기 세팅..
+			string initTrapImage = (isWin11) ? TRAP_IMAGE_WIN11 : TRAP_IMAGE_WIN10;
+
+			// Item 관련 상수 설정..
+			const int ITEM_COUNT = 4;
+			ConsoleColor[] ITEM_COLOR = new ConsoleColor[Item.ITEM_TYPE_COUNT]
+			{
+				ConsoleColor.DarkCyan, ConsoleColor.Green, ConsoleColor.Red, ConsoleColor.Blue
+			};
+			string[] ITEM_IMAGE_WIN11 = new string[Item.ITEM_TYPE_COUNT]
+			{
+				"®", "E", "A", "A"
+			};
+			string[] ITEM_IMAGE_WIN10 = new string[Item.ITEM_TYPE_COUNT]
+			{
+				"R", "E", "B", "B"
+			};
+			// Item 초기 세팅..
+			string[] initItemImage = new string[Item.ITEM_TYPE_COUNT];
+			for ( int index = 0; index < Item.ITEM_TYPE_COUNT; ++index )
+			{
+				string win11Image = ITEM_IMAGE_WIN11[index];
+				string win10Image = ITEM_IMAGE_WIN10[index];
+
+				initItemImage[index] = (isWin11) ? win11Image : win10Image;
+			}
 			#endregion
 
-			#region 변수 초기화
 			// ============================================================================================================================================
 			// 변수 초기화..
 			// ============================================================================================================================================
-
-			#region Player 관련 변수 설정
+			#region 변수 초기화
 			// 플레이어 관련 변수 설정..
 			Player player = new Player
 			{
 				X = INITIAL_PLAYER_X, Y = INITIAL_PLAYER_Y, PrevX = INITIAL_PLAYER_X, PrevY = INITIAL_PLAYER_Y,
-				Image = PLAYER_IMAGE, Color = PLAYER_COLOR
+				Image = initPlayerImage, Color = PLAYER_COLOR, Hp = 10, Mp = 30
 			};
-			#endregion
+			int curPlayerMoveCount = 0;
 
-			#region Box 관련 변수 설정
 			// 박스 관련 변수 설정..
-			const int BOX_COUNT = 5;
-			int[] INIT_BOXES_X = new int[BOX_COUNT] { 5, 5, 5, 5, 10 };
-			int[] INIT_BOXES_Y = new int[BOX_COUNT] { 2, 3, 4, 5, 7 };
-
-			Box[] boxes = new Box[BOX_COUNT];
+            Box[] boxes = new Box[BOX_COUNT];
 			for( int boxIndex = 0; boxIndex < BOX_COUNT; ++boxIndex )
 			{
 				boxes[boxIndex] = new Box
 				{
 					X = INIT_BOXES_X[boxIndex], Y = INIT_BOXES_Y[boxIndex], PrevX = INIT_BOXES_X[boxIndex], PrevY = INIT_BOXES_Y[boxIndex],
-					Image = BOX_IMAGE, Color = BOX_COLOR, CurState = Box.State.Idle, DirX = 0, DirY = 0
+					Image = initBoxImage, Color = BOX_COLOR, CurState = Box.State.Idle, DirX = 0, DirY = 0
                 };
 			}
-			#endregion
 
-			#region Map 관련 변수 설정
 			// 맵 관련 변수 설정..
 			// 맵의 각 위치들의 데이터를 저장하는 룩업 테이블..
 			MapSpaceType[,] mapDatas = new MapSpaceType[MAP_HEIGHT + 1, MAP_WIDTH + 1];
-			#endregion
 
-			#region Wall 관련 변수 설정
-			// 벽 관련 변수 설정..
-			const int WALL_COUNT = 15;
-			int[] wallsX = new int[WALL_COUNT] { 3, 3, 3, 42, 42, 42, 42, 42, 43, 44, 45, 46, 47, 48, 49 };
-			int[] wallsY = new int[WALL_COUNT] { 8, 7, 9, 18, 19, 20, 21, 17, 17, 17, 17, 17, 17, 17, 17 };
-
-			// 현재 벽이 활성화되어있는가( default를 true 로 초기화 )..
-			bool[] isWallActive = Enumerable.Repeat<bool>( true, WALL_COUNT ).ToArray<bool>();
-			#endregion
-
-			#region Goal 관련 변수 설정
-			// 골인 지점 관련 변수 설정..
-			const int GOAL_COUNT = BOX_COUNT;
-			int[] goalsX = new int[GOAL_COUNT] { 49, 49, 49, 49, 40 };
-			int[] goalsY = new int[GOAL_COUNT] { 18, 19, 20, 21, 7 };
-
-			bool[] isGoalIn = new bool[GOAL_COUNT];
-			#endregion
-
-			#region Portal 관련 변수 설정
-			int[,] portalX = new int[PORTAL_COUNT, 2] 
-			{ { 35, 5 }, { 35, 5 }, { 35, 5 }, { 35, 5 }, { 4, 40 }, { 10, 20 }, { 20, 30 }, { 30, 10 } };
-			int[,] portalY = new int[PORTAL_COUNT, 2] 
-			{ { 2, 18 }, { 3, 19 }, { 4, 20 }, { 5, 21 }, { 6, 16 }, { 1, 12 }, { 1, 12 }, { 1, 12 } };
-
-			ConsoleColor[] portalColor = new ConsoleColor[PORTAL_COUNT]
+            // 벽 관련 변수 설정..
+			Wall[] walls = new Wall[WALL_COUNT];
+			for( int wallIndex = 0; wallIndex < WALL_COUNT; ++wallIndex )
 			{
-				ConsoleColor.Green, ConsoleColor.DarkMagenta, ConsoleColor.Gray, ConsoleColor.Blue, ConsoleColor.Yellow
-				, ConsoleColor.Green, ConsoleColor.Gray, ConsoleColor.Blue
+				walls[wallIndex] = new Wall
+				{
+					X = INIT_WALLS_X[wallIndex], Y = INIT_WALLS_Y[wallIndex], 
+					Image = initWallImage, Color = WALL_COLOR, isActive = true
+				};
+			}
+
+			// 골인 지점 관련 변수 설정..
+            Goal[] goals = new Goal[GOAL_COUNT];
+			for( int goalIndex = 0; goalIndex < GOAL_COUNT; ++goalIndex )
+			{
+				goals[goalIndex] = new Goal
+				{
+					X = INIT_GOALS_X[goalIndex], Y = INIT_GOALS_Y[goalIndex], Image = initGoalImage, Color = GOAL_COLOR,
+					GoalInColor = GOALIN_COLOR, isGoalIn = false
+				};
+			}
+
+			// Portal 관련 변수 설정..
+			Portal[] portals = new Portal[PORTAL_COUNT];
+			for( int portalIndex = 0; portalIndex < PORTAL_COUNT; ++portalIndex )
+			{
+				portals[portalIndex] = new Portal
+				{
+					GatesX = new int[PORTAL_GATE_COUNT], GatesY = new int[PORTAL_GATE_COUNT], Image = initPortalImage, Color = INIT_PORTAL_COLOR[portalIndex]
+				};
+
+                for ( int gateIndex = 0; gateIndex < PORTAL_GATE_COUNT; ++gateIndex )
+				{
+					portals[portalIndex].GatesX[gateIndex] = INIT_PORTALGATE_X[portalIndex, gateIndex];
+					portals[portalIndex].GatesY[gateIndex] = INIT_PORTALGATE_Y[portalIndex, gateIndex];
+                }
+			}
+
+			// Switch 관련 변수 설정..
+			Sokoban.Switch[] switches = new Sokoban.Switch[SWITCH_COUNT];
+			for( int switchIndex = 0; switchIndex < SWITCH_COUNT; ++switchIndex )
+			{
+				int loopCount = INIT_OPENCLOSE_WALL_INDEX[switchIndex].Length;
+
+				switches[switchIndex] = new Sokoban.Switch
+				{
+					X = INIT_SWITCHES_X[switchIndex], Y = INIT_SWITCHES_Y[switchIndex], ButtonOffsetX = INIT_SWITCHESBUTTON_OFFSETX[switchIndex],
+					ButtonOffsetY = INIT_SWITCHESBUTTON_OFFSETY[switchIndex], IsHolding = false, OpenCloseWallIndex = new int[loopCount]
+				};
+
+				for ( int openCloseWallIndex = 0; openCloseWallIndex < loopCount; ++openCloseWallIndex )
+				{
+					switches[switchIndex].OpenCloseWallIndex[openCloseWallIndex] = INIT_OPENCLOSE_WALL_INDEX[switchIndex][openCloseWallIndex];
+				}
+			}
+
+			// Trap 관련 변수 설정..
+			Trap[] traps = new Trap[TRAP_COUNT]
+			{
+				new Trap { X = 15, Y = 10, Damage = 10, Image = initTrapImage, Color = TRAP_COLOR }
 			};
-			#endregion
 
-			#region Switch 관련 변수 설정
-			int[] switchX = new int[SWITCH_COUNT] { 41 };
-			int[] switchY = new int[SWITCH_COUNT] { 17 };
-			int[] switchPushOffsetX = new int[SWITCH_COUNT] { -1 };
-			int[] switchPushOffsetY = new int[SWITCH_COUNT] { 0 };
-
-			bool[] isSwitchHolding = new bool[SWITCH_COUNT];	// 스위치 누르는 중이냐..
-			int[][] openCloseWallIdx = new int[SWITCH_COUNT][];	// 스위치 누르거나 땔 때 열거나 닫는 벽 인덱스..
-			openCloseWallIdx[0] = new int[4] { 3, 4, 5, 6 };
-			#endregion
+			// Item 관련 변수 설정..
+			Item[] items = new Item[ITEM_COUNT]
+			{
+				new Item { X = 10, Y = 10, Duration = 10, type = Item.Type.ReverseMove, isActive = true },
+				new Item { X = 10, Y = 2, Duration = 1, type = Item.Type.EasterEgg, isActive = true },
+				new Item { X = 10, Y = 6, Duration = 1, type = Item.Type.HPPosion, isActive = true },
+				new Item { X = 20, Y = 7, Duration = 1, type = Item.Type.MPPosion, isActive = true }
+			};
+			// 현재 타입에 따라 Image 와 Color 결정..
+			for( int itemIndex = 0; itemIndex < ITEM_COUNT; ++itemIndex )
+			{
+				int itemType = (int)(items[itemIndex].type);
+				items[itemIndex].Image = initItemImage[itemType];
+				items[itemIndex].Color = ITEM_COLOR[itemType];
+			}
+			// 플레이어가 사용중인 아이템 관련..
+			int[] playerActiveItemIndex = new int[ITEM_COUNT];
+			int activeItemCount = 0;
 
 			#region 기타 변/상수 설정
 			// 타이머 관련..
-			const int FRAME_PER_SECOND = 90;
+			const int FRAME_PER_SECOND = 20;
 			double frameInterval = 1.0 / FRAME_PER_SECOND;
 			double elaspedTime = 0.0;
 			double runTime = 0.0;
@@ -182,26 +291,8 @@ namespace KMH_Sokoban
 			Stopwatch stopwatch = new Stopwatch();
 			// 렌더 관련( 그릴지 말지 )..
 			bool isSkipRender = false;
+			//bool isConsoleClear = false;
 			#endregion
-			#endregion
-
-			#region 디버깅 관련 변수,상수
-			LinkedList<KeyValuePair<int, string>> logMessage = new LinkedList<KeyValuePair<int, string>>();
-			int logStartX = 60;
-			int logStartY = 0;
-
-			logMessage.AddLast( new KeyValuePair<int, string>( 2, "============== 설명 ==============" ) );
-			logMessage.AddLast( new KeyValuePair<int, string>( 1, $"{PLAYER_IMAGE} : 플레이어" ) );
-			logMessage.AddLast( new KeyValuePair<int, string>( 1, $"{BOX_IMAGE} : 박스" ) );
-			logMessage.AddLast( new KeyValuePair<int, string>( 1, $"{WALL_IMAGE} : 벽" ) );
-			logMessage.AddLast( new KeyValuePair<int, string>( 1, $"{GOALIN_IMAGE} : 골" ) );
-			logMessage.AddLast( new KeyValuePair<int, string>( 1, $"{SWITCH_IMAGE} : 스위치, {SWITCH_PUSH_IMAGE} : 버튼" ) );
-
-			logMessage.AddLast( new KeyValuePair<int, string>( 2, "" ) );
-			logMessage.AddLast( new KeyValuePair<int, string>( 2, "======== 방향키 ========" ) );
-			logMessage.AddLast( new KeyValuePair<int, string>( 1, "↑ ← ↓ → : 이동" ) );
-			logMessage.AddLast( new KeyValuePair<int, string>( 1, "SpaceBar : 박스 잡기" ) );
-			logMessage.AddLast( new KeyValuePair<int, string>( 1, "A : 박스 차기" ) );
 			#endregion
 
 			#region 시작 전 초기 작업
@@ -224,26 +315,53 @@ namespace KMH_Sokoban
 			// 맵 데이터에 벽 위치 저장..
 			for ( int i = 0; i < WALL_COUNT; ++i )
 			{
-				if ( isWallActive[i] )
+				if ( walls[i].isActive )
 				{
-                    mapDatas[wallsY[i], wallsX[i]] = MapSpaceType.DontPass;
+                    mapDatas[walls[i].Y, walls[i].X] = MapSpaceType.DontPass;
                 }
 				else
 				{
-                    mapDatas[wallsY[i], wallsX[i]] = MapSpaceType.Pass;
+                    mapDatas[walls[i].Y, walls[i].X] = MapSpaceType.Pass;
                 }
 			}
 
 			// 맵 데이터에 포탈 위치 저장..
-			for ( int i = 0; i < PORTAL_COUNT; ++i )
+			for ( int portalIndex = 0; portalIndex < PORTAL_COUNT; ++portalIndex )
 			{
-				for( int j = 0; j < PORTAL_GATE_COUNT; ++j )
-					mapDatas[portalY[i, j], portalX[i, j]] = MapSpaceType.Portal;
+				for( int gateIndex = 0; gateIndex < PORTAL_GATE_COUNT; ++gateIndex )
+				{
+					int gateX = portals[portalIndex].GatesX[gateIndex];
+					int gateY = portals[portalIndex].GatesY[gateIndex];
+                    mapDatas[gateY, gateX] = MapSpaceType.Portal;
+                }
 			}
 
 			// 맵 데이터에 스위치 위치 저장..
-			for ( int i = 0; i < SWITCH_COUNT; ++i )
-				mapDatas[switchY[i], switchX[i]] = MapSpaceType.DontPass;
+			for ( int switchIndex = 0; switchIndex < SWITCH_COUNT; ++switchIndex )
+			{
+				int switchX = switches[switchIndex].X;
+				int switchY = switches[switchIndex].Y;
+
+				mapDatas[switchY, switchX] = MapSpaceType.DontPass;
+            }
+
+			// 맵 데이터에 Trap 위치 저장..
+			for ( int switchIndex = 0; switchIndex < SWITCH_COUNT; ++switchIndex )
+			{
+				int trapX = traps[switchIndex].X;
+				int trapY = traps[switchIndex].Y;
+
+				mapDatas[trapY, trapX] = MapSpaceType.Trap;
+			}
+
+			// 맵 데이터에 Item 위치 저장..
+			for ( int switchIndex = 0; switchIndex < SWITCH_COUNT; ++switchIndex )
+			{
+				int itemX = items[switchIndex].X;
+				int itemY = items[switchIndex].Y;
+
+				mapDatas[itemY, itemX] = MapSpaceType.Item;
+			}
 
 			// 맵 외곽 통과 못하는 곳으로 설정..
 			for ( int i = 0; i <= MAP_WIDTH; ++i )
@@ -257,6 +375,46 @@ namespace KMH_Sokoban
 				mapDatas[i, MAP_WIDTH] = MapSpaceType.DontPass;
 			}
 
+			// 설명용 텍스트 설정..
+			LinkedList<KeyValuePair<int, string>> logMessage = new LinkedList<KeyValuePair<int, string>>();
+			const int logStartX = 60;
+			const int logStartY = 0;
+
+			logMessage.AddLast( new KeyValuePair<int, string>( 2, "============== 설명 ==============" ) );
+			logMessage.AddLast( new KeyValuePair<int, string>( 1, $"{initPlayerImage} : 플레이어" ) );
+			logMessage.AddLast( new KeyValuePair<int, string>( 1, $"{initBoxImage} : 박스" ) );
+			logMessage.AddLast( new KeyValuePair<int, string>( 1, $"{initWallImage} : 벽" ) );
+			logMessage.AddLast( new KeyValuePair<int, string>( 1, $"{initGoalImage} : 골" ) );
+			logMessage.AddLast( new KeyValuePair<int, string>( 1, $"{SWITCH_IMAGE} : 스위치, {SWITCH_PUSH_IMAGE} : 버튼" ) );
+
+			logMessage.AddLast( new KeyValuePair<int, string>( 2, "" ) );
+			logMessage.AddLast( new KeyValuePair<int, string>( 2, "============ 아이템 설명 ============" ) );
+			logMessage.AddLast( new KeyValuePair<int, string>( 1, $"반대로 움직임(10턴) : {initItemImage[(int)(Item.Type.ReverseMove)]}" ) );
+			logMessage.AddLast( new KeyValuePair<int, string>( 1, $"이스터 에그 : {initItemImage[(int)(Item.Type.EasterEgg)]}" ) );
+			logMessage.AddLast( new KeyValuePair<int, string>( 1, $"HP 포션 : {initItemImage[(int)(Item.Type.HPPosion)]}" ) );
+			logMessage.AddLast( new KeyValuePair<int, string>( 1, $"MP 포션 : {initItemImage[(int)(Item.Type.MPPosion)]}" ) );
+
+			logMessage.AddLast( new KeyValuePair<int, string>( 2, "" ) );
+			logMessage.AddLast( new KeyValuePair<int, string>( 2, "======== 방향키 ========" ) );
+			logMessage.AddLast( new KeyValuePair<int, string>( 1, "↑ ← ↓ → : 이동" ) );
+			logMessage.AddLast( new KeyValuePair<int, string>( 1, "SpaceBar : 박스 잡기" ) );
+			logMessage.AddLast( new KeyValuePair<int, string>( 1, "A : 박스 차기" ) );
+			logMessage.AddLast( new KeyValuePair<int, string>( 1, "" ) );
+
+			// 플레이어 정보 텍스트 설정..
+			StringBuilder playerStateLog = new StringBuilder();
+			const int playerStateLogStartX = 0;
+			const int playerStateLogStartY = MAP_RANGE_MAX_Y + 2;
+			// 플레이어 에러 텍스트 설정..
+			StringBuilder playerErrorLog = new StringBuilder();
+			// 야매로 플레이어 정보 출력한 곳 지워줄 텍스트 설정..
+			StringBuilder clearPlayerStateLog = new StringBuilder();
+			clearPlayerStateLog.AppendLine( "                               " );
+			clearPlayerStateLog.AppendLine( "                               " );
+			clearPlayerStateLog.AppendLine( "                               " );
+			clearPlayerStateLog.AppendLine( "                               " );
+			clearPlayerStateLog.AppendLine( "                               " );
+
 			// 타이머 스타트..
 			stopwatch.Start();
 			#endregion
@@ -265,9 +423,16 @@ namespace KMH_Sokoban
 			#region GameLoop
 			while ( true )
 			{
+				// 실행 시간 계산..
 				elaspedTime += runTime - prevRunTime;
 				prevRunTime = runTime;
-				runTime = stopwatch.Elapsed.TotalMilliseconds * 0.0001;
+				runTime = stopwatch.Elapsed.TotalMilliseconds * 0.001;
+
+				logMessage.RemoveLast();
+				logMessage.AddLast( new KeyValuePair<int, string>( 1, $"실행 시간 : {runTime:F3}" ) );
+
+				playerStateLog.Clear();
+				playerStateLog.AppendLine( "========== Player State ==========" );
 
 				if ( elaspedTime >= frameInterval )
 				{
@@ -284,326 +449,21 @@ namespace KMH_Sokoban
 					}
 					#endregion
 
-					#region Update
-					// ------------------------------------------------------------------ Update.. ------------------------------------------------------------------
-					// ================================= Player Update.. =================================
-					#region Player Update
-					// 플레이어 이전위치 갱신..
-					player.PrevX = player.X;
-					player.PrevY = player.Y;
+					Update( inputKey );
 
-					// 1. 입력 키 처리..
-					switch ( inputKey )
-					{
-						case ConsoleKey.RightArrow:
-						case ConsoleKey.LeftArrow:
-							player.X += (int)inputKey - 38;
-
-							break;
-						case ConsoleKey.DownArrow:
-						case ConsoleKey.UpArrow:
-							player.Y += (int)inputKey - 39;
-
-							break;
-						case ConsoleKey.Spacebar:
-							for ( int i = 0; i < BOX_COUNT; ++i )
-							{
-								int boxX = boxes[i].X;
-								int boxY = boxes[i].Y;
-								Box.State boxState = boxes[i].CurState;
-
-								int xDist = Math.Abs( player.X - boxX );
-								int yDist = Math.Abs( player.Y - boxY );
-
-								if ( 1 == xDist + yDist )
-								{
-									if ( Box.State.GrabByPlayer == boxState )
-                                        boxState = Box.State.Idle;
-									else
-                                        boxState = Box.State.GrabByPlayer;
-
-									boxes[i].CurState = boxState;
-                                }
-							}
-
-							break;
-						case ConsoleKey.A:
-							for ( int i = 0; i < BOX_COUNT; ++i )
-							{
-                                int boxX = boxes[i].X;
-                                int boxY = boxes[i].Y;
-
-                                int xDist = Math.Abs( player.X - boxX );
-								int yDist = Math.Abs( player.Y - boxY );
-
-								if ( 1 == xDist + yDist )
-								{
-									int curBoxIndex = i;
-
-									// 박스 상태 변경 및 그와 관련된 값 설정..
-									boxes[curBoxIndex].CurState = Box.State.Move;
-
-									int dirX = player.X - boxX;
-									int dirY = player.Y - boxY;
-
-									boxes[curBoxIndex].DirX = dirX;
-                                    boxes[curBoxIndex].DirY = dirY;
-								}
-							}
-
-							break;
-					}
-					#endregion
-
-					#region Box Update
-					// ================================= Box Update.. =================================
-					// 박스 업데이트..
-					for ( int i = 0; i < BOX_COUNT; ++i )
-					{
-						// 박스 이전위치 갱신..
-						boxes[i].PrevX = boxes[i].X;
-						boxes[i].PrevY = boxes[i].Y;
-
-						switch ( boxes[i].CurState )
-						{
-							case Box.State.Idle:
-								if ( player.X == boxes[i].X && player.Y == boxes[i].Y )   // 플레이어와 박스가 같을 때..
-								{
-									// 박스가 이동할 위치를 계산( 현재위치 - 이전위치 = 이동할 방향 )..
-									int boxMoveDirX = player.X - player.PrevX;
-									int boxMoveDirY = player.Y - player.PrevY;
-
-									// 박스 현재위치 갱신.. 
-									boxes[i].X += boxMoveDirX;
-									boxes[i].Y += boxMoveDirY;
-
-									break;
-								}
-
-								break;
-							case Box.State.Move:
-								boxes[i].X -= boxes[i].DirX;
-								boxes[i].Y -= boxes[i].DirY;
-
-								isSkipRender = false;
-
-								break;
-
-							case Box.State.GrabByPlayer:
-							{
-								boxes[i].PrevX = boxes[i].X;
-								boxes[i].PrevY = boxes[i].Y;
-
-								// 박스가 이동할 위치를 계산( 현재위치 - 이전위치 = 이동할 방향 )..
-								int boxMoveDirX = player.X - player.PrevX;
-								int boxMoveDirY = player.Y - player.PrevY;
-
-								// 박스 현재위치 갱신.. 
-								boxes[i].X += boxMoveDirX;
-                                boxes[i].Y += boxMoveDirY;
-							}
-
-								break;
-						}
-					}
-					#endregion
-
-					#region Collision
-					// ================================= Player Box Update가 끝난 후 Overlap 처리??.. =================================
-					#region Box Collision
-					// 박스가 특정 물체와 겹쳤다( 박스 or 벽 or 맵 외곽 )..
-					for ( int i = 0; i < BOX_COUNT; ++i )
-					{
-						MapSpaceType curStandSpaceType = mapDatas[boxes[i].Y, boxes[i].X];
-
-						// 박스가 현재 위치에 다른 물체가 있을 때는 이전 위치로 이동..
-						switch(curStandSpaceType)
-						{
-							case MapSpaceType.DontPass:
-								boxes[i].X = boxes[i].PrevX;
-								boxes[i].Y = boxes[i].PrevY;
-
-								boxes[i].CurState = Box.State.Idle;
-
-								break;
-							case MapSpaceType.BoxStand:
-								for ( int curBoxIdx = 0; curBoxIdx < BOX_COUNT; ++curBoxIdx )
-								{
-									if ( curBoxIdx == i )
-										continue;
-									if ( boxes[i].X != boxes[curBoxIdx].X || boxes[i].Y != boxes[curBoxIdx].Y )
-										continue;
-
-									boxes[i].X = boxes[i].PrevX;
-                                    boxes[i].Y = boxes[i].PrevY;
-
-                                    boxes[i].CurState = Box.State.Idle;
-
-									break;
-								}
-
-								break;
-
-							case MapSpaceType.PlayerStand:
-								if( Box.State.GrabByPlayer != boxes[i].CurState )
-								{
-									boxes[i].X = boxes[i].PrevX;
-                                    boxes[i].Y = boxes[i].PrevY;
-
-                                    boxes[i].CurState = Box.State.Idle;
-								}
-
-								break;
-
-							case MapSpaceType.Portal:
-								bool isFindPortal = false;
-								for ( int portalIdx = 0; portalIdx < PORTAL_COUNT; ++portalIdx )
-								{
-									for ( int portalGateIdx = 0; portalGateIdx < PORTAL_GATE_COUNT; ++portalGateIdx )
-									{
-										int curPortalX = portalX[portalIdx, portalGateIdx];
-										int curPortalY = portalY[portalIdx, portalGateIdx];
-
-										if ( curPortalX == boxes[i].X && curPortalY == boxes[i].Y )
-										{
-											curPortalX = portalX[portalIdx, (portalGateIdx + 1) % 2];
-											curPortalY = portalY[portalIdx, (portalGateIdx + 1) % 2];
-
-											int dirX = boxes[i].X - boxes[i].PrevX;
-											int dirY = boxes[i].Y - boxes[i].PrevY;
-
-											boxes[i].X = curPortalX + dirX;
-                                            boxes[i].Y = curPortalY + dirY;
-
-											if ( Box.State.GrabByPlayer == boxes[i].CurState )
-                                                boxes[i].CurState = Box.State.Idle;
-
-											i -= 1;
-
-											isFindPortal = true;
-
-											break;
-										}
-									}
-
-									if ( isFindPortal )
-										break;
-								}
-
-								break;
-						}
-					}
-					#endregion
-
-					#region Player Collision
-					// 플레이어가 특정 물체와 겹쳤다( 박스 or 벽 등등 )..
-					MapSpaceType overlapSpaceType = mapDatas[player.Y, player.X];
-					switch(overlapSpaceType)
-					{
-						case MapSpaceType.DontPass:
-							player.X = player.PrevX;
-							player.Y = player.PrevY;
-
-							break;
-						case MapSpaceType.BoxStand:
-							for( int boxIdx = 0; boxIdx < BOX_COUNT; ++boxIdx)
-							{
-                                int boxX = boxes[boxIdx].X;
-                                int boxY = boxes[boxIdx].Y;
-
-                                // 만약 플레이어와 박스의 위치가 같을 때 이전 위치로..
-                                // 맵 데이터가 갱신이 안되있는 상태기 때문에 이 검사를 하는 것..
-                                if (player.X == boxX && player.Y == boxY)
-                                {
-                                    player.X = player.PrevX;
-                                    player.Y = player.PrevY;
-                                }
-                            }
-
-							break;
-						case MapSpaceType.Portal:
-							for( int portalIdx = 0; portalIdx < PORTAL_COUNT; ++portalIdx )
-							{
-								for (int portalGateIdx = 0; portalGateIdx < PORTAL_GATE_COUNT; ++portalGateIdx)
-								{
-									int curPortalX = portalX[portalIdx, portalGateIdx];
-									int curPortalY = portalY[portalIdx, portalGateIdx];
-
-									if (curPortalX == player.X && curPortalY == player.Y)
-									{
-                                        curPortalX = portalX[portalIdx, (portalGateIdx + 1) % 2];
-										curPortalY = portalY[portalIdx, (portalGateIdx + 1) % 2];
-
-										int dirX = player.X - player.PrevX;
-										int dirY = player.Y - player.PrevY;
-
-										player.X = curPortalX + dirX;
-										player.Y = curPortalY + dirY;
-
-										overlapSpaceType = mapDatas[player.Y, player.X];
-										if( MapSpaceType.Pass != overlapSpaceType )
-										{
-											player.X = player.PrevX;
-											player.Y = player.PrevY;
-										}
-
-										break;
-                                    }
-								}
-							}
-
-							break;
-					}
-					#endregion
-
-					#region Switch Collision
-					for( int switchIdx = 0; switchIdx < SWITCH_COUNT; ++switchIdx )
-					{
-						int switchPushX = switchX[switchIdx] + switchPushOffsetX[switchIdx];
-						int switchPushY = switchY[switchIdx] + switchPushOffsetY[switchIdx];
-
-						MapSpaceType curPushPosSpaceType = mapDatas[switchPushY, switchPushX];
-						if( MapSpaceType.Pass != curPushPosSpaceType )
-						{
-							if( false == isSwitchHolding[switchIdx] )
-							{
-								isSwitchHolding[switchIdx] = true;
-
-								for( int wallIdx = 0; wallIdx < openCloseWallIdx[switchIdx].Length; ++wallIdx )
-									isWallActive[openCloseWallIdx[switchIdx][wallIdx]] = false;
-
-								isSkipRender = false;
-							}
-						}
-						else
-						{
-							if( true == isSwitchHolding[switchIdx] )
-							{
-								isSwitchHolding[switchIdx] = false;
-
-								for ( int wallIdx = 0; wallIdx < openCloseWallIdx[switchIdx].Length; ++wallIdx )
-									isWallActive[openCloseWallIdx[switchIdx][wallIdx]] = true;
-
-								isSkipRender = false;
-							}
-						}
-					}
-					#endregion
-					#endregion
-
-					#region Goal Update
+					// =========================================== Check Game Clear.. =========================================== //
 					// 골인 지점과 박스 위치가 몇개나 같은지 비교하는 곳..
 					int goalBoxCount = 0;
 					for ( int i = 0; i < GOAL_COUNT; ++i )
 					{
-						isGoalIn[i] = false;
+						goals[i].isGoalIn = false;
 
 						for ( int j = 0; j < BOX_COUNT; ++j )
 						{
-							if ( goalsX[i] == boxesX[j] && goalsY[i] == boxesY[j] )
+							if ( goals[i].X == boxes[j].X && goals[i].Y == boxes[j].Y )
 							{
 								++goalBoxCount;
-								isGoalIn[i] = true;
+								goals[i].isGoalIn = true;
 
 								break;
 							}
@@ -613,56 +473,6 @@ namespace KMH_Sokoban
 					// 현재 골인지점과 박스위치가 전부 같다면( GG )..
 					if ( goalBoxCount == GOAL_COUNT )
 						break;
-					#endregion
-
-					#region Map Update
-					// ================================= 전체적인 위치의 갱신이 끝났다면 맵에 데이터 저장.. =================================
-					// 플레이어 정보 갱신..
-					mapDatas[player.PrevY, player.PrevX] = MapSpaceType.Pass;
-					mapDatas[player.Y, player.X] = MapSpaceType.PlayerStand;
-
-					// Box 정보 갱신..
-					for ( int i = 0; i < BOX_COUNT; ++i )
-					{
-						mapDatas[prevBoxesY[i], prevBoxesX[i]] = MapSpaceType.Pass;
-						mapDatas[boxesY[i], boxesX[i]] = MapSpaceType.BoxStand;
-					}
-
-					// Portal 정보 갱신..
-					for( int portalIdx = 0; portalIdx < PORTAL_COUNT; ++portalIdx )
-					{
-						for( int portalGateIdx = 0; portalGateIdx < PORTAL_GATE_COUNT; ++portalGateIdx )
-						{
-							int curPortalX = portalX[portalIdx, portalGateIdx];
-							int curPortalY = portalY[portalIdx, portalGateIdx];
-							mapDatas[curPortalY, curPortalX] = MapSpaceType.Portal;
-						}
-					}
-
-					// 벽 정보 갱신..
-					for( int wallIdx = 0; wallIdx < WALL_COUNT; ++wallIdx )
-					{
-						int wallX = wallsX[wallIdx];
-						int wallY = wallsY[wallIdx];
-
-						if ( true == isWallActive[wallIdx] )
-							mapDatas[wallY, wallX] = MapSpaceType.DontPass;
-						else
-							mapDatas[wallY, wallX] = MapSpaceType.Pass;
-					}
-
-					// Switch 정보 갱신..
-					for ( int i = 0; i < SWITCH_COUNT; ++i )
-						mapDatas[switchY[i], switchX[i]] = MapSpaceType.DontPass;
-
-                    #endregion
-
-                    #endregion
-
-                    if ( isSkipRender ) // Render 를 스킵해야 한다면( 무한 깜빡임 방지 )..
-                        continue;
-
-                    isSkipRender = true;
 
                     Render();
 				}
@@ -810,100 +620,147 @@ namespace KMH_Sokoban
 
 			#endregion
 
+			#region Render Function
 			void Render()
 			{
-                // 이전 프레임 지우기..
-                Console.Clear();
+				// 이전 프레임 지우기..
+				//if( isConsoleClear )
+				//{
+				//	Console.Clear();
+				//	isConsoleClear = false;
+				//}
 
-                for ( int i = 0; i < SWITCH_COUNT; ++i )
-                {
-                    int posX = switchX[i];
-                    int posY = switchY[i];
+				// Log Render..
+				int logYOffset = 0;
+				foreach ( var message in logMessage )
+				{
+					Console.ForegroundColor = ConsoleColor.Green;
+					Console.SetCursorPosition( logStartX, logStartY + logYOffset );
+					Console.Write( message.Value );
 
-                    RenderObject( posX, posY, SWITCH_IMAGE, SWITCH_COLOR );
+					logYOffset += message.Key;
+				}
 
-                    posX += switchPushOffsetX[i];
-                    posY += switchPushOffsetY[i];
+				if ( isSkipRender ) // Render 를 스킵해야 한다면( 무한 깜빡임 방지 )..
+				    return;
 
-                    RenderObject( posX, posY, SWITCH_PUSH_IMAGE, SWITCH_COLOR );
-                }
+				isSkipRender = true;
 
-                for ( int curPortalIdx = 0; curPortalIdx < PORTAL_COUNT; ++curPortalIdx )
-                {
-                    for ( int curPortalGateIdx = 0; curPortalGateIdx < PORTAL_GATE_COUNT; ++curPortalGateIdx )
-                    {
-                        int portalGateX = portalX[curPortalIdx, curPortalGateIdx];
-                        int portalGateY = portalY[curPortalIdx, curPortalGateIdx];
-						ConsoleColor color = portalColor[curPortalIdx];
+				// Player State Render..
+				playerStateLog.AppendLine( $"HP : {player.Hp}" );
+				playerStateLog.AppendLine( $"MP : {player.Mp}" );
 
-						RenderObject( portalGateX, portalGateY, PORTAL_IMAGE, color );
-                    }
-                }
+				Console.SetCursorPosition( playerStateLogStartX, playerStateLogStartY );
+				Console.Write( clearPlayerStateLog );
+				Console.SetCursorPosition( playerStateLogStartX, playerStateLogStartY );
+				Console.WriteLine( playerStateLog );
+				Console.Write( playerErrorLog );
+				playerErrorLog.Clear();
 
-                // 박스 출력하기..
-                for ( int i = 0; i < BOX_COUNT; ++i )
-                {
-					RenderObject( boxes[i].X, boxes[i].Y, BOX_IMAGE, BOX_COLOR );
-                }
+				// Render Switch..
+				for ( int switchIndex = 0; switchIndex < SWITCH_COUNT; ++switchIndex )
+				{
+					int posX = switches[switchIndex].X;
+					int posY = switches[switchIndex].Y;
 
-                // 골인 지점 출력하기..
-                for ( int i = 0; i < GOAL_COUNT; ++i )
-                {
-                    if ( isGoalIn[i] )
-                    {
-						RenderObject( goalsX[i], goalsY[i], GOALIN_IMAGE, GOALIN_COLOR );
-                    }
-                    else
-                    {
-                        RenderObject( goalsX[i], goalsY[i], GOAL_IMAGE, GOAL_COLOR );
-                    }
-                }
+					RenderObject( posX, posY, SWITCH_IMAGE, SWITCH_COLOR );
 
-				// 플레이어 출력하기..
+					posX += switches[switchIndex].ButtonOffsetX;
+					posY += switches[switchIndex].ButtonOffsetY;
+
+					RenderObject( posX, posY, SWITCH_PUSH_IMAGE, SWITCH_COLOR );
+				}
+
+				// Render Portal..
+				for ( int portalIndex = 0; portalIndex < PORTAL_COUNT; ++portalIndex )
+				{
+					for ( int gateIndex = 0; gateIndex < PORTAL_GATE_COUNT; ++gateIndex )
+					{
+						int portalGateX = portals[portalIndex].GatesX[gateIndex];
+						int portalGateY = portals[portalIndex].GatesY[gateIndex];
+
+						RenderObject( portalGateX, portalGateY, portals[portalIndex].Image, portals[portalIndex].Color );
+					}
+				}
+
+				// Render Wall..
+				for ( int i = 0; i < WALL_COUNT; ++i )
+				{
+					if ( true == walls[i].isActive )
+					{
+						RenderObject( walls[i].X, walls[i].Y, walls[i].Image, walls[i].Color );
+					}
+					else
+					{
+						RenderObject( walls[i].X, walls[i].Y, " ", ConsoleColor.Black );
+					}
+				}
+
+				// Render Trap..
+				for ( int i = 0; i < TRAP_COUNT; ++i )
+				{
+
+					RenderObject( traps[i].X, traps[i].Y, traps[i].Image, traps[i].Color );
+				}
+
+				// Render Item..
+				for ( int itemIndex = 0; itemIndex < ITEM_COUNT; ++itemIndex )
+				{
+					int itemX = items[itemIndex].X;
+					int itemY = items[itemIndex].Y;
+					string itemImage = items[itemIndex].Image;
+					ConsoleColor itemColor = items[itemIndex].Color;
+
+					if ( true == items[itemIndex].isActive )
+					{
+						RenderObject( itemX, itemY, itemImage, itemColor );
+					}
+					else
+					{
+						RenderObject( itemX, itemY, " ", ConsoleColor.Black );
+					}
+				}
+
+				// Render Box..
+				for ( int i = 0; i < BOX_COUNT; ++i )
+				{
+					RenderObject( boxes[i].PrevX, boxes[i].PrevY, " ", ConsoleColor.Black );
+					RenderObject( boxes[i].X, boxes[i].Y, boxes[i].Image, boxes[i].Color );
+				}
+
+				// Render Player..
+				if ( MapSpaceType.Pass == mapDatas[player.PrevY, player.PrevX] )
+					RenderObject( player.PrevX, player.PrevY, " ", ConsoleColor.Black );
 				RenderObject( player.X, player.Y, player.Image, player.Color );
 
-                // 벽 출력하기..
-                for ( int i = 0; i < WALL_COUNT; ++i )
-                {
-                    if ( false == isWallActive[i] )
-                        continue;
+				// Render Goal..
+				for ( int i = 0; i < GOAL_COUNT; ++i )
+				{
+					if ( goals[i].isGoalIn )
+					{
+						RenderObject( goals[i].X, goals[i].Y, goals[i].Image, goals[i].GoalInColor );
+					}
+					else
+					{
+						RenderObject( goals[i].X, goals[i].Y, goals[i].Image, goals[i].Color );
+					}
+				}
 
-                    Console.SetCursorPosition( wallsX[i], wallsY[i] );
-                    Console.ForegroundColor = WALL_COLOR;
-                    Console.Write( WALL_IMAGE );
-                }
+				// Render Map BorderLine..
+				Console.ForegroundColor = BORDERLINE_COLOR;
+				for ( int i = MAP_RANGE_MIN_X - 1; i < MAP_RANGE_MAX_X; ++i )
+				{
+					RenderObject( i, MAP_RANGE_MIN_Y - 1, initBorderLineImage, BORDERLINE_COLOR );
+					RenderObject( i, MAP_RANGE_MAX_Y - 1, initBorderLineImage, BORDERLINE_COLOR );
+				}
+				for ( int i = MAP_RANGE_MIN_Y - 1; i < MAP_RANGE_MAX_Y; ++i )
+				{
+					RenderObject( MAP_RANGE_MIN_X - 1, i, initBorderLineImage, BORDERLINE_COLOR );
+					RenderObject( MAP_RANGE_MAX_X - 1, i, initBorderLineImage, BORDERLINE_COLOR );
+				}
+			}
 
-
-                // 맵 출력하기..
-                Console.ForegroundColor = BORDERLINE_COLOR;
-                for ( int i = MAP_RANGE_MIN_X - 1; i < MAP_RANGE_MAX_X; ++i )
-                {
-                    Console.SetCursorPosition( i, MAP_RANGE_MIN_Y - 1 );
-                    Console.Write( '▦' );
-                    Console.SetCursorPosition( i, MAP_RANGE_MAX_Y - 1 );
-                    Console.Write( '▦' );
-                }
-                for ( int i = MAP_RANGE_MIN_Y - 1; i < MAP_RANGE_MAX_Y; ++i )
-                {
-                    Console.SetCursorPosition( MAP_RANGE_MIN_X - 1, i );
-                    Console.Write( '▦' );
-                    Console.SetCursorPosition( MAP_RANGE_MAX_X - 1, i );
-                    Console.Write( '▦' );
-                }
-
-                // Log Render..
-                int logYOffset = 0;
-                foreach ( var message in logMessage )
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.SetCursorPosition( logStartX, logStartY + logYOffset );
-                    Console.Write( message.Value );
-
-                    logYOffset += message.Key;
-                }
-            }
-
-            void RenderObject(int x, int y, string image, ConsoleColor color)
+			void RenderObject(int x, int y, string image, ConsoleColor color)
 			{
 				ConsoleColor prevColor = Console.ForegroundColor;
 
@@ -913,6 +770,840 @@ namespace KMH_Sokoban
 
 				Console.ForegroundColor = prevColor;
 			}
-		}
-	}
+
+			void RenderProfessor()
+			{
+				Console.Clear();
+				Console.WriteLine( "이스터에그 약 5초뒤에 나옵니다. 전체화면 추천" );
+				Console.WriteLine( "이스터에그 약 10초뒤에 꺼집니다. 전체화면 추천" );
+				Console.WriteLine( "교수님 늘 좋은 수업 해주셔서 감사합니다." );
+				Console.WriteLine( "감사한 마음을 담았습니다." );
+
+				Thread.Sleep( 5000 );
+
+				Console.BackgroundColor = ConsoleColor.Black;
+				Console.ForegroundColor = ConsoleColor.DarkGreen;
+
+				Console.Clear();
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@!*=@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@~;;!**==***!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@!*!!*======*$===#==*!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@;;" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=***=$=====$#=$$$=$=*==!*=!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*;" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@===#$#=$#$=*$#$$###$@$#$#$=*;;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=$*$==$$$=$$#@##@########$##*!;;;;@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=$$$==$=$*$$=#$$$#####@##@@@##$$=!:;;@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@**$$$=**=#$$$==$####$#######@@@@$##=!:;@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=$##$#!$=====$$$#######@###@#@#@@#@#$;;;@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@**=!#=!$=$$=$$=$$$$######@@###$#@@@@@@@#*!:@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@**=$$***=$=$$==**=*!**==$$$###$#@@@@@@@@$==;;@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@;*=*=$!=!$$$$=**!!;;:::;;!**==$$$@@@@@@@@@$$$;@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*!**$==$##$$==*!;:~~~~~~-~~~~:;!*$##@@@@@@@$=*~@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*=!=$!=#$$$$$==!;~~---,,,,,,,,,,-~;!*$@@@@@@@@#*~@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@;!***$$*$$$$$$=*;~---,,............,~:!=$#@@@@@#$;@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*=$==#$#$=$$$$*;:~--,,,.............,,-:;*$#@@@@$;@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@;;!$#=$$$$$$$$=*:~--,,,,................,-~;*=#@@#*-@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*=$$$=$$$$$$=$*!~--,,,,,........ ..   ....,-~;=$@#$!;@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*$$=$=$$$$$=$=*;---,,,,,.......        ......-:*$#$*~@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@!*$$$=$$=$$$$=*!~---,,,,,.......  .      ......,~;##$!~@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*==#$=$=$$===*!:----,,,,,,.....   .         ....,~*@#*;@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*$$$$$=$$=$=*!;~----,,,,,.......    .        ....,:#@=!@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=##$$=$$$=$=!;~---------,........  ..           ..-*@$*~@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@!$#$$$$$=$==*;:~~~~~~~:;:~~,,.......  . .         ..;##=:@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@!$##$$#==$=*!;~~~~~:;;:;;;:::~~-,...   ... ..      .:##=;@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@==$#$$##=$==*;~~~~~~~~~~~~:~;!;;;~,...  ..   . .     ~##$;@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@$$$#$$#$===*;~~~~~~~------,,-~:;;:~-,.  .            ,##=!@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@.............@@ ... ........@@@............@@@@@@@@@@@.......@....@@@@@@@@@@@....@.......@@@@..... @@@@@@@@@@@=$##$$#$$$*!:~~~~~~~~-----,..,-~::::-........        .$#$*@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@.............@@.............@@@............@@@@@@@@@@.............@@@@@@@@@..............@@@....... @@@@@@@@@@$$####$$$=*;~~~~~~~~~~~~~--,...-~:::~-.........       *#$=;@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@.............@@.............@@@............@@@@@@@@@ .............@@@@@@@@@..............@@.........@@@@@@@@@@=#####$$$=!:~~~--~~~:~::::~,...,-~~:~--,.,-----,.     -#$*@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@.....@....@@@@@.............@@@............@@@@@@@@@.....@.........@@@@@@@@ .............@ ......... @@@@@@@@@$###$$$#$=;:~~----~:;;!**==*:-,,,-~~---,,-::;;;:~,  . ,##*@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@.............@@..............@@............@@@@@@@@@.....@.........@@@@@@@@@.............@.....@.... @@@@@@@@@$@###$#$$!::~--,,,-~~;!*!=$$$=;------,,,,~:~::;;;;-.  ,@#*@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@;............@@..............@@............@@@@@@@@@ ..............@@@@@@@@ .............@ .........@@@@@@@@@@#@@#$$$$=;::~--,,,,,,--~~;=$*;*;----,...,-~~~---~~,.. ,@#*@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@.............@@..............@@............@@@@@@@@@@.............@@@@@@@@@..............@@@@@......@@@@@@@@@!#@@##$$=!;:~~--,,,,..,,--,,--~:*-,,,....,---,,.....,,.,@#;@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@.............@@.............@@@............@@@@@@@@@@@.......@....@@@@@@@@@..............@@@@@.....@@@@@@@@@@$###$$*=*;::~~---,,.....,--~-,,.,.,,,..  .---,,...  .,,-@$;@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@.............@@.............@@@............@@@@@@@@@@@....@@@@....@@@@@@@@@..............@@@@.....@@@@@@@@@@@=~,-;:;**;::~~--,,,........,,,....,,,.. ..,-~:~,.  ....;@;@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@............@@.............@@@@@@@....@@@@@@@@@@@@@@@....@@@@....@@@@@@@@@..............@@@@.... @@@@@@@@@@~-~!;~:;!!;::~~~-,,,,...   ...   ..,,,..  .,;=$$$!- ....*#;@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@............@@.............@@@@@@@....@@@@@@@@@@@@@@@....@@@@....@@@@@@@@@@.............@@@@,...@@@@@@@@@@@ ~;*!:;;;;;::~~~-,,,,...  .    ...,,,,.   ..-:*$$=*:.,..==~@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@.....@@.............@@..............@@@@@@@@@@............@@@@@@@@@@.............@@@@....@@@@@@@@@@@~;;!!:;;;;;::~~--,,,,,.... . ....,,,,,.   ..,--~;:!*~,..$*-@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@.....@@@............@@..............@@@@@@@@@@............@@@@@@@@@@@@.. @.......@@@@....@@@@@@@@@@@::;;!;;;;;;:::~---,,,,....  . ...,,,,,....  .,--,..,!-..#!@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@.....@@@@@@@@@@@....@@..............@@@@@@@@@@............@@@@@@@@@@@@@@@@.......@@@@....@@@@@@@@@@@;;~~:;;;;;;;:~~~--,,,,... .. ....,--,,..     ..,-,. ,-..*;@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@.......@@@@@@@@@@@@@@@@@@@;::;$=::;;;::~~~---,,,....  ....,--,,,..      .....  . .!@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@;:;*#!~::;;::~~~~---,,,.......,,,,,,,,,.  . .   . ..   .@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@~:!*$~:~:;;:~~~~-----,,,.....,,,,,,,,--,..   ..        .@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@~:!**::~;;;:~~~------,,,,...,,,----~:~:~,. ..          .@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@::;;!!::;;::~~~-------,,,...,,~::;=$*;;;~-...     .    ,@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@:::~:!::;;:~~~~--------,,,,,..~;;!***!!*=;, .    ..    .@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@:::::::;:;:~~~~--------,,,,.,,,-:~~~:!=$#=:...  ..  .. .@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@;:::::;;:::~~~~~-------,,,.,,,,,,,,,,-~;;;:,.... .     ,@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-;:~:;;;:::~~~~~-------,,,,,,,,,,,,.....~:~.....      .-@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@:;:;;;;;;:~~~~-------,,,,,,,,,,,,..  .  . .,.... ... .@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@,~;=*:!;;:~~~~-------,,,,,,,,,,,,,. ....   ..........,@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-::!*:;;;:~~~------,,,,,,-----~:;:~,..  .. .........,-@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-*::;!~!;;:~~~~~----,,,-,---~:!!!!!;:--,.   ........,,~@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@!#~:;;~!;;:~~~~~-----,,,--~:!**==*!;::::~.   ....,,,,-;@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@:##-:;;~!;;:~~~~~-----,,--~;*=$$$$***;;;;;- . ...,,,,--@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@;=@#,:::~!;;::~~~~~----,----:;!;**=*-~!**!!:......,,,,-~@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@!$@$,::;-!;;::~~~~-----------~~~---~, ~===*;,....,,,,,~~@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@!=#@$-::-,:!;;::~~~~-------,,,----,..~.  ==*!-....,,,,-:@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@~@@:;$#@=-:--~:;!;::~~~~-~---------~~-----:.,,:*!:,...,,,-~@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@.~*#*@;;;*$@@!~~,.~;:!;;::~~~~~~~~~-----~~~~~:~!;...-~~,..,,--~;@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @.-;=#$,~:!!$#@@;~,,,,;;:!;:::~~~~~~~~~-------~~;;!*~.::.,,,,,,--:@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   @@@@@@@ - .,,,, -!##@-~;=**=#@@;,,.,,~::!!;::~~~~~~~~~~---------~!!;~;;.,,,,---~:@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ .... .-~--,,,,,-,,.. -!$#@@*;=***=$#@@~..,,,-~::!!;:::~~~--~-------,,,,-~:~~~!,,----~~;:@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@,,........,,~~---~:!:~,...~$#@@@@*==!**=$#@#:...,--~::!!;;::~~~----------,,,,-~:~-~*~,--~~::;@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@~.,-.  ..,,,,--~;;:-~:!;~...-;=$#@@@@#****!*=$$@#;~...,-~::;*!!;;::~~------,-,,,,,-~~~-~!:~~~:::!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-,,.,~;~,,.,-~,~***!;$$;~-,:*=###@@@@@@=!***===$#@#!;,...,~:::!*!!;;::~-------,,,,,,--~~-~~:~~::;;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@,,,...,---!*~--~;*!;*$!=####$#$####@@@@@@#***=====$#@@*;:,..,-:::;!**!!;;:~~~----,,,--------~~~~::;!:@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@,-,..,----~--;$=~~;!;!=$*=##########@@@@@@@========$$#@@*;;:,,,,-::;;=****!;:::~~~~----~~-~-----~~::!;-,,-@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-,,..,-~::~~~!:;*$$~~!!!*=!$##########@@@@@@@!!*!==*=$$#@#*;;;:-,,-~:;;!===***!;:::::::~~~:~~-----~::;!------@@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@~,..,-::::!*!*=$;=$$#*~;*$$!=#########@@@@@@@***!;==*=$##@#*!;;;:--,-~:;;!$===***!;;;;;::::::::~~-~:;!*,~-,,~~-@@@@@@@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@~~-..,-;;:!*==$=======$$#$==$#*$##$#######@@@@@#!*=!;===$$$#@#=!;;;!:~---~:;;*$$====****!!!;;;;;;;::::;!*~,:::!$=*!:~,,~@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-,..,-~:;*;==$=$$$$==$=$$$$####=$##########@@@@@*!*=**====$$#@#=!;;;!!;:~-~::;;*#$$=======***!!!!*!;;;!**:,,~~:*@@##$*:-,@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --,.,,~:;:====$$$$$$=$$$$$$$=$###=$####$####@@@@@$**=$$$$===$$##$=!;;;!!!!;~-~::;!*$##$=$$$$$===********==:,. -~:=##@##$=!;@@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@~-..,.,-~!:!*==$$$$$$$$$#$$$$$$$$####=$####$###@@@@@@**==$$$$==$$$$$==*;;;;!!!!!:~:;:;!*$###$$$$$$=$$$=$==$$=:,...-~:=####$####$@@@@@@@@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@~,.,,,,-~:!!!!$$$$$$$$$$$$$$#$$###$###@$$#####$##@@@@@=**=====**==$$====*;;;;!!!*!!!!;;;!!*$####$$$$$$$$$$$$=*:-,.-~-~~:;!=#$#@#$=*;@@;~;@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@,.,,---~~::;*=$==$$$$$$$$$$#####$#####@@$######$##@@@@@*========$$$$$===**!!;;;!**!!!**!!!***$$$####$$$$$$$$=*:---:~--:::~:;$#@##$==*:@~:~: @@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ----~~::;;;**$=$=$$$$$#####$#############$########@@@@@#===$$$$$=$$$$#==$=**!;;;!!!!*!***!*****=$$$$$##$#$$=**;~:;;~~~~:~::~;=#@@##$$=!@~~~~@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@;::~:!;:****=$=$$$=$$#$$####$############@$#####$#@@@@@@==$$$$$$$#$$$$$==$=**!;;!;;;;!***********=$$$##$$==***;;;::-~--~~~~:::!$###$$$$!-:- @@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*!;;::;;*====$=$$$$$$#$$$$$$#$##############@########@@@@@#==$$$$$$$$$$$$#$=$***!!;!;;;;;!************=$$======*!!;:~~-----~~::::;*@@####$!-@~~@@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@!;;;;;!!=$$$=$$$$$$$$$#$$$$$$############@@###########@@@@@$==$=$$$$$###@@@@##*!!!;;;;;;;;;!*!*====*****========***;:~~~~~--~:;::;!!=$$###$*:-~,~@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@;;:::::*$$==$$$$$$$$$$$$$$$$########$########@@########@@@@@====$$###@@@@@@@@@#=*!;;;;;;;;;::!!!!*====$===========!:~~~~~---~~:;::;!**=####**:~--~@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@:::::;*==$$$$$$$$$$$$$$$$$$$###########$#####@@########@@@@@#*====#@@@@@@@@@@###$**!;;;:;;;;:::!!;!**===========*;::~~~~~~---~~~~:::;==*###$$=~---~ @@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@:;;:;;!*==$=$$$$$$$$#$#$#$$$$$$$########$#######@########@@@@@==$$$@@@@@@@#@@@$=#@$*!!;;;::;;;;:::;!!**======**;;;;!;:~~~~------~~~~~::;!#$$$##$*;;: @@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@~;;;;!!!*=$$$$$$$$$$#$$#$$#$##$$$$################@#######@@@@@#####@###@@####@@#$@@$!!!;;;;;;;;;;;:~;!!**=**!;;!;;;;!!;:~~~~-----~~~~:;::*$$##@@#*=!!~@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@!;;!!!!*=$$$$$$$$$$$$#####$#####$$$################@########@@@@#########@@###@@@@@@#$**!;;;;;;;;;!;;::!!**;::!!!!;;;;;;;::~~~~~-~~~~~::;:;!$###@##$$$;;@@@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@!!!!**=*=$$$$$$$#$$$$#####$####$$#############$#####@######@@@@@####$#################$**!;;;;;;;;;;;;;;:::~~~:;;!!!!;;;;;::~~~~~~~~~~~~;*!!!##@@#$$$$*;: :@@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@;!!**==$$$$$$$$$$$$$$$#####$$$######$$############@###@######@@@@@##$$$######@##$$#####@$*!!!!;;;;;;;;;;;;::~~~~:;;;!!!;;;;::::~~~~~~~~~~~!!!!=@@@#$##$$*!:-;;@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*!***$$$#$$$$$$$$$$$$$###$#########################@###@######@@@@@##$$###$$############@=**!!;;;;;;;::;;;::;::::::;!!;;!!;;:::::~~~~~~~~~:!!!!#@@###@$$=**;~~-;@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@**==$$$$$$#$$$$$$#$$$$$############################@@##@@#####@@@@@####$###$$$#####$#$###=****!;;;;;;;;:;;::::::::::;!!;;!!;;;::::~~~~~~~:~:!!=$@@##@@#$$===*:~~,@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*==$$$$$$$###$$$####$$$########$####################@@##@######@@@@@#####$##$$###$##$#$##=*****!!;;;;;;;:;;::::::::::;;;;;:;;;:::::~~~~~~~::;!!=@@@@@###$$=$$*!~--@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@**=$$$$$$#####$$$####$$$#####################$$######@@##@#####@@@@@@@#######$$$##$#$$$$#=******!;;;;;;;;;:::::~::;::::;;;;::;;:::::~~~~~~::;;*!$@@@@###$=====!*;~~;@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*==$$$$$$####$$$$###$#################$#####$$$######@@@@@#####@@@@@########$$$$##$##$$$*!*!**!!;:;;;;::;:::::~~~:::;:;;;;;;::::::::~~~::~~:;*$#@@@######@@@#==!::: @@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*=$$$$$$$$$###$$###############$$#####$$$####$########@##@@#####@@@@@########$$$$$$$#@$$#!*!!!*!;;:::;;;:::::::::::::::;;;;;::::::::::~~::~~:!$@@@@@##@#####$***=!~~ @@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@$$$$$$$$$$$$#############################$####$########@##@@####@@@@#@##########$$$$$$####$!*!!;;;;:::;::::::::::::::::;;::;;::~:::~:::::::::;;#@@@@#@@#####$====*!~~@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@$$$$$$$==$==$$####$$############$########################@##@@####@##@###########$$$$$$$#@#$#=!!;;;;;:::;::::::::::::::::;:::::::::::::::::::;;*=#@@@@@@###@@#=$#$$=*-@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@$$#$$$$$=$$=$$############################$$$###########@##@@@####@#############$$$$$$$$##$$##*;;;;;::::;:::::::::::;;:::;;::::::;::::::::::;;*##@@@@@@##@@#$=$##$==*~~;@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@$$$$$$===*===$##$#############$$##########$$##########@#@@@#@@@####@#############$$$=$$$$$#####$!;;;;;:::::::~~:::;:;;;;;;;;;;::;;;!;!;;;;;::;;=$$@@@@@##@@###@@@#$$**:,;@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@##$$$$$==*==$$$################$$#########$$##########@@@@@##@@@###@##############$$=$==$$$###$$$#!;;;;:::::::~::;::::;;;;;;;;:::;!*=**!!!!;;;!*===#@@@#@@@##@@@@#$$$$*:-@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@##$$$$=$$=**=$$$###############$$##########$$###########@@#####@@#########$#$#######$$$====$=$$$#$$$$;;;;;:~~::~::;::::;:;;;;;;::::;!*=**!!!!!!**=$#$@@@@@@@#@@@@###$$$==!; @@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@##$$$$$====$===$################$$###########$############@@#####@@####$$$#$$$$$#######$$$========$$=$$*:;;::~~:::::;::::::::;;;;::::;;!*!!!!!!!!=$#@@@@@@@@##@@@@######$$*! @@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@###$$$=$$$*=*=$$##################$##############################@#$$$$$$$======$$$#$$$$$====**=***===*!;:;;;:::::;!;:::::::;;;;;;:::;!!!!!!!****$@@@@@@@@@@@@@@######$$$$*!@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@$$$$$$===*=$=$$$#################$$################################$$$$$$$=****===$$$$$$=$===**!*****!***;;;;::::;;;::;;:;;;!!;:;;::;;!!!!!!!!!!*$@@@@@@@@#@@@@#######$$$$*!@@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@$$$$==$==$$==$$$##################$$$########################$$####$$$$$$$==*!!!!**===========*!*!!!*!;!*!!:;;:::;;;;::;;;;;;;!;:;::;;;!!!!!!!!!!*$=#@@@@@#@@@#########$$$$**~@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@#$==$$=$$=*=$=$##############$$##$$################################$$=$$$$==**!!!!!*****=====******!!!!!!!!!;::::;;;;;;;;;;;;::;;::::;;!!!!!!!!!!=**=#@@#@#@@@######$$$#$#$$**:~@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@$$$====$===*$$##############$$#$#$$################################$$=======**!!!!!!*!!**********!!!!;;;;;;!!:::;;;;;;;::;;;;::::;;::;!!!!!!!!***$=**==###@@@@@@#########$$$*=!@@@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@=======$=***=$$$################$$$#################################$=======*****!!!!!!!!!****!*!!;!!;;;;;:;;!;::;;;;:;::::;;;;::;:;::;!!!!!******==!**=#####@###############===-~@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@=$====*===*==$$$##################$##################################$=**********!!!!!;;;;!!!!!!!!!!!;;;;;::;;!;:;;:::::::::;;;;::::;;;;;!*!!!*****==!!==$###=$#############$$*==~: @@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@*==$=*===$=*===$$######################################################$=***==***!!;!!;;;;;;;;;;;;;;!!;;;::::::;;!:;!;;::::::;:::;:::;;;;;;!!;;;!*!!!**!;=$*==#$*###########$$$$*$=:;;@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@!*===$====*$#==$$#######################################################$==****!!!!!!!;;;;;::::;;;;;;;;;::::::::;;;:;;;:::::::::;:::::;;:;;;!!;;;;!!;!;!!!$==**$==#@##########$$=*$$!:@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@@*=$$=*==$=#$*===$#######################################################$$==*!!!!!;!!!;;::::::::::::;;;;:::::::::;;;;;;!;:::::::::::;::;;;;;;;;;;;;;;;;;!!***==*#==#####$$$$$$$$==*$$* @@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@@!!===*==$==***=$$$#######################################################$$**!!!;;;;;;;;:::::::::::::;;;;:::::::::;;!;;!!:::::;:::::::::::;;;;;;;;;;;;;;;!!!;*=*=#$######$$$$====$=*$$;;@@@@" );
+				Console.WriteLine( @"@@@@@@@@@@@=$$$$#@*!===***=$$$############################################@@########$$=**!;;:;;;;;;:::::::::::::;;;;:;;:::::::;!;;;!!:::~:;;::~~::~:::::;;;;;;;;;;!!!!;;;!==$#######@##@###$====$#!:;@@@" );
+				Console.WriteLine( @"@@@@@@@@@@$==$==**=***!;*=$$$############################################@@########$$$=!!;:::;;;;:::::::::::::::;;;;;:::::::::;;;:;;;::::::;::~::~~:::::;;;;;;;;!!!!!!;;;!**$##@@@@@@@@@@@@@#$*$#$*:@@@@" );
+				Console.WriteLine( @"@@@@@@@@@$======*!!!==*!*==$$###########################################@@@########$$$=!;;::;;;;::::::::::::::::::;;;:;:::::;;;;;:;;;;::~:::::~~:::~::::;;;;;;;;;;!!!!;;!!!=@@@@@@@@@@@@@@###$=$##$~:@@@" );
+				Console.WriteLine( @"@@@@@@@@$#===*!!!*!;*$#*:=#$$#@@@##########@###########################@@@@########$$$=*!;;;;;;;;;:::::::::::::::;;;:;;:::::;;;;;::;;;::::::::::~~::::::;;;;;;;;;!!;;!;;!!!##@@@@@####@@##@#$=$##$$~@@@@" );
+				Console.WriteLine( @"@@@@@@@@=!*$=**===;:=$###$$####@@@#@@@@@#@@@###########################@@@@#######$=$$$=*!!!;;;;::::::::::::::::::;::;;;:;;;::;;;::;;;;::::::::::~::::::;;;;;!!!;*!;!!;!!!=################$$=$###$;@@@@" );
+				Console.WriteLine( @"@@@@@@@!$=:;$=$$$##$!*==#$#$###@@@@@@@@#@@############################@@@@@#######$$$#$==**!;;;;:::::;:;;;::::;:::::;;;;;;;::;:::::::;;::;;::;:::::::::;;;!!!!!!*=$=!!;*!*=##############$$$$$$####!@@@@" );
+				Console.WriteLine( @"@@@@@@~!!!!:!!!!!*$###$$=$######@@@@@@##@###@##########################@@@#############$==**!;;;;;;::;;;;;;;;;;;;:::;;;;:;;:;;::::::::::::;;;;:::::::;;;;;;!***==$#=*!!*!*$@@@#@########$$##$#=####=@@@@" );
+				Console.WriteLine( @"@@@@@!;:;:~!$=$$$$*!=$#$########@@@@@@@##############################@@@@##############$$==**!;;;;;;;!;!;;;;;;;;;;;;;;;;;;;;;;:::::~~~::::;;;;;;;:;;;;;;;;;!***==$=$=***$#@@@#########$$$###$$=$##$*@@@@" );
+				Console.WriteLine( @"@@@@:;;!;=$*;!!!==#@*;##$########@@#@@############################@##@@@@########$$#####$===**!!!!!!!*!!!;;;;;;;;;;;;;;;;;;;;;;;;:::~~::;;;;;;;;;;;;;;;;;;!!**==$=$#$=*$@@@@#########$$####$$##=$$$*@@@@" );
+				Console.WriteLine( @"@@@!;:~~~:;**:::;*=$@#=$#########@#@###########################@#@###@@@@########$$$####$===**********!!!;;;;;;;;;;;;;;;;;;;:;;;;:;:::::;:;;;;;;::;;;;;;;!*****=$$$#$$#@@@@@#######$$######$$$#=$$$=@@@@" );
+				Console.WriteLine( @"@@;~~--~~;==*!!;::!=$#@$######################################@@@#$$#@@@@#######$=$$$#$$$=====*********!!!!!!!;;;::;:::;;;;:::;;;;:;;::;;;;;:;;;;:;;!;;;!******=$###@@@@@@@###############$$$$#==$==~@@@" );
+				Console.WriteLine( @"@@:;=#=**::;;!*;;;!*###@####################################@@@@#*$#@@@@########$==$$$$$=======****=******!!!;;;;;::::::;;:;;;;;;;;;;;;;;;;;;;;;;;;!!!;*==$==**$#@@@@@@@@@@############@#$$$$$$$*===:@@@" );
+				Console.WriteLine( @"@#=!!==*;:-~:;$#$$!;*###@################@################@@@@@#$=*@@@@@########==*==$$$=======***********!!!!;;;:::::::;;;;;;;;;;;;;;;;;!;;!!;!!!*==**=$=$=*==#@@@@@@@@@########$######$$#$$$$#=**$:@@@" );
+				Console.WriteLine( @"@#;--!*=*==**;~!=$$$==@@@@###############################@@@@@#===*@@@@@#######$=====$$======***********!!!!;;;:::::::::;;;;;;;;;;;!!!;;!!;;;;;;!!*====###$$=$#@@@@@@@@##########$$#####$$$$$$$$$*==:@@@" );
+				Console.WriteLine( @"@*;*!;;::-~~:;!;**=$###@@@@############################@@@@@@#=*!*$@@@@########$====$$$=*====********!!!;!!;;;;:::::::::;;;;;;;;;;;!!!!!!!!*!;;!**=$$$#@@@@###@@@@@@@@##@#@@@@####=$$###$$$$$$===**$!@@@" );
+				Console.WriteLine( @"!--~:~~:;****!:!$$*=$#@#@@@@#########################@@@@@@@@@@*:!@#@@@########$$$===$$$=======***!!!!!!!!;;:;:::::::::::;::;;;;;;;!!!!*!!***!***=#@###@@@#####@@@@@@@@@@@@@@@@@@#$==$$$$$$======*;$*@@@" );
+				Console.WriteLine( @"---~;;:;::;:;$=!;==$=####@@@##################@@####@@@@@@@@@@@;;*@@@@########$$==$$$$$$$=***===*!!;;;;;;!;;:::;:::::::::::::::;;;;!!!*=!***=$$$$$#@@@#@@@@@@@@@@@@@@@@@@@@@@@@@@##$====*=========:$*@@@" );
+				Console.WriteLine( @",----~---~~~~~:;=$=$$$###@@@@#################@#@####@@@#@@@@@@@!$@@@@########$=$$$=$$$$=******!!!;;;:;;;;;::::::::::::::::::;;;;;;!!!****==$$$####@@@@@@@@@@@@@@@@@@@@@@@@@@@#@##@###$$$=======$=;==@@@" );
+				Console.WriteLine( @"*$*!$*!;;--:;;~~;$$$$$####@@@@################@@#@@@@@#=@@@@@@@@~$@@@@##$#####$$$$==$$===*****!!!;;:::;;;;::::::::::::::::::;;;;:;;;*******$#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#####@@@@@###########$==!==:@@" );
+				Console.WriteLine( @"*####@@##@$$!~:!==$$$#$###@@@@@@#####$$########@@@@@$=@@@@@@@@@@:#@@@@########=$$$$$=========**!!;::::;;;;;::::::::::::::::;;;;;;;!*========$@@@@@@@@@@@@@@@@@@@@@@@@@#########@@@@@@@@@@@#####@@#=!$@@@" );
+				Console.WriteLine( @"$$#######@@@@@#*~=#=$$####@@@@@@@@#@####@@@@###@@##=@@@@@@@@@@@@!@@@@@#######$=$$$===**=======**!;;:::;;;;;:::::::::::::::;;;;;:;;!**=====$$$@@@@@@@@@@@@@@@@@@@@@@@@@####@#######@@@####@@@######$!=@@@" );
+				Console.WriteLine( @"$$=$=$$==**!!*#@#==##$$####@@@@@@@@@####@@@@@@##*@@@@@@@@@@@@@@!$@@@@########$$$$$=======$$=====!;;;:::;;;;:::::::::::::::;;;;:;;!**!***=$###@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#@##$$$$###########$#$;!@@@" );
+				Console.WriteLine( @"#$##$==$==#@#*!=###$#######@@@@@@@@@@@@@@@@@$;@@@@@@@@@@@@@@@@~=#@@@@########=$$$$=======$===$$=*;;::::::;;;::::::::::::::;;;;:;!!******=$###@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@##$=====$$#$$$$$$$!*@@@" );
+				Console.WriteLine( @"#$$$=$$$$===$#@$~*##$###@##@@@@@##@###@@##@@!~@@@@@@@@@@@@@@@@!##@@@@@#$$###$$$$$$$====$$$======*!;;;;:::;:;;::::::::::::;;;;;;!*!!****==$$##@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#####@@#$$$*!!$$$==*=;*@@@" );
+				Console.WriteLine( @"#$*;;:~--~:!==$#@==##$####@@@@######@@@##@@*@@@@@@@@@@@@@@@@@!$@@@@@########$$$$$$$$====$====$$=*;;;;::::::;;;;;::;;:;;;;:;;;;;***!***=*==$$#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@######@@@@@@###$*!!!=$$$*;@@@" );
+				Console.WriteLine( @"=*~-,,-.,,,,-~=$$@#=#####@@@@@#########@@@$@@@@@@@@@@@@@@@@@:=#@@@@########$$$$$$$$$=====*===$==*!!;;;:;::;;;;;;:;;;;;;;;;;;;;!!!!!!!!!!==$$#@@@@@@@@@@@@@@@@@@@@#@@@@@@#####@@@@@@@@@@@@@@#$!;;!**$!:@@" );
+				Console.WriteLine( @"#~:~:~~:~~,--~~!#$#@$####@@@@@@@@@##@#@#@#@@@@@@@@@@@@@@@@@@*$@@@#@@#######$$$$$$$$$$==========**!!;;;::;::;;;;;;;;;;;;;;;;;;;;!!!;!!;!!*$$$#@@@@@@@@@@@#@@@@@@@@$@@@@##@###@@@@@@@@@@@@@@@@#$*;!!*$!~@@" );
+				Console.WriteLine( @":~:!:~~----~::~~;#$#@$###@@@@@@@@@@@@@#@*@@@@@@@@@@@@@@@@@@-$#@@@@@@######=$#$$$$$$=$$========*!!!;:;;;;;:;;;;;;;;;;;!;;;;;;;;!!!;!!;;;!==$$@@@@@@@@@@@@@@@@@@@#@~@@@@@@@@#@@@@@@@@@@@@@@@@@@@#*;**== @@" );
+				Console.WriteLine( @";~;:~~--~~~:::;;~=##@####@@@@@@@@@@@@#@$@@@@@@@@@@@@@@@@@@@!$@@@@@@######$=$$$$$$$$$$$$$==$$==***!;;;;;;;;;;;;;;;;;;!!;!!!;;;!!!!!!!;;**=$$#@@@@@@@@@@@#@@@@@@@@=-$@@@@@@#@@@@@@@@@#$$###@@@@@@#!;!==;@@" );
+				Console.WriteLine( @":::~;;!;~~-~~;~;;:###@###@@@@@@@@@@@@@$@@@@@@@@@@@@@@@@@@@:##@@@@@@######=$$$$##$$$$###$$$$#$$=***!;;;;;;;;;;;;;;;;;;;!!!!;;;;!!!*****==$##@@@@@@@@@@@@#@@@@@@@#!@$@@@@@@@@@@@@@#$$$=*@##$$#@@@@#*;=$~@@" );
+				Console.WriteLine( @"!!;::;~~~-~~--~~:;$#######@@@@@@@@@@##=@@@@@@@@@@@@@@@@@@@*@@@@@@@@#####==$$$$####$$#######$$$$=**!;;;;;!!;;;;;;;;;;;;!!;;;!!!!;!***==$@@@@@@@@@@@@@@@#@@@@@@@@!@@@;@@@@@@@@##$######$*@@@####@@#@#!=@@@" );
+				Console.WriteLine( @"!!*;:::~-:-~-:::~;####@###@@@@@@@@@#@#@@@@@@@@@@@@@@@@@@@@$@@@@@@@@$###$=$$$$$$############$$$$=**!;;;!;;;;;;;;;;;;;;;!;;;!!;;!*!!***=$@@@@@@@@@@@@@@@#@@@@@@@$@@@@@;@@######@@@@##@@#$*#@@@@@#@@@##*@@@" );
+				Console.WriteLine( @"!**;!*;!==*!;~::;:$###@####@@@@@@@#@#@@@@@@@@@@@@@@@@@@@@**@@@@@@@#####=$$$$$##############$$$$$=*!;;;!!;;;;;;;;;;;;;;;!;!!!!!****====#@@@@@@@@@@@@@@#@@@#@@@#:@@@@==@@@##@#$$=@@@@@@@@#==@@@@@@@@@## @@" );
+				Console.WriteLine( @"===###=;:~:;;*!::;$###@###@@@@@@@@@#@@@@@@@@@@@@@@@@@@@@@@=@@@@#@@####$$$#####$###@@@@@####$$###$=*!;;;!!;;;;;!;;;;;;;;;;!!*!========$@@@@@@@@@@@@@@##@@@@@@@*@@@#@=;~----~!$@#==$$$#####$=#@@@@@@@@@~@@" );
+				Console.WriteLine( @"=$#$~..    @  !*;:=###@##$*$#=$@@@@@@@@@@@@@@@@@@@@@@@@@@@$@@@@@@#####=$#########@@@###########$==*!!;;!!;!;;!;;;;;;;;;;!!!****===$##@@@@@@@@@@@@@@@$@@@##@@#@@@@#;,----,,,..~$@@!:!;;;*==$$#@@@@@@@@:;@" );
+				Console.WriteLine( @"@@:,,...     . ~=;$###@@@*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#@@@#@@####=##########@@@@@######@@##$===!;!!;;;;;!!;;;;;;;;;;;;***!**=$#@@@@@@@##@@@@@@@##@@@#@@@#@@@$----------,,,.-$@#~*$=*;!$*==@@@@@@@;;@" );
+				Console.WriteLine( @"@:.......    .  !!=##@@@$ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@!:#@@#@@####=$#####@@@@#@@@@@@#@##@###$$==*!!*!!!;;;;;;;;;;;;;;!!!****!*=###@@@@@@@@@@@@@@##@@@##@@#@@;!~~-------------,,!@@!~$$$!;!=**#@@@@@!@@" );
+				Console.WriteLine( @"~:,.... .   . ..,#$###@@*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@!;:@@@##@###=$#####@@@@@@@@#@@@@@@###$$====**!!!!!;;;;;;;;;;;;!!!!!*****==$##@@@@@@@@@@@@@@##@@@##@@:@;:~~~~----~---------.:#@$-!#$$!;*!!#@@@@=@@" );
+				Console.WriteLine( @"; ,..,-,-,., ....$###@#:@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@!;!@@######=$####@@@@@@@@@@@@@@@@@##$$$$$$=***!!!!;!!;;;;;;;;;!;!!!*=***==$#$#@@@@@@@@@@@@@#@@@##@@=,~:~~~~~~~~~~~~~~~~----,-@@@,;##$*:;:;#@@@=@@" );
+				Console.WriteLine( @"   .,-~:~:::~~,..~@##*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@;;*@###$$$==#####@@@@@@@@@@@@@@@@##$$$$$$$*!**!!!;;!;;;;!!!;;!!!!!******==$#$#@@@@@@@@@@@@#@@@###@@;::~~~~~~~~~~~~~~~~~~~~-~,*@@$-;$==*;;~;$@@=@@" );
+				Console.WriteLine( @"  :-~:::~~~:~:~~,.##@#= @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ =@$==$$*=#@@@@@@@@@@@@@@@@@@@####$$$==$$*!****!;;;;;;!!*!!!!!!!****=*==$$#$$@@@@@@@@@@@@#@@###@@=~:~~~~~~~~~~~~~~~~~~~~~~~-:@@@;-*==*!;::!#@=@@" );
+				Console.WriteLine( @" ~;:::::~:::::~:~.$@@@@$=@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@:==$$$=!*$#@@@@@@@@@@@@@@@@@#######$$=====!!**!!!;!;;;***!!!!!!!****==*=$$###@@@@@@@@@@@#@@@###@@::~~~~~~~~~~~~~~~~~~~~~~::~~@@@!~;=*!!;:~;$@=@@" );
+				Console.WriteLine( @";;;;;;::~::::::~:-;@@@#@@=*@@@@@@@@@@@@@@@@@@@@@@@@@@@@*!:$#=*!=##@@@@@@@@@@@@@@@@#####@@@##$=====*!**!!;;;;;!*!!!;!!;!!****=**=###@@@@@@@@@@@@@@@@####@*~~~~~~~~~~~~~~~~~~~~~~~~:;::@@@*;:!$=!;**;*@!@@" );
+				Console.WriteLine( @" ~;;~::~::~~::~::--@@@@##@@* @@@@@@@@@@@@@@@@@@@@@@@@@@@;!$*;*$#@#@@@@@@@@@@@@@@@####@@@@@##$$$$==****!;;;;;;!*!!!;;;;!!**====*$###@@@@@@@@@@@@@@@@##$@#~~~~~~~~~~~~~~~~~~~~~~~~~:;;!@@#=!;!*!*$@#!!@~@@" );
+				Console.WriteLine( @" ~;;:::~:~:~~~~:~~.$@#@@@#@@$!*@@@@@@@@@@@@@@@@@@@@@@@@;!:;;=#@@@@@@@@@@@@@@@@@@###@@@@@@@###$$$=====*!;;;;;;!!!!!!;;!!!***===$$$#@@@@@@@@@@@@@@@@##@#@~--~~~~~~~~~~~--~~~~~~~~~~:!;=@@$==!**$@@@@;!$@@@" );
+				Console.WriteLine( @"@;;::::~~~:~~~~~:-,;@##@@@#@@#$$*!@@@@@@@@@@@@@@@@@@@@@;:,*$#@@@@@@@@@@@@@@@@@@@@@@@@@###@###$$$======!;;;;;!!;;!**!!!******==$$$#@@@@@@@@@@@@@@@####@;----~~-~~~~~~~----~~~~~~~~:!=@@#$$=*=#@@##@!;!@@@" );
+				Console.WriteLine( @" ;~:::::~~:~:~~~~-,,@@##@@@$#@@$##;@ @@@@@@@@@@@@@@@@@@ ~*@#@@@@@@@@@@@@@@@@@@@@@@@@@@@##@####$$$=====*!;;!!!!!!!**!!********===$#@@@@@@@@@@@@@@###@#*------~~~~~~~~----~~~~~~~-~:*@@##$$=$@@#@###=!;@@@" );
+				Console.WriteLine( @"@;~:~~:::~~:~~~~---.;@@@$@@@##@@#=@#~@@@@@@@@@@@@@@@@@;;$@@@@@@@@@@@#@####@@@@@@@@@@@@@######$##$$=====*!!*!!!!!!*!!!!*******===##@@@@@@@@@@@@@#####=~~---~~~~::~~----~-~~~~~~~~-:#@@#$$#$$$@##@@@=*!:*@" );
+				Console.WriteLine( @"@ ;;~~:~~~:~~::~~---.#@@@$@@@#$@@@$@@$;@@@@@@@@@@@@@@@@!#@@####@###@@#@@@@@@@@@@@@@@@@@#########$$$=====*!*!!****!!;!!!*******=$#@@@@@@@@@@@@@@####$-~~~~~::::::~~----~~~~~~~~~~,;@@@#$##$#=#@#@@@$*=~;@" );
+				Console.WriteLine( @"@;;~~:::~:::~::::~~~--@@@@$@@@#$@@@=#@#=!@@@@@@@@@@@@@@;$$====$#@@@@@@@@@@@@@@@@@@@@###########$#$$==*====*!!****!!!!!!!!!!***=#@@@@@@@@@@@@@@@@###~~~~~~:::::::~~~~~~~~~~~~~~~~-~@@##$##$@$=@#@@@#== @@" );
+				Console.WriteLine( @"@ ;;:~::~~~~~:::::::~.=@@@@$@@@@=@@@$$@@$;@@@@@@@@@@@@@;#$$###@@@@@@@@@@@@@@@@@@@@@@############$$=========******!!!!!*******=##@@@@@@@@@@@@@@@@@@!-~~~::::::::::::::::~~-~-~~~:--@@###$##@$=$@@###$= @@" );
+				Console.WriteLine( @"@ ;~::~::::::::::::::~~@@@@@=@@@@=#@@#=@@@=:@@@@@@@@@@@*@@@@@@@@@@@@@@@@@@@@@@@@@@@##############$==$$$==$$==***!!******====$$###@@@@@@@@@@@@@@@#$-~~~~::::::::::::::;::~~~~-~~~--@@###@#@@@#*@@@@#$$@@@" );
+				Console.WriteLine( @"@@ ~:~~:~::::::~::::::-*#@@@@$@@@@$@@@#=@@@@$;@@@@@@@@@==$@@@@@@@@@@@@@@@@@@@@@@@@@##############$$$$$$$$$$$===*!****=====$$=$$##@@@@@@@@@@@@@@@@;~::~:::::::::::::;;;;:~~~~~~~~-,#@##@##@@@@#$@@@#$$;@@" );
+				Console.WriteLine( @"@@ *:~~:~~:::::~~:~--:::@#@@@@#@@@@$@@@@*#@@@$=@@@@@@@$!=$@@@@@@@@@@@@@@@@@@@@@@@@@@@@@###$$$##########$$$$$===**====$====$$$$$##@@@@@@@@@@@@@@@#~:::~::::::;;:::::;;:;::~:::~-~--#@@@@###@@@@=#@@@$$@@@" );
+				Console.WriteLine( @"@@ ;;:::~~:~~~~~~:~~,,:~$@#@@@@#@@@@$@@@@=$@@@@!:@@@@@ !==##@##@@@@@@@@@@@@@@@@@@@@@@@@@####$$$#########$$$$===========$==$$$#$#@@@@@@@@@@@@@@@#=~:::~~~~:::;;::::::::;:::::;:~~--$@@@##@#@@@@#=@@@=*@@@" );
+				Console.WriteLine( @"@@@;;::~:::~~~~~:::~~,~:;@@#@@@@#@@@@$@@@@$=@@@@$;@@@@!===$#######@@@@@@@@@@@@@@@@@@@@@####$$$#############$$===$$$=$$$$$$$$$$##@@@@@@@@@@@@@@@#~~~::~~~~:::;!::::;::;;;::::;::~--=@@@###@@@@@@##@@$!@@@" );
+				Console.WriteLine( @"@@@ ~:::::~~:~::::~~~~-:~@@@#@@@@#@@@@#@@@@#=@@@@#!:!~**$####@@@@@@@@@@@@@@@@@@@@@@@@@#########@###########$=$$$$$$$$###$$$#####@@@@@@@@@@@@@@@$-~~:~~~~~~::!!:::~!!:;;:::::::::~-#@@@#@$@@@@@@@#@#=:@@@" );
+				Console.WriteLine( @"@@@ ~;;;:::::::::~~~::~:~$@@#@@@@@#@@@@@@@@@@=@@@@@!~~!=$#@@@@@@@@@@@@@@@@@@@@@@@@@@@@######@#########$##$#$$$$$####$######@@###@@@@@@@@@@@@@@#:~~~;~~~:~~~:=!:::;;;:;;:::::::::~-@@@@#@$#@#@@@@@@#=@@@@" );
+				Console.WriteLine( @"@@@ ~;:;::~::~~::~:~:::::*@@@#@@@@@#@@@@@@@@@@*@@@@@$$@$####@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@##############$$$$###########@@@@@@@@@@@@@@@@@@@@$-~~:;~~~::~~~$!:-*;:::!;:::::;;::~-@@@@@@$@@@@@@@@@#*@@@@" );
+				Console.WriteLine( @"@@@@;:;:::~~::~:~:::::;;::@@@@#@@@@@#@@@@@@@@@@=#@@@@#!!=$####@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@####@####################@###@@@@@@@@@@@@@@@@@@@@!-~~:!~~:~:~~~$!~~:;;:;*::::::;;:~~-@@@#@#$@@@@@@@@@*;@@@@" );
+				Console.WriteLine( @"@@@@;;::::::::~~~:::::;;:~#@@@@@@@@@@#@@@@@@@@@@=#@@@@@=#@@@@###@#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@###$###############@@@@@@@@@@@@@@@@@@@@@@@@$-~~:;!~~~::~~~#;-:::::*!:::::;;:::~~@@@@@##@#@@@@@@$!@@@@@" );
+				Console.WriteLine( @"@@@@;~:~~:::::~~~~::::!!:~=@@@@@#@@@@@@@@@@@@@@@@=$@@@@@=$@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@##$$$##$$#######$$#@@@@@@@@@@@@@@@@@@@@@@#@:-~~;!!~:::;:~:$-::::::*!:::~~=!::~-~@@@@@#@@#@@@@##:~@@@@@" );
+				Console.WriteLine( @"@@@@;~-~~:~;::::::::::!!;:!@@@@@@@@@@@@@@@@@@@@@@@#*@@@@@$!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@##$$$$##$$#########@@@@@@@@@@@@@@@@@@@@@@#!,-~:;*!~:::;::*~~:::::~=!::~~~$!:~~-;@@@@@$@@@@@@@=:~~-@@@@" );
+				Console.WriteLine( @"@@@@ ~;;~::;;:::::::::*!;::@@@@@@@@@@@@@@@@@@@@@@@@#=@@@@@###@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@##$$$$###########@@@@@@@@@@@@@@@@@@@@@@@@=,-~~:;*;:::;;:;;~::;:::~=;:::~:=;::~-!@@@@@@@@@@@@*~~~::@@@@" );
+				Console.WriteLine( @"@@@@ ;;;::;:;:;::;::::!!;:~$@@@@@@@@@@@@@@@@@@@@@@@@#=@@@@@#$$#@@@@@@###@@@@@@@@@@@@@@@@@@@@@@@#@@###$$$$#######@##@@@@@@@@@@@@@@@@@@@@@@#!,-~::;*=;~:;;;;;;~:;!;:::*;:::~;=;~~~-*@@@@@@@@@#=--~~~::@@@@" );
+				Console.WriteLine( @"@@@@@;*:::;;;;;;;;;:;:!*;::=@@@@@@@@@@@@@@@@@@@@@@@@@@*@@@@@@####@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#######$#######@###@@@@@@@@@@@@@@@@@@@@!,,~~::;!==!~:::;;;;~;*!;:~:*;:::~!=:~~:-=@@@@@@@#@@=!~-~~~~@@@@" );
+				Console.WriteLine( @"@@@@@;*::;:;;;;;;;:;::**;;:$@@@@@@@@@@@@@@@@@@@@@@@@@#@*#@@@@@@@##@#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#####$$########@#@###@@@@@@@@@@@@@@@@!--~~:;;;**$*~:::::;:;*!;;;~;*;:::~*=;~~~-=@@@@@@@@@@$=*:!*!;@@@@" );
+				Console.WriteLine( @"@@@@@@*;;;::;;;;;:;;:;**;;:#@@@@@@@@@@@@@@@@@@@@@@@@@@@@=#@@@@@@@@#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@##############@@###@@@@@@@@@@@@@@@@@@!-~::;;!*=$@!~:::::;;*!;;;;:!!::::~*=::::-*@@@@@@@@@#$$=*~;;;@@@@" );
+				Console.WriteLine( @"@@@@@;;;;;:!;;;;;;;;:;**!;;@@@@@##@@@@@@##@@@@@@@#@@@@@@@#@@@@@@@@@#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#########$###@@@##@@#@@@@@@@@@@@@@@#=-::;!!**#@@*~~::::;$*!;;;;:!!:;;:~==::::-*@@@@@@@@@##$==!~:;@@@@" );
+				Console.WriteLine( @"@@@@@@;;!!**!*;:;!;;;!!*;;;*@#*=*=!*@@$!=**@**$#$*@@@@@@@*=@!#@!@@@:#===$*@@@@@@@@@@@@@@@@@@@@@@@@@############@#########@@@@@@@@@@@=!=#$;;!*$#@@@@*~~:::~*@*!;;;::!!;;:::==;:::~*@@@@@@@@@#$$$==!~:@@@@" );
+				Console.WriteLine( @"@@@@@@@;!!*!*;!;!!:;;**!;!;;@#==*=*=@@$*===@##*#$**==$@@!#*@*#@;@@@:*#:##*@@@@@@@@@@@@@@@@@@@@@@@@@@@@#@@#################@@@@@@@@@!:!=$@@@@@@@####!~~~:::##!;;;;;:*!;::::==;:::~=@@@@@@@#@##$$$$=!:@@@@" );
+				Console.WriteLine( @"@@@@@@@*;!*!=;;;;;;;;***;!!=*@!=***=##**!*=====#$#$$$$@@*@$#*#@***=;@#~@#;#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@##############@@@@@@@@@@@;!*=$$##@@@##$#@!-~~~~:@$!;:::::=!;;;;~==;:::-$@@@@@@@####$$$$$=!;@@@" );
+				Console.WriteLine( @"@@@@@@ *!;**=;!!*!:::=***!*@##*#****@@#=*$###@@#$=$$$$@@=#=@*#@@===!@!$*#*@@@@@@@@@#@@@@@@@@@@@@@@@@@@@@@@@############@@@@@@@@@@#@$!*=$$###@#$$##@!~~~~~~@$;;::::;=!;;;:~#=;:::-#@@@@@#@####$$$$$$=;@@@" );
+				Console.WriteLine( @"@@@@@@@*;;**=!*;!!::!$*!:~;@@@@=****@@$=$##@==$##=@@@@@@@=$@*#@@=@@;=$@$$=@@@@@@@@@####@@@@@@@@@@@@@@@@@@@@@###########@@@@@@@@@###@$==$$###$$$#@@@*~:::::@$;:::::!=;;::::@=;:::~@@@@@@#####$$$$$$$$=@@@" );
+				Console.WriteLine( @"@@@@@@@;;;!*$:;;;!::;**!!;!*==$$=*=$@@$=$$#@@@@@@#####@@@@@@$@@@*=*!@@@@#$@@@@@@@@@@@@@@@@#@@#@@@@@@@@@@@@@@@########@@@@@@@@########$$##$$$$###@@@$~:~~:;@$;:::::*!;:::~;@$;::~~@@@#@####$$$$$$$$$$$;@@" );
+				Console.WriteLine( @"@@@@@@@;~;;*#:;;:::::=*;;:;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@###@@@@@@@@@@@@@@@@#####@@@@@@@###@####$$$##$$$$###@@@@#-~~~~;@=::::::=!::::~*@=;:~~~@@@#####$$$$$$$$$$$$#=@" );
+				Console.WriteLine( @"@@@@@@@ ~:;*#~;;;::;:$*!;!;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@###@@@@@@@@@@@@@@@@#####@@##@####@####$##$$##$$$######@@~~---*@=::::::$;::::~=@=:~~~~@@@#####$$$$$$$$$$$=#$@" );
+				Console.WriteLine( @"@@@@@@@ ~:;=$~::;::::$*;!;!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#@@@@@@@@@@@@@@@@@#####$###@@###$$$$$##$###$$########@*~~--$@=:::;::$!::::~=@=:~~~~@@######$$$$$$$$$$$$=#@" );
+				Console.WriteLine( @"@@@@@@@ ;;;=$::;;;;::#*!!;*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#######@@@##$$$$###$$##############@!~-;@@=:;;::;#;:::::=#=::~~:@##########$$$$$$$$$=@*" );
+				Console.WriteLine( @"@@@@@@@@;;!=*:~;;;;;;#=*!!=@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@######@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#$$$$$$$#$$$###############$=@#@*:::::;@!:::::*@=~~--!#$##$$$####$$$$$$$$$=@*" );
+				Console.WriteLine( @"@@@@@@@  ~-!*~;;;;;!*#$;,,-~~~~~~:*@@@@@@@@@@@@@@@@@@@@@@@@@@*      ;=@@@@@@@@@@@@@@@@@@@@@@@;~-~~~~~~~~~=@@@@@@@@@@~~~~~~~~~$########$!-~-----~~-;=######@*~::::;@*~:::~$:    .::-$$$$$$####$$$$$$$$=$=" );
+				Console.WriteLine( @"@@@@@@@@   :*~~;;;;;!*=           -$@@@@@@@@@@@@@@@@@@@@@@@@@!       ~@@@@@@@@@@@@@@@@@@@@@@#. .         :@@@@@@@@@#        ,$######$$#~      .   -;$$####@!::;;:;@*~~~~:#.    .:!!*#$$$$$###$$$$$$$$$==" );
+				Console.WriteLine( @"@@@@@@@@ ~-~=~:::;:;;!=           :=@@@@@@@@@@@@@@@@@@@@@@@@@-       .#@@@@@@#@@@@@@@@@@@@@@@-,:;:;;:!;;~;@@@@@@@@@$        .=#####$$$#,      ,   -;##$###@=:;;;;;@!~~~~~$     ~!~-~$$$$$$###$$$$$$$$$$=" );
+				Console.WriteLine( @"@@@@@@@@  ; =~~::;:;;!*           ~$#@@@@@@@@@@@@@@@@@@@@@@@$     .-,~@@@@@@@@@@@@@@@@@@@@@@@!-;;~::-.,--,@@@@@@@@@*         *#####$$$$        ,  .;#######$:;::;!@!~::~:*     ,-, .=$$$$$$##$$$$$$$$##*" );
+				Console.WriteLine( @"@@@@@@@@  ~ --:~:;:;!##            !#@@@@@@@@@@@@@@@@@@@@@@@!    .,::###@@@@@@@@#@@@@@@@@@@@@$$*!====-   ,#@@@@@@@@;         !########=      ..,,, ~#$#$$$##::::;*@;:~::;;          *$$$$$$$$$$$$$$$$#@=" );
+				Console.WriteLine( @"@@@@@@@@    ,~~~;::!@##.           !@@@@@@@@@@@@@@@@@@@@@@@@~    .. .;@@@@@@@@@@@@@@@#@@@@@@@=~,.-!-;.   .$@@@@@@@@;.        ~#######$*      -.,:;:*$$$#$$$@!:~~~=@::~~:;-          ;#$$$$$$$$$$$$$$$#@*" );
+				Console.WriteLine( @"@@@@@@@@@@  ,-:~:~:=@#@            !@@@@@@@@@@@@@@@@@@@@@@@@:     .. .*@@@@@@@@@@@@@@@@@@@@@@#$$$#$$~     =@@@@@@@@:;.       ,########;      -~:!!!$$####$$#$:::~#@~~~~~:           ~$$$$$$$$$$$$$$$$#@$" );
+				Console.WriteLine( @"@@@@@@@@@    -:~~:~$@#@.           !@@@@@@@@@@@@@@@@@@@@@@@#.     ..,;@@@@@@@@@@@@@@@@@@@@@@@#;-:$=!*;-   *@@@@@@##.;~        $#######;      .~:*~;#####$$$##=:~*@@;~---~           .=$$$$$$$$$$$$$$$#@@" );
+				Console.WriteLine( @"@@@@@@@@@    ,::::-#@@@            !@@@@@@@@@@@@@@@@@@@@@@@!   ~~-..,-*=*@@@@@@@@@@@@@@@@@@@@@:!*=**!-:.,.;@@@@@@@= .*,...    =###$$#@:       -::-:##########@##@@@#~~~--            !$$$$$$$$$$$$$$$#@@" );
+				Console.WriteLine( @"@@@@@@@@@     ::~:~#@@#.           !@@@@@@@@@@@@@@@@@@@@@@@-           .~@@@@@@@@@@@@@@@@@@@@@=~,,-,,;-   -@@@@@@@!  ~~...    !$$#####-        .!**###########@@####$;~#:            ~$$$$$$$$$$$$$$##@#" );
+				Console.WriteLine( @"@@@@@@@@@@    ~~~~~#@@#            !@@@@@@@@@@@@@@@@@@@@@@#             .#@@@@@@@@@@@@@@@@@@@@#;~-..,*; - .@@@@@@@:  .~: .    ;#######.    .,..,~$$#######$###########@$             :$$$$$$$$$$$$$$$#@=" );
+				Console.WriteLine( @"@@@@@@@@@@    -~~~:@@@#            !@@@@@@@@@@@@@@@@@@@@@@$              *@@@@@@@@@@@@@@@@@@@@#;--.:!*, .  $@@@@@@;    ~-.    :#$$###=     ...  .;$####################;             .$$$$$$$$$$$$$$$#@;" );
+				Console.WriteLine( @"@@@@@@@@@@     -~-;@@@#.           !@@@@@@@@@@@@@@@@@@@@@@=              :@@@@@@@@@@@@@@@@@@@@@=:!-::*-.   =@@@@@@~ .  .:.    ,######*            $#####$########$$$$$#,              *$$$$$$$$$$$$$$#$~" );
+				Console.WriteLine( @"@@@@@@@@@@     ~--*@@@#.           !@@@@@@@@@@@@@@@@@@@@@@~              :@@@@@@@@@@@@@@@@@@@@@#==,..~     !@@@@@@.     ,~     $####@;           .$##$$$$########$$$$##.   .          -$$$$$$$$$$$$$$@*;" );
+				Console.WriteLine( @"@@@@@@@@@@     ,~-@@@@#            !@@@@@@@@@@@@@@@@@@@@@#.              .@@@@@@@@@@@@@@@@@@@@@$*;,,.,..   ;@@@@@$       ..    =###@@~           ~##$$$$$$#######$$$$#=.-~.:          .$$$$$$$$$$$$$#@::" );
+				Console.WriteLine( @"@@@@@@@@@@@ ~  :*#@@@@#.           !@@@@@@@@@@@@@@@@@@@@@=                =@@@@@@@@@@@@@@@@@@@@#=$~,-,     ;@@@@@!  ..    .,   !#@@@@~           ;#$$$$$$$$$$$###$$$##!.,,~,           =$$$$$$$$$$$$#;-;" );
+				Console.WriteLine( @"@@@@@@@@@@@ ~  -@#@@@@#            !@@@@@@@@@@@@@@@@@@@@@;                ~@@@@@@@@@@@@@@@@@@@@##$=$=-     :@@@@@~   ,  .  ,-  :@@@@@;           ;$$$$$$$$$$$$###$$$##~~-,,,    .      !$$$$$$$$$$$$;:!=" );
+				Console.WriteLine( @"@@@@@@@@@@@     =#@@@@#            !@@@@@@@@@@@@@@@@@@@@@!                -@@@@@@@@@@@@@@@@@@@@#$*~~:,~;:;:!@@@@@, -  ..,., :. ~@@@@@,           !$=====$$$$$$$###$$$=:~~:-... .       :$$$$$$$$$$$$;;;:" );
+				Console.WriteLine( @"@@@@@@@@@@@ ;-~-;#@@@@#.           !@@@@@@@@@@@@@@@@@@@@@,                :#@@@@@@@@@@@@@@@@@@@#=;~~-..-.. .#@@@#,..,  .,.-..:,-@@@@$            *=======$$$$$$$#$$$$* .               ,$$$$$$$$$$$#;:!;" );
+				Console.WriteLine( @"@@@@@@@@@@@@ @  ~@#@@@#.           !@@@@@@@@@@@@@@@@@@@@#~..,~-~,          =@@@@@@@@@@@@@@@@@@@@$$$#$. .    =@@@$., ..  ,.,...~-@@@@*            ****=====$$$$$$$$$$$;..       ,,       *$$$$$$$$$$#$*;~" );
+				Console.WriteLine( @"@@@@@@@@@@@ ;~!,-@@@@@@            !@@@@@@@@@@@@@@@@@@@@;   ,,:-.          ;@@@@@@@@@@@@@@@@@@@@--...  ,    !@@@=.~--.  ..,,~,.-$@##:           .******====$$$$$$$$$$:                  ;$$$$$$$$$$$;*=*" );
+				Console.WriteLine( @"@@@@@@@@@@@@  ,. $@@@@@            !@@@@@@@@@@@@@@@@@@@@;~-,,.~:,.  .      ,@@@@@@@@@@@@@@@@@@@@:,... ..    ~@@@*. ., ,...,,:- -=@@#-           -!!!!***===$$$$$$$$$$,  . ,             :$$$$$$$$$#=!;:*" );
+				Console.WriteLine( @"@@@@@@@@@@@@     ;@@@@@            !@@@@@@@@@@@@@@@@@@@@~-~;~-:~-~ -.   ,::-#@@@@@@@@@@@@@@@@@@@!..,, .     ~@@@!..    .   .-:: ;@@#.          .:!!!!!***====$$$$$$$=,..                -$$$$$$$$$=!;*!!" );
+				Console.WriteLine( @"@@@@@@@@@@@@ ;;~.:@@@@@            !@@@@@@@@@@@@@@@@@@@$.... ..        -!##=#@@@@@@@@@@@@@@@@@@@$-.,. .     :@@@-:      . .,::!~,@@#           .;;;;!!!**=====$$$$$$*:~. ..              =$$$$$$$=;:~~::" );
+				Console.WriteLine( @"@@@@@@@@@@@@     @$@@@@            !@@@@@@@@@@@@@@@@@@@!,, ..    ,..~  ~:;$*$@@@@@@@@@@@@@@@@@@#$ .,. -     ,@@#~!-.       ,:;!*:@@$           -;;;;!!!***====$$$$$$!;~-,...             ;$$$$$==****!!;" );
+				Console.WriteLine( @"@@@@@@@@@@@@   ,..*@@@@            !@@@@@@@@@@@@@@@@@@@-       .-.  .  :!;-:*@@@@@@@@@@@@@@@@@@@#..,.        #@#;-;~      ..~;;!!#@$,         -~;;;;;!!!**====$$$$$$~-,..     . .,,..    ~$=$$===*******" );
+				Console.WriteLine( @"@@@@@@@@@@@@@  ,. ~@@@@            !@@@@@@@@@@@@@@@@@@@, .    ,,..,    ~;!=$$@@@@@@@@@@@@@@@@@@@@~..         =@=;~:;- ,   ..-;!!*#@=!.       .~:;;;!!!!!***===$$$$$=,.,,,,,,,,~~:-::~.   ,$======*!**!!*" );
+				Console.WriteLine( @"@@@@@@@@@@@@@     ,$@@@            !@@@@@@@@@@@@@@@@@@$:,..         .--~!$$$##@@@@@@@@@@@@@@@@@@#;      .    ;@*~~,;~  .. , ,~;!!$@=;;       ~~:;;;!!!!****===$$$$$;.  .                  *======;;;;*=;" );
+				Console.WriteLine( @"@@@@@@@@@@@@@  ,.  *@@@            !@@@@@@@@@@@@@@@@@@=:;:-.   .... .~----:;;*@@@@@@@@@@@@@@@@@@@$.          -@*:,,~;:.      :::**@*!;,      ~.:;;;;!!*****===$$$$$,.                     ;==****!;!***:" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@     -@@@            !@@@@@@@@@@@@@@@@@@!!;;:-,,,,,            :@@@@@@@@@@@@@@@@@@@$. .,       .@~~~.,~;-  ,   ~;;!*#;:.      .~,:;;;;;!*!***====$$$=.                      ,=**;;!!;;!;:;" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@     ;@@@            !@@@@@@@@@@@@@@@@@#:;;!:~~,,-.,~  ..      -@@@@@@@@@@@@@@@@@@@@..-         #.,.  .~-- - -~;!;;;#!:       ,-~;;;;;;!!!!**=====$$*.          -.           **!;;;!!;!:;=" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@      $@@.           !@@@@@@@@@@@@@@@@@#!:...,.---,:=:;;;;:-   ,#@@@@@@@@@@@@@@@@@@@.           =  ,  ~:,-. -.-**!;!=~.       -,-;;;;;;!!!**====$$$$;~,         !-           ;!;;;!!:::~:~" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@ ~!;;;*@@;~,         !@@@@@@@@@@@@@@@@@*;:~...,. ..!=,    .     ~@@@@@@@@@@@@@@@@@@@-           :   .  :- :;-~!****-~         ~;;;;;;;;;!!**===$$$$$-:.         =~           ~!!!!!*;::;:;" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@  -,-,:@@~~.         !@@@@@@@@@@@@@@@@@;           =$.         .:@@@@@@@@@@@@@@@@@@@; -:        .    ;,.:.~:!~~:**!.          ::;;;;;;;;!!**====$$$=.          ,#!           -!!!!;;:::!;;" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@      -#@.           !@@@@@@@@@@@@@@@@#.          .$#,         -;@@@@@@@@@@@@@@@@@@@*                ,!:~, .!!~;!**.          :::;;;;;;;!!**====$$$*,.         ~#$.           !!*!*=*!;;::" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@      =@.           !@@@@@@@@@@@@@@@@*           :##-         ;*$@@@@@@@@@@@@@@@@@@#.                :;~-,  !;-~-            .~;;;;;;;;!!*====$$$$;-:         :$#~           :!*!!*!!!;;:" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@      ~@            !@@@@@@@@@@@@@@@@~           !##!         ~!=@@@@@@@@@@@@@@@@@@@,                ~!;:;--!*.            . .-;;;;;;!!!**====$$$$:::::,      !$$;           ~;;;;!*;;~:;" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@      ,#       ,- -:=@@@@@@@@@@@@@@@@~           *##$          :!@@@@@@@@@@@@@@@@@@@~                 ~;;:;*:-            ..,.-;;;;;;!!!**====$$$=,.. .      .=$$;      ..,,,~!!;!!=**;;;" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@       =.     .,~~-,*@@@@@@@@@@@@@@@@,           $###:          !#@@@@@@@@@@@@@@@@@@:                  ,.--,              .,.,:!!;;;;!!!**====$$$*,..        ~$$$*      .,,..,;!*!;;:!!!:" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@       ;.    ..  ..~=@@@@@@@@@@@@@@@=           .####:         ,;$@@@@@@@@@@@@@@@@@@;                                     ,,-,;!!!!!!!!!*=====$$$-  .        ;$$$$.           :!*=!;;;*:~" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@       ..       . .;$@@@@@@@@@@@@@@@~           :####:        .*!!@@@@@@@@@@@@@@@@@@*                                     -~~-;**!!!!!!***===$$=$,-.. ,,,.,. !$$$$:           -!!=!!;*!;;" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@              .,~!;$@@@@@@@@@@@@@@@.           =####*        .:=!@@@@@@@@@@@@@@@@@@$                                     -:::**!!;!!!!**===$$$==~::~::-::::.=$$$$!           ,!!***!;;!!" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@          ,....,,-;$@@@@@@@@@@@@@@$           -#####$.        -$$@@@@@@@@@@@@@@@@@@@::;:;~:--                            ,~::*!!!;;;;!**===$$$$!..      ...,$$$$$*           .!**$=*::::" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@                   !@@@@@@@@@@@@@@*           ,=$$##@:       ,!$=$@@@@@@@@@@@@@@@@@@~,, .,-~,           -                -~~;!!!!;;;!!!*===$$$$-.          ~$$$=$=            ;**=$=***;" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@                   !@@@@@@@@@@@@@@!           -=!;!~:-       ;*;:;@@@@@@@@@@@@@@@@@@!                   *                 ,,;!;!**!!!****==$$$=~~.,..,,    !$$==$$,           ~!!!***;!;" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@                   !@@@@@@@@@@@@@@,           ;*;;;;;:      .*~  :@@@@@@@@@@@@@@@@@@*                  -#-                .,;!!!**!!***=====$$=!~,         =$$==$$:           .!!!!*!;::" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@                  !@@@@@@@@@@@@@$            *****=**      ,*,-~,#@@@@@@@@@@@@@@@@@=                  ;@;                -~!!!!**!!****====$$=!~-,       .$$$$$$$*            !;!;==*!;" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@                  !@@@@@@@@@@@@@!           ,;;!!***=.     -*=**!*@@@@@@@@@@@@@@@@@#                  ;@,               ..-!***!!!!!***====$$*:.,.       ,$$$$$$$=            :!!!;:~~~" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@                  !@@@@@@@@@@@@@:          .-;~--;;!!,     .-:~~~~@@@@@@@@@@@@@@@@@@.                 ;@:               ..,****!!!!!****====$!::-        ,;;;;;;;:            ~**;;::~!" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@                  !#@@@@@@@@@@@@-               -:         ,;;:;-.#@@@@@@@@@@@@@@@@@-                 *@*               ..-****!!!!!**===$==*-:,,                             ,!!:!;*;:" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@                  !#@@@@@@@@@@@$                -;         ~!!*!~-$@@@@@@@@@@@@@@@@@;                 $@$             .. ,:*!!!!!****===$$$=*:;~,                              ;!*!!;~~" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@                  !#@@@@@@@@@@@;            ....,~         !****!.!@@@@@@@@@@@@@@@@@=                ,@@@-           .,,,.;***!!!**===$$$$$=*:~-.....                          ;*=**!:!" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@                 !#####@@@@@@@-        .. ...,,::         -!*!!!~-@@@@@@@@@@@@@@@@@#.               :@@@:                !***!**==$$$$$$$==;;:~,.                             ~*!;:*!!" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@                 ;####@@@@@@@@~                ,,          :!;;;:~#@@@@@@@@@@@@@@@@@-              .*@@@:               .******====$$$$$$==~:,,..                             -=**$===" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@                 ;###$##@@@@@$.                            ,!;!;:;$@@@@@@@@@@@@@@@#@~     ~ ~~,..::!#@@@;               ,******===$$$$$$$$!~~--.                              .=$$$$$=" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@                 ;$$==#$#@@@@*                             ~;!;!!;=@@@@@@@@@@@@@@@@@-     ,---,  .-;#@@@*               -!!***====$$$$$$$$:                                    !$$****" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@                 ;=====$##@@@-                            ,;;~~**!*@@@@@@@@@@@@@@@@@:   ,,-:~,,.-~:,#@@@$               ~!!***=====$$=$$$$,.                                   -!:~;;;" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@       ..,,,,...!$$==*=$##@#                             .~;~::::;#@@@@@@@@@@@@@@@#*,,.,,~:;;;!:- ~@@@@@,             .:!!!!**====$==$$$=-~.                                 .,==**!;" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@      :;;;!~~   :*===#$#$##=                               ~;;:~  *@@@@@@@@@@@@@@###!;;;-  ~~.-,-.*@@@@@:         .:~.;!!!;!**====$==$$$!:-.                                 .-;:;*:;" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@     :!;-~-  .  -;!***===##!                              .-:;;::-;@@@@@@@@@@@@@####-~,-,    -. .,*@@@#@!    ,, .~-:;:~!!;;!!**=====$$$$:~,                                   ,:;::::" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@    -*!~-,-~,, .-:;!!*====$~                                ..... :@##@#@@@@@#@####@:- .,,    .  .#@@@@#*   .,-,,,~...~!!;!!!**===$$$$$$:-..                                  ,;;:~::" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@    !*,  .  .-,-;***=**====,.                                     .#####@@@@@###$##@!   ...      -@@@@@#=        --,.,~!;;!!!!**==$$$$$* . .                                   ~:;!!!" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@    ,- ,. .   ,-:!*!!!!!==*                                        *#$####@@####$$$$;  .  ,... ..-@@@@##$    .   -:~~!!;!!!!!!=*===$$$#! .  . ,,                           .    :!**=" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@                -;;;;*!!;!~                                        -====$$$$$###$$=$!   .  .  ,-~;@@@@@##,   ..::~~-~~;;!!!!*===$$$$$$#~  .. .                             .    ,-~::" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@              . ~:!*!*=!;!,.                                       .;**!***!*$=#$$===   ..,.,.~;;=@@@@@##:,,...,,--   ;!!!**==$$$$$$$$=. ..  .                                  .-~::" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@             . ~;!;:!***!.-           !;::;=!;!*!**=$*             ;;*=!!!**$*$$====.   ,-,-~:;!$@@@@@##!       ..   !!!****=$$$$###$*             ::::!*!;;!*!***;       ,... .-~~:" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@               ~:;!!*!;;;            -*::;!;:;!!*$#=#*.            ;:;;::;!!$=*$===$~.     . ,,~#@@@@@##=.          .!!!*****=$#####$: ..         -*=#$$$$$==#$$==#~      ,-    ,,~~" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@               ~!**==**!~            ~!:!;:::;;;:!=**=:            ~!;!$$=;!==;====$!;:,-~-~~--~@@@@@@@##-          -!!*=****=$####$=-,.,,        ;$*==$$=$=*==$=*=~      -~.   ..~~" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@               :**==*==*,            ~:!;*==***!;:!!!;:            .*!*===!**=*!$==$!~.     .  ~@@@@@@@#@~          :***=====$$$##$=!.  ..  ....,,**!!*****!;!!!!:;-      ~-     .~~" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@         .  ...~!!**$==*             =#=$#####$*==*!*==,            *=$===***==;!$=$*:~        ;@@@@@@@@@-  -- -~.  !**======$$$$$==:.,--,, ,,-..,:;;!*;;:;;!*!:;;*;      -~.,. .,::" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@          ...,.:!*=====!            .$#####@=$=*!!!!=$=,            :;*$#$!!**$=;*$$$~         ;@@@@@@@@@; .-:~,.- .========$$$$#$$$:            -;;;!;!;:;;;!:!;:;:      ...,,  ,~;" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@        .,-~-,;=$$$$==:            ~=#=##$##$**!!!***;,            ~$:=$==***=$*;$$=~.        *@@@@@@@@@*..   .~- ,=====$$$$$$#=!*=-            :===!!!==*=**!*=*;!,      .~.,..,:;" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@     , ,~,.,~~-;===$=**.            !=!;!!!!!!*=!!!!;:;:            .=$!**$***!=$!!==~,..      $@@@@@@@@@#  .  .;: -=====$$$$$$#*==*             ::;;!*:::;!!*;:~:;!~       ..,.,,;;" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@  ~,,-...,--.;*=====*     .. .    ==:~::;;;;;:::;!*!!!.            :-:~~;$****$=!!$====~    .@@@@@@####@, ,.~::- ~=$$$$$$$$$#$###=            .;::!;:;;!;**!:!;**!;        ,,-,~::" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@  ~::-~. . ,.;$$#==$*~;;!!;;!~-~ .==;;;:::*!---~;:-~:=~   -, ;~    ~==!;!#*****==;**~..     ~@@@@@@@####:,,,,-;- !$$$$$$$$$#=;!;=~            ~;:~::;$==;~;!===*!:;        ,:~-;;*" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@ ;!;::~~-,,,*#$#==#;.,.., ..,,,.~$=*$$!!=$=;;::!::;;;~  ,-~--~-   ,!::!:;#****=#=;*        !@@@#####$$$:     .  =$$$$$$$$$#$$$=!.            ;:;:;=:!!***=$***=$*$~        ;~~;=*" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@ -,..,,.    !##$*==-            *=**:!**:*!-~-~~:;!::: ....,-;-   .;;!*;:*$!***=#*;.       *######$$$$$;       .$$$$$$$$$#=:;!!=             =#!=*;::;;;!;*:~!*===!        .:~-;*" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@            ;=$$===.           -*****$$;;!~~:::*!;;**!. ,,  ,::   -**!!!=:$=!***$#!.       *$###$$$$=$$=       :#$$$$$$$##!::;;:            .*=#*:::~~!;:;!*;;!;!!!            .=" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@;;::;;:~:;!$@!=$$#*::;:~-:;;;:~=***!=*;=!*;*;;!!!:=;=:~:::=**;;;::!;!!;!=*$=!*=*$$~~-~~:~~*$$#$*=$$=***~~:;;;:!##$$#$##@!!!;*!:,.--.,,-,,-~;;;:!!;;*$#$;:*=!!!!!;;-----:-,-~~--:" );
+				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@*=$##$=$##@##;=$#$#@##=*=@@@=******=;;*!;=$!==*!=$!$$$#$*****$**!!!!!*=*!!!$=!***@*!!**=**=@=$$=$==****=*!#!:$$;*#=;$#;;!!*!*;~;!:=;::*:!*;!:~;!:!;:*!!=;;;!!!;;!;!!;!:!!=!!!!**" );
+
+				Console.SetCursorPosition( 0, 0 );
+
+				Thread.Sleep( 10000 );
+
+				Console.BackgroundColor = BACKGROUND_COLOR;
+				Console.ForegroundColor = FOREGROUND_COLOR;
+				Console.Clear();
+				Console.CursorVisible = false;
+			}
+            #endregion
+
+			void Update( ConsoleKey inputKey )
+			{
+				#region Update
+				// ------------------------------------------------------------------ Update.. ------------------------------------------------------------------
+				// ================================= Player Update.. =================================
+				UpdatePlayer( ref player, inputKey );
+
+				// ================================= Item Update.. =================================
+				for ( int index = 0; index < activeItemCount; ++index )
+				{
+					int itemIndex = playerActiveItemIndex[index];
+
+					Item.Type curItemType = items[itemIndex].type;
+
+					if ( Item.Type.END == curItemType )
+					{
+						continue;
+					}
+
+					switch( curItemType )
+					{
+						case Item.Type.ReverseMove:
+							// 현재 프레임에 플레이어가 움직인 거리 계산..
+							int moveDirX = player.X - player.PrevX;
+							int moveDirY = player.Y - player.PrevY;
+
+							if( 0 != moveDirX || moveDirY != 0 )	// 움직임이 있는 경우에만 실행..
+							{
+								// 그 반대 방향으로 움직이게 함..
+								player.X = player.PrevX - moveDirX;
+								player.Y = player.PrevY - moveDirY;
+							}
+							else
+							{
+								++items[itemIndex].Duration;
+							}
+							break;
+
+						case Item.Type.EasterEgg:
+							RenderProfessor();
+							break;
+
+						case Item.Type.HPPosion:
+							
+							break;
+
+						case Item.Type.MPPosion:
+							
+							break;
+					}
+
+					--items[itemIndex].Duration;
+
+					if ( 0 == items[itemIndex].Duration )
+					{
+						items[itemIndex].type = Item.Type.END;
+					}
+				}
+
+				#region Box Update
+				// ================================= Box Update.. =================================
+				// 박스 업데이트..
+				for ( int i = 0; i < BOX_COUNT; ++i )
+				{
+					// 박스 이전위치 갱신..
+					boxes[i].PrevX = boxes[i].X;
+					boxes[i].PrevY = boxes[i].Y;
+
+					switch ( boxes[i].CurState )
+					{
+						case Box.State.Idle:
+							if ( IsCollision( player.X, player.Y, boxes[i].X, boxes[i].Y ) )   // 플레이어와 박스가 같을 때..
+							{
+								// 박스가 이동할 위치를 계산( 현재위치 - 이전위치 = 이동할 방향 )..
+								int boxMoveDirX = player.X - player.PrevX;
+								int boxMoveDirY = player.Y - player.PrevY;
+
+								// 박스 현재위치 갱신.. 
+								boxes[i].X += boxMoveDirX;
+								boxes[i].Y += boxMoveDirY;
+
+								break;
+							}
+
+							break;
+						case Box.State.Move:
+							boxes[i].X -= boxes[i].DirX;
+							boxes[i].Y -= boxes[i].DirY;
+
+							isSkipRender = false;
+
+							break;
+
+						case Box.State.GrabByPlayer:
+						{
+							boxes[i].PrevX = boxes[i].X;
+							boxes[i].PrevY = boxes[i].Y;
+
+							// 박스가 이동할 위치를 계산( 현재위치 - 이전위치 = 이동할 방향 )..
+							int boxMoveDirX = player.X - player.PrevX;
+							int boxMoveDirY = player.Y - player.PrevY;
+
+							// 박스 현재위치 갱신.. 
+							boxes[i].X += boxMoveDirX;
+							boxes[i].Y += boxMoveDirY;
+						}
+
+						break;
+					}
+				}
+				#endregion
+
+
+				// ================================= Collision Update.. =================================
+				#region Box Collision
+				// 박스가 특정 물체와 겹쳤다( 박스 or 벽 or 맵 외곽 )..
+				for ( int i = 0; i < BOX_COUNT; ++i )
+				{
+					MapSpaceType curStandSpaceType = mapDatas[boxes[i].Y, boxes[i].X];
+
+					// 박스가 현재 위치에 다른 물체가 있을 때는 이전 위치로 이동..
+					switch ( curStandSpaceType )
+					{
+						case MapSpaceType.DontPass:
+							boxes[i].X = boxes[i].PrevX;
+							boxes[i].Y = boxes[i].PrevY;
+
+							boxes[i].CurState = Box.State.Idle;
+
+							break;
+						case MapSpaceType.BoxStand:
+							for ( int curBoxIdx = 0; curBoxIdx < BOX_COUNT; ++curBoxIdx )
+							{
+								if ( curBoxIdx == i )
+									continue;
+								if ( boxes[i].X != boxes[curBoxIdx].X || boxes[i].Y != boxes[curBoxIdx].Y )
+									continue;
+
+								boxes[i].X = boxes[i].PrevX;
+								boxes[i].Y = boxes[i].PrevY;
+
+								boxes[i].CurState = Box.State.Idle;
+
+								break;
+							}
+
+							break;
+
+						case MapSpaceType.PlayerStand:
+							if ( Box.State.GrabByPlayer != boxes[i].CurState )
+							{
+								boxes[i].X = boxes[i].PrevX;
+								boxes[i].Y = boxes[i].PrevY;
+
+								boxes[i].CurState = Box.State.Idle;
+							}
+
+							break;
+
+						case MapSpaceType.Portal:
+							// 포탈 다른 게이트로 이동..
+							PushPortal( portals, ref boxes[i].X, ref boxes[i].Y, boxes[i].PrevX, boxes[i].PrevY );
+
+							// 현재 플레이어에게 잡혀있는 상태라면 기본 상태로 변경..
+							if ( Box.State.GrabByPlayer == boxes[i].CurState )
+								boxes[i].CurState = Box.State.Idle;
+
+							i--;    // 이동한 지점에 다른 오브젝트가 있는지 검사하려고..
+
+							break;
+					}
+				}
+				#endregion
+
+				#region Player Collision
+				// 플레이어가 특정 물체와 겹쳤다( 박스 or 벽 등등 )..
+				MapSpaceType overlapSpaceType = mapDatas[player.Y, player.X];	// 여기서 받아옵니다..
+
+				// 여기서 검사..
+				switch ( overlapSpaceType )
+				{
+					case MapSpaceType.DontPass:
+						player.X = player.PrevX;
+						player.Y = player.PrevY;
+
+						break;
+					case MapSpaceType.BoxStand:
+						for ( int boxIdx = 0; boxIdx < BOX_COUNT; ++boxIdx )
+						{
+							int boxX = boxes[boxIdx].X;
+							int boxY = boxes[boxIdx].Y;
+
+							// 만약 플레이어와 박스의 위치가 같을 때 이전 위치로..
+							// 맵 데이터가 갱신이 안되있는 상태기 때문에 이 검사를 하는 것..
+							if ( player.X == boxX && player.Y == boxY )
+							{
+								player.X = player.PrevX;
+								player.Y = player.PrevY;
+							}
+						}
+
+						break;
+					case MapSpaceType.Portal:
+						PushPortal( portals, ref player.X, ref player.Y, player.PrevX, player.PrevY );
+
+						break;
+
+					case MapSpaceType.Item:
+						for ( int itemIndex = 0; itemIndex < ITEM_COUNT; ++itemIndex )
+						{
+							if( IsCollision( player.X, player.Y, items[itemIndex].X, items[itemIndex].Y ))
+							{
+								playerActiveItemIndex[activeItemCount] = itemIndex;
+								++activeItemCount;
+								// 밟은 아이템은 필드에서 제거( 안보이게 함 )..
+								items[itemIndex].isActive = false;
+
+								break;
+							}
+						}
+						break;
+				}
+				#endregion
+
+				#region Switch Collision
+				for ( int switchIdx = 0; switchIdx < SWITCH_COUNT; ++switchIdx )
+				{
+					int switchButtonX = switches[switchIdx].X + switches[switchIdx].ButtonOffsetX;
+					int switchButtonY = switches[switchIdx].Y + switches[switchIdx].ButtonOffsetY;
+
+					MapSpaceType curPushPosSpaceType = mapDatas[switchButtonY, switchButtonX];
+					if ( MapSpaceType.Pass != curPushPosSpaceType )
+					{
+						if ( false == switches[switchIdx].IsHolding )
+						{
+							switches[switchIdx].IsHolding = true;
+
+							int loopCount = switches[switchIdx].OpenCloseWallIndex.Length;
+							for ( int loopIndex = 0; loopIndex < loopCount; ++loopIndex )
+							{
+								int wallIndex = switches[switchIdx].OpenCloseWallIndex[loopIndex];
+
+								walls[wallIndex].isActive = false;
+							}
+
+							isSkipRender = false;
+						}
+					}
+					else
+					{
+						if ( true == switches[switchIdx].IsHolding )
+						{
+							switches[switchIdx].IsHolding = false;
+
+							int loopCount = switches[switchIdx].OpenCloseWallIndex.Length;
+							for ( int loopIndex = 0; loopIndex < loopCount; ++loopIndex )
+							{
+								int wallIndex = switches[switchIdx].OpenCloseWallIndex[loopIndex];
+
+								walls[wallIndex].isActive = true;
+							}
+
+							isSkipRender = false;
+						}
+					}
+				}
+				#endregion
+
+				// =========================================== Map Update.. =========================================== //
+				#region Map Update
+				// 플레이어 정보 갱신..
+				mapDatas[player.PrevY, player.PrevX] = MapSpaceType.Pass;
+				mapDatas[player.Y, player.X] = MapSpaceType.PlayerStand;
+
+				// Box 정보 갱신..
+				for ( int i = 0; i < BOX_COUNT; ++i )
+				{
+					mapDatas[boxes[i].PrevY, boxes[i].PrevX] = MapSpaceType.Pass;
+					mapDatas[boxes[i].Y, boxes[i].X] = MapSpaceType.BoxStand;
+				}
+
+				// Portal 정보 갱신..
+				for ( int portalIdx = 0; portalIdx < PORTAL_COUNT; ++portalIdx )
+				{
+					for ( int gateIndex = 0; gateIndex < PORTAL_GATE_COUNT; ++gateIndex )
+					{
+						int curPortalX = portals[portalIdx].GatesX[gateIndex];
+						int curPortalY = portals[portalIdx].GatesY[gateIndex];
+						mapDatas[curPortalY, curPortalX] = MapSpaceType.Portal;
+					}
+				}
+
+				// 벽 정보 갱신..
+				for ( int wallIdx = 0; wallIdx < WALL_COUNT; ++wallIdx )
+				{
+					int wallX = walls[wallIdx].X;
+					int wallY = walls[wallIdx].Y;
+
+					if ( true == walls[wallIdx].isActive )
+					{
+						mapDatas[wallY, wallX] = MapSpaceType.DontPass;
+					}
+					else
+					{
+						mapDatas[wallY, wallX] = MapSpaceType.Pass;
+					}
+				}
+
+				// Switch 정보 갱신..
+				for ( int switchIndex = 0; switchIndex < SWITCH_COUNT; ++switchIndex )
+				{
+					mapDatas[switches[switchIndex].Y, switches[switchIndex].X] = MapSpaceType.DontPass;
+				}
+
+				// Item 정보 갱신..
+				for( int itemIndex = 0; itemIndex < ITEM_COUNT; ++itemIndex )
+				{
+					if( true == items[itemIndex].isActive )
+					{
+						mapDatas[items[itemIndex].Y, items[itemIndex].X] = MapSpaceType.Item;
+					}
+					else
+					{
+						mapDatas[items[itemIndex].Y, items[itemIndex].X] = MapSpaceType.Pass;
+					}
+				}
+
+				#endregion
+
+				#endregion
+			}
+
+			void UpdatePlayer( ref Player player, ConsoleKey inputKey )
+			{
+				// 플레이어 이전위치 갱신..
+				player.PrevX = player.X;
+				player.PrevY = player.Y;
+
+				int moveX = 0;
+				int moveY = 0;
+
+				switch ( inputKey )
+				{
+					case ConsoleKey.RightArrow:
+					case ConsoleKey.LeftArrow:
+						moveX += (int)inputKey - 38;
+						player.actionKind = Player.ActionKind.Move;
+
+						break;
+					case ConsoleKey.DownArrow:
+					case ConsoleKey.UpArrow:
+						moveY += (int)inputKey - 39;
+						player.actionKind = Player.ActionKind.Move;
+
+						break;
+					case ConsoleKey.Spacebar:
+						player.actionKind = Player.ActionKind.Grab;
+
+						break;
+					case ConsoleKey.A:
+						player.actionKind = Player.ActionKind.Kick;
+
+						break;
+
+					default:
+						return;
+				}
+
+				// 현재 MP가 행동 시 필요한 MP 보다 부족하다면..
+				if ( player.Mp < Player.ACTION_USE_MP[(int)player.actionKind] )
+				{
+					playerErrorLog.AppendLine( "마나가 부족합니다." );
+					return;
+				}
+
+				// 행동에 필요한 MP 만큼 빼주기..
+				player.Mp -= Player.ACTION_USE_MP[(int)player.actionKind];
+
+				// 행동 종류에 따라 해야할 행동 진행..
+				switch (player.actionKind)
+				{
+					case Player.ActionKind.Move:
+						player.X += moveX;
+						player.Y += moveY;
+						++curPlayerMoveCount;
+
+						break;
+
+					case Player.ActionKind.Grab:
+						for ( int i = 0; i < BOX_COUNT; ++i )
+						{
+							int boxX = boxes[i].X;
+							int boxY = boxes[i].Y;
+							Box.State boxState = boxes[i].CurState;
+
+							int xDist = Math.Abs( player.X - boxX );
+							int yDist = Math.Abs( player.Y - boxY );
+
+							if ( 1 == xDist + yDist )
+							{
+								if ( Box.State.GrabByPlayer == boxState )
+									boxState = Box.State.Idle;
+								else
+									boxState = Box.State.GrabByPlayer;
+
+								boxes[i].CurState = boxState;
+							}
+						}
+
+						break;
+
+					case Player.ActionKind.Kick:
+						for ( int i = 0; i < BOX_COUNT; ++i )
+						{
+							int boxX = boxes[i].X;
+							int boxY = boxes[i].Y;
+
+							int xDist = Math.Abs( player.X - boxX );
+							int yDist = Math.Abs( player.Y - boxY );
+
+							if ( 1 == xDist + yDist )
+							{
+								int curBoxIndex = i;
+
+								// 박스 상태 변경 및 그와 관련된 값 설정..
+								boxes[curBoxIndex].CurState = Box.State.Move;
+
+								int dirX = player.X - boxX;
+								int dirY = player.Y - boxY;
+
+								boxes[curBoxIndex].DirX = dirX;
+								boxes[curBoxIndex].DirY = dirY;
+							}
+						}
+
+						break;
+				}
+			}
+
+			bool IsCollision( int x, int y, int x2, int y2 )
+			{
+				if( x == x2 && y == y2)
+				{
+					return true;
+				}
+
+				return false;
+			}
+
+			
+			// 포탈 밟았을 때 다른 게이트로 이동시키는 기능..
+			void PushPortal(in Portal[] portals, ref int curPosX, ref int curPosY, int prevPosX, int prevPosY )
+			{
+				bool isFindPortal = false;
+
+				for ( int portalIdx = 0; portalIdx < PORTAL_COUNT; ++portalIdx )
+				{
+					for ( int gateIndex = 0; gateIndex < PORTAL_GATE_COUNT; ++gateIndex )
+					{
+						int curPortalX = portals[portalIdx].GatesX[gateIndex];
+						int curPortalY = portals[portalIdx].GatesY[gateIndex];
+
+						if ( IsCollision( curPortalX, curPortalY, curPosX, curPosY ) )
+						{
+							// 다른 포탈 게이트 위치 계산..
+							ComputeOtherPortalGatePosition( portals[portalIdx], gateIndex, out curPortalX, out curPortalY );
+
+							// 다른 포탈 게이트 이동 시 현재 이동한 방향으로 1칸 이동한 위치에 순간이동시키기..
+							int dirX = curPosX - prevPosX;
+							int dirY = curPosY - prevPosY;
+
+							int teleportPosX = curPortalX + dirX;
+							int teleportPosY = curPortalY + dirY;
+
+							// 현재 포탈 이동한 지점에 다른 오브젝트가 있는지 검사..
+							MapSpaceType curPosSpaceType = mapDatas[teleportPosY, teleportPosX];
+							if ( MapSpaceType.Pass == curPosSpaceType || MapSpaceType.Item == curPosSpaceType )
+							{
+								curPosX = teleportPosX;
+								curPosY = teleportPosY;
+							}
+							else
+							{
+								curPosX = prevPosX;
+								curPosY = prevPosY;
+							}
+
+							isFindPortal = true;
+
+							break;
+						}
+
+						if( isFindPortal )
+						{
+							break;
+						}
+					}
+				}
+			}
+
+			// Portal 현재 서 있는 게이트가 아닌 다른 게이트의 위치를 계산..
+			void ComputeOtherPortalGatePosition( in Portal portal, int ignoreIndex, out int gateX, out int gateY )
+			{
+				Random random = new Random();
+
+                int curGateX = -1;
+                int curGateY = -1;
+                int curIndex = ignoreIndex;
+				while ( curIndex == ignoreIndex )
+				{
+					curIndex = random.Next( PORTAL_GATE_COUNT );
+
+                    curGateX = portal.GatesX[curIndex];
+                    curGateY = portal.GatesY[curIndex];
+                }
+
+                gateX = curGateX;
+                gateY = curGateY;
+			}
+        }
+    }
 }
