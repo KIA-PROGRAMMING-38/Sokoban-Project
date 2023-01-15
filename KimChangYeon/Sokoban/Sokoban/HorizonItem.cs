@@ -11,5 +11,6 @@ namespace Sokoban
         public int X;
         public int Y;
         public char Symbol;
+        public ConsoleColor Color;
     }
 }

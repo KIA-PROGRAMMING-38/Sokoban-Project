@@ -12,5 +12,6 @@ namespace Sokoban
         public int Y;
         public bool IsOnGoal;
         public char Symbol;
+        public ConsoleColor Color;
     }
 }
