@@ -186,25 +186,8 @@ class Program
                 break;
             }
 
-            // 박스가 골 위로 올라왔는지 확인
-            int boxOnGoalCount = 0;
-            for (int boxId = 0; boxId < boxCount; ++boxId)
-            {
-                // 현재 프레임의 박스 상태를 실시간으로 추적하기 위해 false로 바꿔둔다
-                isBoxOnGoal[boxId] = false;
-
-                for (int goalId = 0; goalId < goalCount; ++goalId)
-                {
-                    if (IsCollided(boxPositionsX[boxId], boxPositionsY[boxId],
-                                    goalPositionsX[goalId], goalPositionsY[goalId]))
-                    {
-                        ++boxOnGoalCount;
-                        isBoxOnGoal[boxId] = true;
-
-                        break; // 이 박스에 대해서는 더 이상 체크할 게 없
-                    }
-                }
-            }
+            int boxOnGoalCount = CountBoxOnGoal(in boxPositionsX, in boxPositionsY, ref isBoxOnGoal,
+                            in goalPositionsX, in goalPositionsY);
 
             if (boxOnGoalCount == goalCount)
             {
@@ -224,6 +207,35 @@ class Program
         {
             Console.SetCursorPosition(x, y);
             Console.Write(icon);
+        }
+
+        // 골 위에 박스가 몇 개 있는지 센다
+        int CountBoxOnGoal(in int[] boxPositionsX, in int[] boxPositionsY, ref bool[] isBoxOnGoal,
+                        in int[] goalPositionsX, in int[] goalPositionsY)
+        {
+            int boxCount = boxPositionsX.Length;
+            int goalCount = goalPositionsX.Length;
+
+            int result = 0;
+            for (int boxId = 0; boxId < boxCount; ++boxId)
+            {
+                isBoxOnGoal[boxId] = false;
+
+                for (int goalId = 0; goalId < goalCount; ++goalId)
+                {
+                    if (IsCollided(boxPositionsX[boxId], boxPositionsY[boxId],
+                                    goalPositionsX[goalId], goalPositionsY[goalId]))
+                    {
+                        ++result;
+
+                        isBoxOnGoal[boxId] = true;
+
+                        break;
+                    }
+                }
+            }
+
+            return result;
         }
 
         // target 근처로 이동시킨다 
