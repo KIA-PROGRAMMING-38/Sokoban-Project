@@ -27,7 +27,9 @@ namespace Sokoban
         public ConsoleColor Color;
         public ActionKind actionKind;
 
-        public int Hp;
-        public int Mp;
+        public int MaxHp;
+        public int CurHp;
+        public int MaxMp;
+        public int CurMp;
     }
 }

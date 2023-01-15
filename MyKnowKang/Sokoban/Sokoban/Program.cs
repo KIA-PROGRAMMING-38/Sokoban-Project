@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Xml.Serialization;
 
 namespace KMH_Sokoban
 {
@@ -76,6 +77,8 @@ namespace KMH_Sokoban
 			// Player 초기 세팅..
 			const int INITIAL_PLAYER_X = 1;
 			const int INITIAL_PLAYER_Y = 1;
+			const int INITIAL_PLAYER_HP = 10;
+			const int INITIAL_PLAYER_MP = 500;
 			string initPlayerImage = (isWin11) ? PLAYER_IMAGE_WIN11 : PLAYER_IMAGE_WIN10;
 
 			// Box 관련 상수 설정.. 
@@ -181,9 +184,11 @@ namespace KMH_Sokoban
 			Player player = new Player
 			{
 				X = INITIAL_PLAYER_X, Y = INITIAL_PLAYER_Y, PrevX = INITIAL_PLAYER_X, PrevY = INITIAL_PLAYER_Y,
-				Image = initPlayerImage, Color = PLAYER_COLOR, Hp = 10, Mp = 30
+				Image = initPlayerImage, Color = PLAYER_COLOR, MaxHp = INITIAL_PLAYER_HP, MaxMp = INITIAL_PLAYER_MP,
+				CurHp = INITIAL_PLAYER_HP, CurMp = INITIAL_PLAYER_MP
 			};
 			int curPlayerMoveCount = 0;
+
 
 			// 박스 관련 변수 설정..
             Box[] boxes = new Box[BOX_COUNT];
@@ -196,9 +201,11 @@ namespace KMH_Sokoban
                 };
 			}
 
+
 			// 맵 관련 변수 설정..
 			// 맵의 각 위치들의 데이터를 저장하는 룩업 테이블..
 			MapSpaceType[,] mapDatas = new MapSpaceType[MAP_HEIGHT + 1, MAP_WIDTH + 1];
+
 
             // 벽 관련 변수 설정..
 			Wall[] walls = new Wall[WALL_COUNT];
@@ -211,6 +218,7 @@ namespace KMH_Sokoban
 				};
 			}
 
+
 			// 골인 지점 관련 변수 설정..
             Goal[] goals = new Goal[GOAL_COUNT];
 			for( int goalIndex = 0; goalIndex < GOAL_COUNT; ++goalIndex )
@@ -221,6 +229,7 @@ namespace KMH_Sokoban
 					GoalInColor = GOALIN_COLOR, isGoalIn = false
 				};
 			}
+
 
 			// Portal 관련 변수 설정..
 			Portal[] portals = new Portal[PORTAL_COUNT];
@@ -237,6 +246,7 @@ namespace KMH_Sokoban
 					portals[portalIndex].GatesY[gateIndex] = INIT_PORTALGATE_Y[portalIndex, gateIndex];
                 }
 			}
+
 
 			// Switch 관련 변수 설정..
 			Sokoban.Switch[] switches = new Sokoban.Switch[SWITCH_COUNT];
@@ -256,19 +266,21 @@ namespace KMH_Sokoban
 				}
 			}
 
+
 			// Trap 관련 변수 설정..
 			Trap[] traps = new Trap[TRAP_COUNT]
 			{
-				new Trap { X = 15, Y = 10, Damage = 10, Image = initTrapImage, Color = TRAP_COLOR }
+				new Trap { X = 15, Y = 10, Damage = 5, Image = initTrapImage, Color = TRAP_COLOR, BurstRange = 10 }
 			};
+
 
 			// Item 관련 변수 설정..
 			Item[] items = new Item[ITEM_COUNT]
 			{
-				new Item { X = 10, Y = 10, Duration = 10, type = Item.Type.ReverseMove, isActive = true },
-				new Item { X = 10, Y = 2, Duration = 1, type = Item.Type.EasterEgg, isActive = true },
-				new Item { X = 10, Y = 6, Duration = 1, type = Item.Type.HPPosion, isActive = true },
-				new Item { X = 20, Y = 7, Duration = 1, type = Item.Type.MPPosion, isActive = true }
+				new Item { X = 10, Y = 10, Effect = 0, Duration = 10, type = Item.Type.ReverseMove, isActive = true },
+				new Item { X = 10, Y = 2, Effect = 1, Duration = 1, type = Item.Type.EasterEgg, isActive = true },
+				new Item { X = 10, Y = 6, Effect = 5, Duration = 1, type = Item.Type.HPPosion, isActive = true },
+				new Item { X = 20, Y = 7, Effect = 5, Duration = 1, type = Item.Type.MPPosion, isActive = true }
 			};
 			// 현재 타입에 따라 Image 와 Color 결정..
 			for( int itemIndex = 0; itemIndex < ITEM_COUNT; ++itemIndex )
@@ -291,7 +303,7 @@ namespace KMH_Sokoban
 			Stopwatch stopwatch = new Stopwatch();
 			// 렌더 관련( 그릴지 말지 )..
 			bool isSkipRender = false;
-			//bool isConsoleClear = false;
+			bool isConsoleClear = false;
 			#endregion
 			#endregion
 
@@ -624,11 +636,11 @@ namespace KMH_Sokoban
 			void Render()
 			{
 				// 이전 프레임 지우기..
-				//if( isConsoleClear )
-				//{
-				//	Console.Clear();
-				//	isConsoleClear = false;
-				//}
+				if( isConsoleClear )
+				{
+					Console.Clear();
+					isConsoleClear = false;
+				}
 
 				// Log Render..
 				int logYOffset = 0;
@@ -647,8 +659,8 @@ namespace KMH_Sokoban
 				isSkipRender = true;
 
 				// Player State Render..
-				playerStateLog.AppendLine( $"HP : {player.Hp}" );
-				playerStateLog.AppendLine( $"MP : {player.Mp}" );
+				playerStateLog.AppendLine( $"HP : {player.MaxHp} / {player.CurHp}" );
+				playerStateLog.AppendLine( $"MP : {player.MaxMp} / {player.CurMp}" );
 
 				Console.SetCursorPosition( playerStateLogStartX, playerStateLogStartY );
 				Console.Write( clearPlayerStateLog );
@@ -697,10 +709,19 @@ namespace KMH_Sokoban
 				}
 
 				// Render Trap..
-				for ( int i = 0; i < TRAP_COUNT; ++i )
+				for ( int trapIndex = 0; trapIndex < TRAP_COUNT; ++trapIndex )
 				{
+					if( traps[trapIndex].IsActive )
+					{
+						// 폭발 범위만큼 그린다..
+						int loopStart = -traps[trapIndex].curBurstRange;
+						int loopEnd = -traps[trapIndex].curBurstRange;
 
-					RenderObject( traps[i].X, traps[i].Y, traps[i].Image, traps[i].Color );
+						for ( int x = loopStart; x < loopEnd; ++x )
+						{
+							
+						}
+					}
 				}
 
 				// Render Item..
@@ -771,7 +792,7 @@ namespace KMH_Sokoban
 				Console.ForegroundColor = prevColor;
 			}
 
-			void RenderProfessor()
+			void 교수님죄송합니다()
 			{
 				Console.Clear();
 				Console.WriteLine( "이스터에그 약 5초뒤에 나옵니다. 전체화면 추천" );
@@ -1093,6 +1114,8 @@ namespace KMH_Sokoban
 				UpdatePlayer( ref player, inputKey );
 
 				// ================================= Item Update.. =================================
+				#region Item Update
+
 				for ( int index = 0; index < activeItemCount; ++index )
 				{
 					int itemIndex = playerActiveItemIndex[index];
@@ -1124,15 +1147,15 @@ namespace KMH_Sokoban
 							break;
 
 						case Item.Type.EasterEgg:
-							RenderProfessor();
+							교수님죄송합니다();
 							break;
 
 						case Item.Type.HPPosion:
-							
+							player.CurHp = Math.Min( player.MaxHp, player.CurHp + items[itemIndex].Effect );
 							break;
 
 						case Item.Type.MPPosion:
-							
+							player.CurMp = Math.Min( player.MaxMp, player.CurMp + items[itemIndex].Effect );
 							break;
 					}
 
@@ -1142,7 +1165,11 @@ namespace KMH_Sokoban
 					{
 						items[itemIndex].type = Item.Type.END;
 					}
+
+					isSkipRender = false;
 				}
+
+				#endregion
 
 				#region Box Update
 				// ================================= Box Update.. =================================
@@ -1306,8 +1333,53 @@ namespace KMH_Sokoban
 							}
 						}
 						break;
+
+					case MapSpaceType.Trap:
+						for ( int trapIndex = 0; trapIndex < TRAP_COUNT; ++trapIndex )
+						{
+							if ( IsCollision( player.X, player.Y, traps[trapIndex].X, traps[trapIndex].Y ) )
+							{
+								traps[trapIndex].IsBurst = true;
+								traps[trapIndex].IsActive = true;
+
+								mapDatas[traps[trapIndex].Y, traps[trapIndex].X] = MapSpaceType.Pass;
+
+								break;
+							}
+						}
+
+						break;
 				}
 				#endregion
+
+				for( int trapIndex = 0; trapIndex < TRAP_COUNT; ++trapIndex )
+				{
+					if ( traps[trapIndex].IsBurst )
+					{
+						if ( traps[trapIndex].curBurstRange >= traps[trapIndex].BurstRange )
+						{
+							traps[trapIndex].IsActive = false;
+							traps[trapIndex].IsBurst = false;
+
+							break;
+						}
+
+						// 플레이어에게 아직 데미지를 주지 못했다면 검사..
+						if( false == traps[trapIndex].IsPlayerHit )
+						{
+							if ( IsInRange( player.X, player.Y, traps[trapIndex].X, traps[trapIndex].Y, traps[trapIndex].curBurstRange ) )
+							{
+								player.CurHp -= traps[trapIndex].Damage;
+								traps[trapIndex].IsPlayerHit = true;
+							}
+						}
+
+						++traps[trapIndex].curBurstRange;
+
+						isSkipRender = false;
+						isConsoleClear = true;
+					}
+				}
 
 				#region Switch Collision
 				for ( int switchIdx = 0; switchIdx < SWITCH_COUNT; ++switchIdx )
@@ -1454,14 +1526,14 @@ namespace KMH_Sokoban
 				}
 
 				// 현재 MP가 행동 시 필요한 MP 보다 부족하다면..
-				if ( player.Mp < Player.ACTION_USE_MP[(int)player.actionKind] )
+				if ( player.CurMp < Player.ACTION_USE_MP[(int)player.actionKind] )
 				{
 					playerErrorLog.AppendLine( "마나가 부족합니다." );
 					return;
 				}
 
 				// 행동에 필요한 MP 만큼 빼주기..
-				player.Mp -= Player.ACTION_USE_MP[(int)player.actionKind];
+				player.CurMp -= Player.ACTION_USE_MP[(int)player.actionKind];
 
 				// 행동 종류에 따라 해야할 행동 진행..
 				switch (player.actionKind)
@@ -1524,6 +1596,7 @@ namespace KMH_Sokoban
 				}
 			}
 
+			// 충돌 했는가..
 			bool IsCollision( int x, int y, int x2, int y2 )
 			{
 				if( x == x2 && y == y2)
@@ -1534,7 +1607,20 @@ namespace KMH_Sokoban
 				return false;
 			}
 
-			
+			// 범위 안에 있는가..
+			bool IsInRange( int x, int y, int x2, int y2, int range )
+			{
+				int xDistance = Math.Abs(x - x2);
+				int yDistance = Math.Abs(y - y2);
+
+				if ( xDistance + yDistance <= range )
+				{
+					return true;
+				}
+
+				return false;
+			}
+
 			// 포탈 밟았을 때 다른 게이트로 이동시키는 기능..
 			void PushPortal(in Portal[] portals, ref int curPosX, ref int curPosY, int prevPosX, int prevPosY )
 			{

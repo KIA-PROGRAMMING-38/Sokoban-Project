@@ -20,6 +20,7 @@ namespace Sokoban
 		public int X;
 		public int Y;
 		public Type type;
+		public int Effect;
 		public int Duration;
 		public string Image;
 		public ConsoleColor Color;

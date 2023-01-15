@@ -11,5 +11,11 @@ namespace Sokoban
 		public int Damage;
 		public string Image;
 		public ConsoleColor Color;
+		public bool IsBurst;
+		public int BurstRange;
+
+		public int curBurstRange;
+		public bool IsActive;
+		public bool IsPlayerHit;
 	}
 }
