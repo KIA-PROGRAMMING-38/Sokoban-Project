@@ -28,6 +28,7 @@ namespace KMH_Sokoban
 			while ( true )
 			{
 				Console.Clear();
+				Console.WriteLine( "전체화면으로 실행해주세요" );
 				for ( int i = 0; i < 5; ++i ) Console.WriteLine( "Win11 인 경우 1번, 아닌 경우 2번을 눌러주세요" );
                 ConsoleKey key = Console.ReadKey().Key;
 				if(key == ConsoleKey.D1)
@@ -699,7 +700,6 @@ namespace KMH_Sokoban
 				// Render Trap..
 				for ( int i = 0; i < TRAP_COUNT; ++i )
 				{
-
 					RenderObject( traps[i].X, traps[i].Y, traps[i].Image, traps[i].Color );
 				}
 
@@ -775,7 +775,7 @@ namespace KMH_Sokoban
 			{
 				Console.Clear();
 				Console.WriteLine( "이스터에그 약 5초뒤에 나옵니다. 전체화면 추천" );
-				Console.WriteLine( "이스터에그 약 10초뒤에 꺼집니다. 전체화면 추천" );
+				Console.WriteLine( "이스터에그는 아무키나 누르시면 나가집니다. 전체화면 추천" );
 				Console.WriteLine( "교수님 늘 좋은 수업 해주셔서 감사합니다." );
 				Console.WriteLine( "감사한 마음을 담았습니다." );
 
@@ -784,7 +784,10 @@ namespace KMH_Sokoban
 				Console.BackgroundColor = ConsoleColor.Black;
 				Console.ForegroundColor = ConsoleColor.DarkGreen;
 
-				Console.Clear();
+                Console.Clear();
+                Console.SetCursorPosition( 0, 0 );
+
+                #region 교수님 아스키아트
 				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
 				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
 				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" );
@@ -1074,14 +1077,19 @@ namespace KMH_Sokoban
 				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@;;::;;:~:;!$@!=$$#*::;:~-:;;;:~=***!=*;=!*;*;;!!!:=;=:~:::=**;;;::!;!!;!=*$=!*=*$$~~-~~:~~*$$#$*=$$=***~~:;;;:!##$$#$##@!!!;*!:,.--.,,-,,-~;;;:!!;;*$#$;:*=!!!!!;;-----:-,-~~--:" );
 				Console.WriteLine( @"@@@@@@@@@@@@@@@@@@@@@@@@*=$##$=$##@##;=$#$#@##=*=@@@=******=;;*!;=$!==*!=$!$$$#$*****$**!!!!!*=*!!!$=!***@*!!**=**=@=$$=$==****=*!#!:$$;*#=;$#;;!!*!*;~;!:=;::*:!*;!:~;!:!;:*!!=;;;!!!;;!;!!;!:!!=!!!!**" );
 
-				Console.SetCursorPosition( 0, 0 );
+                #endregion
 
-				Thread.Sleep( 10000 );
+                Console.SetCursorPosition( 0, 0 );
+
+				Console.ReadKey();
 
 				Console.BackgroundColor = BACKGROUND_COLOR;
 				Console.ForegroundColor = FOREGROUND_COLOR;
 				Console.Clear();
-				Console.CursorVisible = false;
+                Console.SetCursorPosition( 0, 0 );
+                Console.CursorVisible = false;
+
+				isSkipRender = false;
 			}
             #endregion
 
