@@ -30,5 +30,14 @@ namespace Sokoban
             else
                 Image = Image[3].ToString();
         }
+
+        public void Update()
+        {
+            PrevX = X;
+            PrevY = Y;
+
+            X += DirX;
+            Y += DirY;
+        }
     }
 }

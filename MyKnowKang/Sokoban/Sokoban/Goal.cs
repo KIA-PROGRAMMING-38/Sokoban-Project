@@ -11,6 +11,25 @@ namespace Sokoban
         public string Image;
         public ConsoleColor Color;
         public ConsoleColor GoalInColor;
-        public bool isGoalIn;
+        public bool IsGoalIn;
+
+        public bool CheckOnBox(in Box[] boxes)
+        {
+            IsGoalIn = false;
+
+            int boxCount = boxes.Length;
+
+            for ( int j = 0; j < boxCount; ++j )
+            {
+                if ( X == boxes[j].X && Y == boxes[j].Y )
+                {
+                    IsGoalIn = true;
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

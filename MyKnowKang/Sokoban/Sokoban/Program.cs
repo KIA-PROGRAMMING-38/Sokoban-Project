@@ -7,22 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
+using static Sokoban.Map;
 
 namespace KMH_Sokoban
 {
-	public enum MapSpaceType
-	{
-		Pass            // 지나가는 곳..
-		, DontPass      // 못지나가는 곳..
-		, PlayerStand   // 플레이어가 있는 곳..
-		, BoxStand      // 박스가 있는 곳..
-		, Portal		// 포탈이 있는 곳..
-		, Item			// 아이템이 있는 곳..
-		, Trap          // 트랩이 있는 곳..
-		, Bomb			// 폭탄이 있는 곳..
-		, Arrow			// 화살이 있는 곳..
-	}
-
 	public enum EndingType
 	{
 		None,
@@ -38,8 +26,10 @@ namespace KMH_Sokoban
 			while ( true )
 			{
 				Console.Clear();
-				Console.WriteLine( "전체화면으로 실행해주세요" );
-				for ( int i = 0; i < 5; ++i ) Console.WriteLine( "Win11 인 경우 1번, 아닌 경우 2번을 눌러주세요" );
+				Console.WriteLine( "전체화면Please 전체화면Please 전체화면Please 전체화면Please 전체화면Please 전체화면Please" );
+				Console.WriteLine( "전체화면Please 전체화면Please 전체화면Please 전체화면Please 전체화면Please 전체화면Please" );
+				Console.WriteLine( "전체화면Please 전체화면Please 전체화면Please 전체화면Please 전체화면Please 전체화면Please" );
+                Console.WriteLine( "Win11 인 경우 1번, 아닌 경우 2번을 눌러주세요" );
                 ConsoleKey key = Console.ReadKey().Key;
 				if ( key == ConsoleKey.D1 )
 				{
@@ -63,7 +53,7 @@ namespace KMH_Sokoban
 
 			// 초기 세팅 관련 상수 설정..
 			const bool CURSOR_VISIBLE = false;                      // 커서를 숨긴다..
-			const string TITLE_NAME = "Welcome To Liverpool";       // 타이틀을 설정한다..
+			const string TITLE_NAME = "Welcome To Sokoban World";       // 타이틀을 설정한다..
 			const ConsoleColor BACKGROUND_COLOR = ConsoleColor.Black;   // Background 색을 설정한다..
 			const ConsoleColor FOREGROUND_COLOR = ConsoleColor.White;     // 글꼴색을 설정한다..
 
@@ -154,7 +144,7 @@ namespace KMH_Sokoban
 			INIT_OPENCLOSE_WALL_INDEX[0] = new int[4] { 3, 4, 5, 6 };
 
 			// Trap 관련 상수 설정..
-			const int TRAP_COUNT = 7;
+			const int TRAP_COUNT = 4;
 			const ConsoleColor TRAP_COLOR = ConsoleColor.DarkMagenta;
 			const string TRAP_IMAGE_WIN11 = "▒";
 			const string TRAP_IMAGE_WIN10 = "Y";
@@ -172,11 +162,11 @@ namespace KMH_Sokoban
             const int ITEM_COUNT = 4;
 			ConsoleColor[] ITEM_COLOR = new ConsoleColor[Item.ITEM_TYPE_COUNT]
 			{
-				ConsoleColor.DarkCyan, ConsoleColor.Green, ConsoleColor.Red, ConsoleColor.Blue
+				ConsoleColor.DarkMagenta, ConsoleColor.Green, ConsoleColor.Red, ConsoleColor.Blue
 			};
 			string[] ITEM_IMAGE_WIN11 = new string[Item.ITEM_TYPE_COUNT]
 			{
-				"®", "┼", "☏", "☎"
+				"®", "┼", "☏", "☏"
             };
 			string[] ITEM_IMAGE_WIN10 = new string[Item.ITEM_TYPE_COUNT]
 			{
@@ -221,7 +211,7 @@ namespace KMH_Sokoban
 
 			// 맵 관련 변수 설정..
 			// 맵의 각 위치들의 데이터를 저장하는 룩업 테이블..
-			MapSpaceType[,] mapDatas = new MapSpaceType[MAP_HEIGHT + 1, MAP_WIDTH + 1];
+			Map map = new Map( MAP_RANGE_MIN_X, MAP_RANGE_MIN_Y, MAP_RANGE_MAX_X, MAP_RANGE_MAX_Y );
 
 
             // 벽 관련 변수 설정..
@@ -243,7 +233,7 @@ namespace KMH_Sokoban
 				goals[goalIndex] = new Goal
 				{
 					X = INIT_GOALS_X[goalIndex], Y = INIT_GOALS_Y[goalIndex], Image = initGoalImage, Color = GOAL_COLOR,
-					GoalInColor = GOALIN_COLOR, isGoalIn = false
+					GoalInColor = GOALIN_COLOR, IsGoalIn = false
 				};
 			}
 
@@ -303,19 +293,7 @@ namespace KMH_Sokoban
 			};
             traps[trapIndexTemp++] = new TriggerTrap
             {
-                X = 33, Y = 2, Image = initTrapImage, Color = TRAP_COLOR, MyType = Trap.TrapType.Trigger
-            };
-            traps[trapIndexTemp++] = new TriggerTrap
-            {
-                X = 33, Y = 3, Image = initTrapImage, Color = TRAP_COLOR, MyType = Trap.TrapType.Trigger
-            };
-            traps[trapIndexTemp++] = new TriggerTrap
-            {
-                X = 33, Y = 4, Image = initTrapImage, Color = TRAP_COLOR, MyType = Trap.TrapType.Trigger
-            };
-            traps[trapIndexTemp++] = new TriggerTrap
-            {
-                X = 33, Y = 5, Image = initTrapImage, Color = TRAP_COLOR, MyType = Trap.TrapType.Trigger
+                X = 32, Y = 2, Image = initTrapImage, Color = TRAP_COLOR, MyType = Trap.TrapType.Trigger
             };
 
 			for( int trapIndex = 2; trapIndex < TRAP_COUNT; ++trapIndex )
@@ -396,24 +374,28 @@ namespace KMH_Sokoban
 
 
 			// 시작 전에 맵 데이터에 플레이어 박스 위치 저장..
-			mapDatas[player.Y, player.X] = MapSpaceType.PlayerStand;
-			for ( int i = 0; i < BOX_COUNT; ++i )
+			map.ChangeSpaceType( player.X, player.Y, Map.SpaceType.PlayerStand );
+			for ( int boxIndex = 0; boxIndex < BOX_COUNT; ++boxIndex )
 			{
-                mapDatas[boxes[i].Y, boxes[i].X] = MapSpaceType.BoxStand;
+                map.ChangeSpaceType( boxes[boxIndex].X, boxes[boxIndex].Y, Map.SpaceType.BoxStand );
             }
 
 			// 맵 데이터에 벽 위치 저장..
-			for ( int i = 0; i < WALL_COUNT; ++i )
+			for ( int wallIndex = 0; wallIndex < WALL_COUNT; ++wallIndex )
 			{
-				if ( walls[i].IsActive )
+				Map.SpaceType spaceType = Map.SpaceType.Pass;
+
+				if ( walls[wallIndex].IsActive )
 				{
-                    mapDatas[walls[i].Y, walls[i].X] = MapSpaceType.DontPass;
+                    spaceType = Map.SpaceType.DontPass;
                 }
 				else
 				{
-                    mapDatas[walls[i].Y, walls[i].X] = MapSpaceType.Pass;
+                    spaceType = Map.SpaceType.Pass;
                 }
-			}
+
+                map.ChangeSpaceType( walls[wallIndex].X, walls[wallIndex].Y, spaceType );
+            }
 
 			// 맵 데이터에 포탈 위치 저장..
 			for ( int portalIndex = 0; portalIndex < PORTAL_COUNT; ++portalIndex )
@@ -422,7 +404,8 @@ namespace KMH_Sokoban
 				{
 					int gateX = portals[portalIndex].GatesX[gateIndex];
 					int gateY = portals[portalIndex].GatesY[gateIndex];
-                    mapDatas[gateY, gateX] = MapSpaceType.Portal;
+
+                    map.ChangeSpaceType( gateX, gateY, Map.SpaceType.Portal );
                 }
 			}
 
@@ -432,7 +415,7 @@ namespace KMH_Sokoban
 				int switchX = switches[switchIndex].X;
 				int switchY = switches[switchIndex].Y;
 
-				mapDatas[switchY, switchX] = MapSpaceType.DontPass;
+                map.ChangeSpaceType( switchX, switchY, Map.SpaceType.DontPass );
             }
 
 			// 맵 데이터에 Trap 위치 저장..
@@ -441,7 +424,7 @@ namespace KMH_Sokoban
 				int trapX = traps[switchIndex].X;
 				int trapY = traps[switchIndex].Y;
 
-				mapDatas[trapY, trapX] = MapSpaceType.Trap;
+                map.ChangeSpaceType( trapX, trapY, Map.SpaceType.Trap );
 			}
 
 			// 맵 데이터에 Item 위치 저장..
@@ -450,19 +433,19 @@ namespace KMH_Sokoban
 				int itemX = items[switchIndex].X;
 				int itemY = items[switchIndex].Y;
 
-				mapDatas[itemY, itemX] = MapSpaceType.Item;
+                map.ChangeSpaceType( itemX, itemY, Map.SpaceType.Item );
 			}
 
 			// 맵 외곽 통과 못하는 곳으로 설정..
-			for ( int i = 0; i <= MAP_WIDTH; ++i )
+			for ( int posX = 0; posX <= MAP_WIDTH; ++posX )
 			{
-				mapDatas[0, i] = MapSpaceType.DontPass;
-				mapDatas[MAP_HEIGHT, i] = MapSpaceType.DontPass;
+                map.ChangeSpaceType( posX, 0, Map.SpaceType.DontPass );
+                map.ChangeSpaceType( posX, MAP_HEIGHT, Map.SpaceType.DontPass );
 			}
-			for ( int i = 0; i <= MAP_HEIGHT; ++i )
+			for ( int posY = 0; posY <= MAP_HEIGHT; ++posY )
 			{
-				mapDatas[i, 0] = MapSpaceType.DontPass;
-				mapDatas[i, MAP_WIDTH] = MapSpaceType.DontPass;
+                map.ChangeSpaceType( 0, posY, Map.SpaceType.DontPass );
+                map.ChangeSpaceType( MAP_WIDTH, posY, Map.SpaceType.DontPass );
 			}
 
 			// 설명용 텍스트 설정..
@@ -518,17 +501,18 @@ namespace KMH_Sokoban
 				prevRunTime = runTime;
 				runTime = stopwatch.Elapsed.TotalMilliseconds * 0.001;
 
+				// 현재 실행 시간 로그 업데이트..
 				logMessage.RemoveLast();
 				logMessage.AddLast( new KeyValuePair<int, string>( 1, $"실행 시간 : {runTime:F3}" ) );
 
-				playerStateLog.Clear();
+                // Player 의 State 갱신..
+                playerStateLog.Clear();
 				playerStateLog.AppendLine( "========== Player State ==========" );
 
-				if ( elaspedTime >= frameInterval )
+				if ( elaspedTime >= frameInterval )	// 현재 지나간 시간이 Frame 간격보다 클 때 실행..
 				{
 					elaspedTime = 0.0;
 
-					#region ProcessInput
 					// --------------------------------------------------------------- ProcessInput.. ---------------------------------------------------------------
 					// 입력한 키 가져오기..
 					ConsoleKey inputKey = ConsoleKey.NoName;
@@ -537,48 +521,21 @@ namespace KMH_Sokoban
 						inputKey = Console.ReadKey().Key;
 						isSkipRender = false;
 					}
-					#endregion
 
-					if( EndingType.None != endingType )
-					{
-						inputKey = ConsoleKey.NoName;
-					}
+					if( EndingType.None == endingType )
+						Update( inputKey );
 
-                    Update( inputKey );
-
-                    // =========================================== Check Game Clear.. =========================================== //
-                    // 골인 지점과 박스 위치가 몇개나 같은지 비교하는 곳..
-                    int goalBoxCount = 0;
-					for ( int i = 0; i < GOAL_COUNT; ++i )
-					{
-						goals[i].isGoalIn = false;
-
-						for ( int j = 0; j < BOX_COUNT; ++j )
-						{
-							if ( goals[i].X == boxes[j].X && goals[i].Y == boxes[j].Y )
-							{
-								++goalBoxCount;
-								goals[i].isGoalIn = true;
-
-								break;
-							}
-						}
-					}
+					// =========================================== Check Game Clear.. =========================================== //
+					// 골인 지점과 박스 위치가 몇개나 같은지 비교하는 곳..
+					int goalInBoxCount = CountBoxOnGoal( ref goals, in boxes );
 
 					if(EndingType.None == endingType )
 					{
-                        // 현재 골인지점과 박스위치가 전부 같다면( GG )..
-                        if ( goalBoxCount == GOAL_COUNT )
-                        {
-                            endingType = EndingType.Clear;
-                            gameOverTime = runTime;
-                        }
-
-                        if ( player.CurHp <= 0 )
-                        {
-                            endingType = EndingType.Die;
-                            gameOverTime = runTime;
-                        }
+						endingType = ComputeEnding( goalInBoxCount, GOAL_COUNT, in player );
+						if(EndingType.None != endingType )
+						{
+							gameOverTime = runTime;
+						}
                     }
 					else
 					{
@@ -594,6 +551,7 @@ namespace KMH_Sokoban
 			#endregion
 
 			#region Clear Message
+
 			// 게임 클리어 했으니까 메시지 띄우기..
 			Console.Clear();
 			Console.SetCursorPosition( 0, 0 );
@@ -753,10 +711,14 @@ namespace KMH_Sokoban
 					break;
 			}
 
-			#endregion
+            #endregion
 
-			#region Render Function
-			void Render()
+            #region Render Function
+
+            /// <summary>
+            /// 한 프레임을 그린다..
+            /// </summary>
+            void Render()
 			{
 				// 이전 프레임 지우기..
 				if( isConsoleClear )
@@ -902,7 +864,7 @@ namespace KMH_Sokoban
 
                     if ( true == items[itemIndex].isActive )
                     {
-                    	RenderObject( itemX, itemY, itemImage, ConsoleColor.Blue );
+                    	RenderObject( itemX, itemY, itemImage, itemColor );
                     }
                     else
                     {
@@ -918,14 +880,16 @@ namespace KMH_Sokoban
 				}
 
 				// Render Player..
-				if ( MapSpaceType.Pass == mapDatas[player.PrevY, player.PrevX] )
-					RenderObject( player.PrevX, player.PrevY, " ", ConsoleColor.Black );
+				if ( Map.SpaceType.Pass == map.GetCurStandSpaceType( player.PrevX, player.PrevY ) )
+				{
+                    RenderObject( player.PrevX, player.PrevY, " ", ConsoleColor.Black );
+                }
 				RenderObject( player.X, player.Y, player.Image, player.Color );
 
 				// Render Goal..
 				for ( int i = 0; i < GOAL_COUNT; ++i )
 				{
-					if ( goals[i].isGoalIn )
+					if ( goals[i].IsGoalIn )
 					{
 						RenderObject( goals[i].X, goals[i].Y, goals[i].Image, goals[i].GoalInColor );
 					}
@@ -949,7 +913,10 @@ namespace KMH_Sokoban
 				}
 			}
 
-			void RenderObject(int x, int y, string image, ConsoleColor color)
+            /// <summary>
+            /// x, y 해당 좌표에 color 색에 맞게 image 를 출력..
+            /// </summary>
+            void RenderObject(int x, int y, string image, ConsoleColor color)
 			{
 				if ( MAP_RANGE_MIN_X - 1 > x || x > MAP_RANGE_MAX_X ||
 					MAP_RANGE_MIN_Y - 1 > y || y > MAP_RANGE_MAX_Y )
@@ -964,13 +931,16 @@ namespace KMH_Sokoban
 				Console.ForegroundColor = prevColor;
 			}
 
-			void 교수님죄송합니다()
+            /// <summary>
+            /// 이스터에그를 그린다..
+            /// </summary>
+            void 교수님죄송합니다()
 			{
 				Console.Clear();
 				Console.WriteLine( "이스터에그 약 3초뒤에 나옵니다. 전체화면 추천" );
 				Console.WriteLine( "이스터에그는 아무키나 누르시면 나가집니다. 전체화면 추천" );
 				Console.WriteLine( "교수님 늘 좋은 수업 해주셔서 감사합니다." );
-				Console.WriteLine( "감사한 마음을 담았습니다." );
+				Console.WriteLine( "감사한 마음을 표현했습니다." );
 
 				Thread.Sleep( 3000 );
 
@@ -1288,120 +1258,82 @@ namespace KMH_Sokoban
 			}
             #endregion
 
-			void Update( ConsoleKey inputKey )
+            /// <summary>
+			/// 한 프레임의 업데이트..
+			/// </summary>
+            void Update( ConsoleKey inputKey )
 			{
 				#region Update
 				// ------------------------------------------------------------------ Update.. ------------------------------------------------------------------
 				// ================================= Player Update.. =================================
-				UpdatePlayer( ref player, inputKey );
+				player.Update( inputKey, boxes );
 
-				// ================================= Item Update.. =================================
-				#region Item Update
+                // ================================= Item Update.. =================================
+                #region Item Update
 
-				for ( int index = 0; index < activeItemCount; ++index )
+                for ( int index = 0; index < activeItemCount; ++index )
+                {
+                    int itemIndex = playerActiveItemIndex[index];
+
+                    Item.Type curItemType = items[itemIndex].type;
+
+                    if ( Item.Type.END == curItemType )
+                    {
+                        continue;
+                    }
+
+                    switch ( curItemType )
+                    {
+                        case Item.Type.ReverseMove:
+                            // 현재 프레임에 플레이어가 움직인 거리 계산..
+                            int moveDirX = player.X - player.PrevX;
+                            int moveDirY = player.Y - player.PrevY;
+
+                            if ( 0 != moveDirX || moveDirY != 0 )   // 움직임이 있는 경우에만 실행..
+                            {
+                                // 그 반대 방향으로 움직이게 함..
+                                player.X = player.PrevX - moveDirX;
+                                player.Y = player.PrevY - moveDirY;
+                            }
+                            else
+                            {
+                                ++items[itemIndex].Duration;
+                            }
+                            break;
+
+                        case Item.Type.EasterEgg:
+                            교수님죄송합니다();
+                            break;
+
+                        case Item.Type.HPPosion:
+                            player.CurHp = Math.Min( player.MaxHp, player.CurHp + items[itemIndex].Effect );
+                            break;
+
+                        case Item.Type.MPPosion:
+                            player.CurMp = Math.Min( player.MaxMp, player.CurMp + items[itemIndex].Effect );
+                            break;
+                    }
+
+                    --items[itemIndex].Duration;
+
+                    if ( 0 == items[itemIndex].Duration )
+                    {
+                        items[itemIndex].type = Item.Type.END;
+                    }
+
+                    isSkipRender = false;
+                }
+
+                #endregion
+
+                #region Box Update
+                // ================================= Box Update.. =================================
+                // 박스 업데이트..
+                for ( int i = 0; i < BOX_COUNT; ++i )
 				{
-					int itemIndex = playerActiveItemIndex[index];
-
-					Item.Type curItemType = items[itemIndex].type;
-
-					if ( Item.Type.END == curItemType )
+					if( 1 == boxes[i].Update( in player ) )
 					{
-						continue;
-					}
-
-					switch( curItemType )
-					{
-						case Item.Type.ReverseMove:
-							// 현재 프레임에 플레이어가 움직인 거리 계산..
-							int moveDirX = player.X - player.PrevX;
-							int moveDirY = player.Y - player.PrevY;
-
-							if( 0 != moveDirX || moveDirY != 0 )	// 움직임이 있는 경우에만 실행..
-							{
-								// 그 반대 방향으로 움직이게 함..
-								player.X = player.PrevX - moveDirX;
-								player.Y = player.PrevY - moveDirY;
-							}
-							else
-							{
-								++items[itemIndex].Duration;
-							}
-							break;
-
-						case Item.Type.EasterEgg:
-							교수님죄송합니다();
-							break;
-
-						case Item.Type.HPPosion:
-							player.CurHp = Math.Min( player.MaxHp, player.CurHp + items[itemIndex].Effect );
-							break;
-
-						case Item.Type.MPPosion:
-							player.CurMp = Math.Min( player.MaxMp, player.CurMp + items[itemIndex].Effect );
-							break;
-					}
-
-					--items[itemIndex].Duration;
-
-					if ( 0 == items[itemIndex].Duration )
-					{
-						items[itemIndex].type = Item.Type.END;
-					}
-
-					isSkipRender = false;
-				}
-
-				#endregion
-
-				#region Box Update
-				// ================================= Box Update.. =================================
-				// 박스 업데이트..
-				for ( int i = 0; i < BOX_COUNT; ++i )
-				{
-					// 박스 이전위치 갱신..
-					boxes[i].PrevX = boxes[i].X;
-					boxes[i].PrevY = boxes[i].Y;
-
-					switch ( boxes[i].CurState )
-					{
-						case Box.State.Idle:
-							if ( IsCollision( player.X, player.Y, boxes[i].X, boxes[i].Y ) )   // 플레이어와 박스가 같을 때..
-							{
-								// 박스가 이동할 위치를 계산( 현재위치 - 이전위치 = 이동할 방향 )..
-								int boxMoveDirX = player.X - player.PrevX;
-								int boxMoveDirY = player.Y - player.PrevY;
-
-								// 박스 현재위치 갱신.. 
-								boxes[i].X += boxMoveDirX;
-								boxes[i].Y += boxMoveDirY;
-
-								break;
-							}
-
-							break;
-						case Box.State.Move:
-							boxes[i].X -= boxes[i].DirX;
-							boxes[i].Y -= boxes[i].DirY;
-
-							isSkipRender = false;
-
-							break;
-
-						case Box.State.GrabByPlayer:
-						{
-							boxes[i].PrevX = boxes[i].X;
-							boxes[i].PrevY = boxes[i].Y;
-
-							// 박스가 이동할 위치를 계산( 현재위치 - 이전위치 = 이동할 방향 )..
-							int boxMoveDirX = player.X - player.PrevX;
-							int boxMoveDirY = player.Y - player.PrevY;
-
-							// 박스 현재위치 갱신.. 
-							boxes[i].X += boxMoveDirX;
-							boxes[i].Y += boxMoveDirY;
-						}
-
-						break;
+						isSkipRender = false;
 					}
 				}
                 #endregion
@@ -1421,25 +1353,7 @@ namespace KMH_Sokoban
 							{
                                 BombTrap curTrap = (BombTrap)traps[trapIndex];
 
-                                if ( curTrap.curBurstRange >= curTrap.BurstRange )
-                                {
-                                    curTrap.IsActive = false;
-                                    curTrap.IsBurst = false;
-
-									continue;
-                                }
-
-                                // 플레이어에게 아직 데미지를 주지 못했다면 검사..
-                                if ( false == curTrap.IsPlayerHit )
-                                {
-                                    if ( IsInRange( player.X, player.Y, traps[trapIndex].X, traps[trapIndex].Y, curTrap.curBurstRange ) )
-                                    {
-                                        player.CurHp -= curTrap.Damage;
-                                        curTrap.IsPlayerHit = true;
-                                    }
-                                }
-
-                                ++curTrap.curBurstRange;
+								curTrap.Update( ref player );
                             }
 
                                 break;
@@ -1448,26 +1362,7 @@ namespace KMH_Sokoban
 							{
                                 TriggerTrap curTrap = (TriggerTrap)traps[trapIndex];
 
-                                curTrap.IsActive = false;
-                                curTrap.IsBurst = false;
-
-                                for( int spawnIndex = 0; spawnIndex < curTrap.SpawnObjectCount; ++spawnIndex )
-								{
-									int x = curTrap.SpawnObjectsX[spawnIndex];
-									int y = curTrap.SpawnObjectsY[spawnIndex];
-									int dirX = curTrap.SpawnObjectsDirX[spawnIndex];
-									int dirY = curTrap.SpawnObjectsDirY[spawnIndex];
-
-									Arrow arrow = new Arrow
-									{
-										X = x, Y = y, PrevX = x, PrevY = y, DirX = dirX, DirY = dirY,
-										Image = initArrowImage, Color = ARROW_COLOR, IsActive = true, Damage = 5
-									};
-
-									arrow.ComputeImage();
-
-                                    arrows.Add( arrow );
-								}
+								curTrap.SpawnObject( ref player, ref arrows, initArrowImage, ARROW_COLOR );
                             }
 
                                 break;
@@ -1475,116 +1370,110 @@ namespace KMH_Sokoban
                     }
                 }
 
-				#endregion
+                #endregion
 
-				foreach ( var arrow in arrows )
+                #region ArrowUpdate
+
+                foreach ( var arrow in arrows )
 				{
-					arrow.PrevX = arrow.X;
-					arrow.PrevY = arrow.Y;
-
-                    arrow.X += arrow.DirX;
-					arrow.Y += arrow.DirY;
+					arrow.Update();
 
 					isSkipRender = false;
                 }
 
-                // ================================= Collision Update.. =================================
-                #region Box Collision
-                // 박스가 특정 물체와 겹쳤다( 박스 or 벽 or 맵 외곽 )..
-                for ( int i = 0; i < BOX_COUNT; ++i )
+				#endregion
+
+				// ================================= Collision Update.. =================================
+				#region Box Collision
+
+				// 박스가 특정 물체와 겹쳤다( 박스 or 벽 or 맵 외곽 )..
+				for ( int boxIndex = 0; boxIndex < BOX_COUNT; ++boxIndex )
 				{
-                    MapSpaceType curStandSpaceType = mapDatas[boxes[i].Y, boxes[i].X];
+					Map.SpaceType curStandSpaceType = map.GetCurStandSpaceType( boxes[boxIndex].X, boxes[boxIndex].Y );
 
 					// 박스가 현재 위치에 다른 물체가 있을 때는 이전 위치로 이동..
 					switch ( curStandSpaceType )
 					{
-						case MapSpaceType.DontPass:
-							boxes[i].X = boxes[i].PrevX;
-							boxes[i].Y = boxes[i].PrevY;
+						case Map.SpaceType.DontPass:
+							boxes[boxIndex].UndoPosState();
 
-							boxes[i].CurState = Box.State.Idle;
-
-							break;
-						case MapSpaceType.BoxStand:
-							for ( int curBoxIdx = 0; curBoxIdx < BOX_COUNT; ++curBoxIdx )
+                            break;
+						case Map.SpaceType.BoxStand:
+							for ( int otherBoxIndex = 0; otherBoxIndex < BOX_COUNT; ++otherBoxIndex )
 							{
-								if ( curBoxIdx == i )
-									continue;
-								if ( boxes[i].X != boxes[curBoxIdx].X || boxes[i].Y != boxes[curBoxIdx].Y )
-									continue;
+								// 현재 같은 박스를 검사하는 것이라면 continue..
+								if ( boxIndex == otherBoxIndex )
+								{
+                                    continue;
+                                }
 
-								boxes[i].X = boxes[i].PrevX;
-								boxes[i].Y = boxes[i].PrevY;
-
-								boxes[i].CurState = Box.State.Idle;
+								// 충돌 시 다시 제자리로 돌려보내기..
+								if ( IsCollision( boxes[boxIndex].X, boxes[boxIndex].Y, boxes[otherBoxIndex].X, boxes[otherBoxIndex].Y ) )
+								{
+									boxes[boxIndex].UndoPosState();
+                                }
 
 								break;
 							}
 
 							break;
-						case MapSpaceType.PlayerStand:
-							if ( Box.State.GrabByPlayer != boxes[i].CurState )
+						case Map.SpaceType.PlayerStand:
+							if ( Box.State.GrabByPlayer != boxes[boxIndex].CurState )
 							{
-								boxes[i].X = boxes[i].PrevX;
-								boxes[i].Y = boxes[i].PrevY;
-
-								boxes[i].CurState = Box.State.Idle;
+								boxes[boxIndex].UndoPosState();
 							}
 
 							break;
-						case MapSpaceType.Portal:
+						case Map.SpaceType.Portal:
 							// 포탈 다른 게이트로 이동..
-							PushPortal( portals, ref boxes[i].X, ref boxes[i].Y, boxes[i].PrevX, boxes[i].PrevY );
+							PushPortal( portals, ref boxes[boxIndex].X, ref boxes[boxIndex].Y, boxes[boxIndex].PrevX, boxes[boxIndex].PrevY );
 
 							// 현재 플레이어에게 잡혀있는 상태라면 기본 상태로 변경..
-							if ( Box.State.GrabByPlayer == boxes[i].CurState )
-								boxes[i].CurState = Box.State.Idle;
+							if ( Box.State.GrabByPlayer == boxes[boxIndex].CurState )
+							{
+								boxes[boxIndex].UndoState();
+							}
 
-							i--;    // 이동한 지점에 다른 오브젝트가 있는지 검사하려고..
+                            // 이동한 지점에 다른 오브젝트가 한번 더 검사하려고..
+                            --boxIndex;
 
 							break; 
-						case MapSpaceType.Trap:
+						case Map.SpaceType.Trap:
                             for ( int trapIndex = 0; trapIndex < TRAP_COUNT; ++trapIndex )
                             {
-                                if ( traps[trapIndex].IsDestroy )
+                                if ( IsCollision( boxes[boxIndex].X, boxes[boxIndex].Y, traps[trapIndex].X, traps[trapIndex].Y ) )
                                 {
-                                    continue;
-                                }
+									traps[trapIndex].Action();
 
-                                if ( IsCollision( boxes[i].X, boxes[i].Y, traps[trapIndex].X, traps[trapIndex].Y ) )
-                                {
-                                    traps[trapIndex].IsBurst = true;
-                                    traps[trapIndex].IsActive = true;
-                                    traps[trapIndex].IsDestroy = true;
-
-                                    mapDatas[traps[trapIndex].Y, traps[trapIndex].X] = MapSpaceType.Pass;
+									map.ChangeSpaceType( traps[trapIndex].X, traps[trapIndex].Y, Map.SpaceType.Pass );
 
                                     break;
                                 }
                             }
 
 							break;
-						case MapSpaceType.Arrow:
-							boxes[i].CurState = Box.State.Idle;
+						case Map.SpaceType.Arrow:
+							boxes[boxIndex].UndoState();
 
                             break;
 					}
 				}
+
 				#endregion
 
 				#region Player Collision
+
 				// 플레이어가 특정 물체와 겹쳤다( 박스 or 벽 등등 )..
-				MapSpaceType overlapSpaceType = mapDatas[player.Y, player.X];	// 여기서 받아옵니다..
+				Map.SpaceType overlapSpaceType = map.GetCurStandSpaceType(player.X, player.Y );	// 여기서 받아옵니다..
 
 				// 여기서 검사..
 				switch ( overlapSpaceType )
 				{
-					case MapSpaceType.DontPass:
-						player.X = player.PrevX;
-						player.Y = player.PrevY;
+					case Map.SpaceType.DontPass:
+						player.UndoPos();
 
 						break;
-					case MapSpaceType.BoxStand:
+					case Map.SpaceType.BoxStand:
 						for ( int boxIdx = 0; boxIdx < BOX_COUNT; ++boxIdx )
 						{
 							int boxX = boxes[boxIdx].X;
@@ -1592,26 +1481,26 @@ namespace KMH_Sokoban
 
 							// 만약 플레이어와 박스의 위치가 같을 때 이전 위치로..
 							// 맵 데이터가 갱신이 안되있는 상태기 때문에 이 검사를 하는 것..
-							if ( player.X == boxX && player.Y == boxY )
+							if ( IsCollision( player.X, player.Y, boxX, boxY ) )
 							{
-								player.X = player.PrevX;
-								player.Y = player.PrevY;
+								player.UndoPos();
 							}
 						}
 
 						break;
-					case MapSpaceType.Portal:
+					case Map.SpaceType.Portal:
 						PushPortal( portals, ref player.X, ref player.Y, player.PrevX, player.PrevY );
 
 						break;
 
-					case MapSpaceType.Item:
+					case Map.SpaceType.Item:
 						for ( int itemIndex = 0; itemIndex < ITEM_COUNT; ++itemIndex )
 						{
 							if( IsCollision( player.X, player.Y, items[itemIndex].X, items[itemIndex].Y ))
 							{
 								playerActiveItemIndex[activeItemCount] = itemIndex;
 								++activeItemCount;
+
 								// 밟은 아이템은 필드에서 제거( 안보이게 함 )..
 								items[itemIndex].isActive = false;
 
@@ -1620,21 +1509,14 @@ namespace KMH_Sokoban
 						}
 						break;
 
-					case MapSpaceType.Trap:
+					case Map.SpaceType.Trap:
 						for ( int trapIndex = 0; trapIndex < TRAP_COUNT; ++trapIndex )
 						{
-							if ( traps[trapIndex].IsDestroy )
-							{
-								continue;
-							}
-
 							if ( IsCollision( player.X, player.Y, traps[trapIndex].X, traps[trapIndex].Y ) )
 							{
-								traps[trapIndex].IsBurst = true;
-								traps[trapIndex].IsActive = true;
-								traps[trapIndex].IsDestroy = true;
+								traps[trapIndex].Action();
 
-                                mapDatas[traps[trapIndex].Y, traps[trapIndex].X] = MapSpaceType.Pass;
+								map.ChangeSpaceType( traps[trapIndex].X, traps[trapIndex].Y, Map.SpaceType.Pass );
 
 								break;
 							}
@@ -1642,16 +1524,18 @@ namespace KMH_Sokoban
 
 						break;
 				}
+
                 #endregion
 
 				#region Switch Collision
+
 				for ( int switchIdx = 0; switchIdx < SWITCH_COUNT; ++switchIdx )
 				{
 					int switchButtonX = switches[switchIdx].X + switches[switchIdx].ButtonOffsetX;
 					int switchButtonY = switches[switchIdx].Y + switches[switchIdx].ButtonOffsetY;
 
-					MapSpaceType curPushPosSpaceType = mapDatas[switchButtonY, switchButtonX];
-					if ( MapSpaceType.Pass != curPushPosSpaceType )
+					Map.SpaceType curPushPosSpaceType = map.GetCurStandSpaceType( switchButtonX, switchButtonY );
+					if ( Map.SpaceType.Pass != curPushPosSpaceType )
 					{
 						if ( false == switches[switchIdx].IsHolding )
 						{
@@ -1688,27 +1572,30 @@ namespace KMH_Sokoban
 						}
 					}
 				}
-                #endregion
+
+				#endregion
+
+				#region Arrow Collision
 
 				for( int arrowIndex = 0; arrowIndex < arrows.Count; )
 				{
-                    MapSpaceType curSpaceType = mapDatas[arrows[arrowIndex].Y, arrows[arrowIndex].X];
+					Map.SpaceType curSpaceType = map.GetCurStandSpaceType( arrows[arrowIndex].X, arrows[arrowIndex].Y );
 
                     switch ( curSpaceType )
                     {
-                        case MapSpaceType.PlayerStand:
+                        case Map.SpaceType.PlayerStand:
                             player.CurHp -= arrows[arrowIndex].Damage;
 							removeArrows.Add( arrows[arrowIndex] );
                             arrows.Remove( arrows[arrowIndex] );
 
                             break;
 
-                        case MapSpaceType.DontPass:
+                        case Map.SpaceType.DontPass:
                             removeArrows.Add( arrows[arrowIndex] );
                             arrows.Remove( arrows[arrowIndex] );
 							break;
 
-                        case MapSpaceType.BoxStand:
+                        case Map.SpaceType.BoxStand:
                             removeArrows.Add( arrows[arrowIndex] );
                             arrows.Remove( arrows[arrowIndex] );
 
@@ -1721,22 +1608,25 @@ namespace KMH_Sokoban
                     }
                 }
 
+				#endregion
+
 				foreach ( var arrow in removeArrows )
 				{
-					mapDatas[arrow.PrevY, arrow.PrevX] = MapSpaceType.Pass;
+					map.ChangeSpaceType( arrow.PrevX, arrow.PrevY, Map.SpaceType.Pass );
 				}
 
                 // =========================================== Map Update.. =========================================== //
                 #region Map Update
+
                 // 플레이어 정보 갱신..
-                mapDatas[player.PrevY, player.PrevX] = MapSpaceType.Pass;
-                mapDatas[player.Y, player.X] = MapSpaceType.PlayerStand;
+                map.ChangeSpaceType( player.PrevX, player.PrevY, Map.SpaceType.Pass );
+                map.ChangeSpaceType( player.X, player.Y, Map.SpaceType.PlayerStand );
 
                 // Box 정보 갱신..
-                for ( int i = 0; i < BOX_COUNT; ++i )
+                for ( int boxIndex = 0; boxIndex < BOX_COUNT; ++boxIndex )
 				{
-					mapDatas[boxes[i].PrevY, boxes[i].PrevX] = MapSpaceType.Pass;
-					mapDatas[boxes[i].Y, boxes[i].X] = MapSpaceType.BoxStand;
+                    map.ChangeSpaceType( boxes[boxIndex].PrevX, boxes[boxIndex].PrevY, Map.SpaceType.Pass );
+                    map.ChangeSpaceType( boxes[boxIndex].X, boxes[boxIndex].Y, Map.SpaceType.BoxStand );
 				}
 
 				// Portal 정보 갱신..
@@ -1746,7 +1636,8 @@ namespace KMH_Sokoban
 					{
 						int curPortalX = portals[portalIdx].GatesX[gateIndex];
 						int curPortalY = portals[portalIdx].GatesY[gateIndex];
-						mapDatas[curPortalY, curPortalX] = MapSpaceType.Portal;
+
+                        map.ChangeSpaceType( curPortalX, curPortalY, Map.SpaceType.Portal );
 					}
 				}
 
@@ -1755,54 +1646,72 @@ namespace KMH_Sokoban
 				{
 					int wallX = walls[wallIdx].X;
 					int wallY = walls[wallIdx].Y;
+					Map.SpaceType changeSpaceType = SpaceType.Pass;
 
 					if ( true == walls[wallIdx].IsActive )
 					{
-						mapDatas[wallY, wallX] = MapSpaceType.DontPass;
+                        changeSpaceType = Map.SpaceType.DontPass;
 					}
 					else
 					{
-						mapDatas[wallY, wallX] = MapSpaceType.Pass;
+                        changeSpaceType = Map.SpaceType.Pass;
 					}
-				}
+
+                    map.ChangeSpaceType( wallX, wallY, changeSpaceType );
+                }
 
 				// Switch 정보 갱신..
 				for ( int switchIndex = 0; switchIndex < SWITCH_COUNT; ++switchIndex )
 				{
-					mapDatas[switches[switchIndex].Y, switches[switchIndex].X] = MapSpaceType.DontPass;
+					int switchX = switches[switchIndex].X;
+					int switchY = switches[switchIndex].Y;
+
+                    map.ChangeSpaceType( switchX, switchY, Map.SpaceType.DontPass );
 				}
 
 				// Item 정보 갱신..
 				for( int itemIndex = 0; itemIndex < ITEM_COUNT; ++itemIndex )
 				{
-					if( true == items[itemIndex].isActive )
+                    int itemX = items[itemIndex].X;
+                    int itemY = items[itemIndex].Y;
+                    Map.SpaceType changeSpaceType = SpaceType.Pass;
+
+                    if ( true == items[itemIndex].isActive )
 					{
-						mapDatas[items[itemIndex].Y, items[itemIndex].X] = MapSpaceType.Item;
+                        changeSpaceType = Map.SpaceType.Item;
 					}
 					else
 					{
-						mapDatas[items[itemIndex].Y, items[itemIndex].X] = MapSpaceType.Pass;
+                        changeSpaceType = Map.SpaceType.Pass;
 					}
+
+					map.ChangeSpaceType( itemX, itemY, changeSpaceType );
 				}
 
 				// Arrow 정보 갱신..
 				for ( int arrowIndex = 0; arrowIndex < arrows.Count; ++arrowIndex )
 				{
-					mapDatas[arrows[arrowIndex].PrevY, arrows[arrowIndex].PrevX] = MapSpaceType.Pass;
-					mapDatas[arrows[arrowIndex].Y, arrows[arrowIndex].X] = MapSpaceType.Arrow;
+                    map.ChangeSpaceType( arrows[arrowIndex].PrevX, arrows[arrowIndex].PrevY, Map.SpaceType.Pass );
+                    map.ChangeSpaceType( arrows[arrowIndex].X, arrows[arrowIndex].Y, Map.SpaceType.Arrow );
 				}
 
                 // Trap 정보 갱신..
                 for ( int trapIndex = 0; trapIndex < TRAP_COUNT; ++trapIndex )
                 {
-					if ( traps[trapIndex].IsDestroy )
+					int trapX = traps[trapIndex].X;
+					int trapY = traps[trapIndex].Y;
+					Map.SpaceType changeSpaceType = SpaceType.Pass;
+
+                    if ( traps[trapIndex].IsDestroy )
 					{
-                        mapDatas[traps[trapIndex].Y, traps[trapIndex].X] = MapSpaceType.Pass;
+                        changeSpaceType = Map.SpaceType.Pass;
                     }
 					else
 					{
-                        mapDatas[traps[trapIndex].Y, traps[trapIndex].X] = MapSpaceType.Trap;
+                        changeSpaceType = Map.SpaceType.Trap;
                     }
+
+					map.ChangeSpaceType( trapX, trapY, changeSpaceType );
                 }
 
                 #endregion
@@ -1810,205 +1719,110 @@ namespace KMH_Sokoban
                 #endregion
             }
 
-			void UpdatePlayer( ref Player player, ConsoleKey inputKey )
-			{
-				// 플레이어 이전위치 갱신..
-				player.PrevX = player.X;
-				player.PrevY = player.Y;
-
-				int moveX = 0;
-				int moveY = 0;
-
-				switch ( inputKey )
-				{
-					case ConsoleKey.RightArrow:
-					case ConsoleKey.LeftArrow:
-						moveX += (int)inputKey - 38;
-						player.actionKind = Player.ActionKind.Move;
-
-						break;
-					case ConsoleKey.DownArrow:
-					case ConsoleKey.UpArrow:
-						moveY += (int)inputKey - 39;
-						player.actionKind = Player.ActionKind.Move;
-
-						break;
-					case ConsoleKey.Spacebar:
-						player.actionKind = Player.ActionKind.Grab;
-
-						break;
-					case ConsoleKey.A:
-						player.actionKind = Player.ActionKind.Kick;
-
-						break;
-
-					default:
-						return;
-				}
-
-				// 현재 MP가 행동 시 필요한 MP 보다 부족하다면..
-				if ( player.CurMp < Player.ACTION_USE_MP[(int)player.actionKind] )
-				{
-					playerErrorLog.AppendLine( "마나가 부족합니다." );
-					return;
-				}
-
-				// 행동에 필요한 MP 만큼 빼주기..
-				player.CurMp -= Player.ACTION_USE_MP[(int)player.actionKind];
-
-				// 행동 종류에 따라 해야할 행동 진행..
-				switch (player.actionKind)
-				{
-					case Player.ActionKind.Move:
-						player.X += moveX;
-						player.Y += moveY;
-						++curPlayerMoveCount;
-
-						break;
-					case Player.ActionKind.Grab:
-						for ( int i = 0; i < BOX_COUNT; ++i )
-						{
-							int boxX = boxes[i].X;
-							int boxY = boxes[i].Y;
-							Box.State boxState = boxes[i].CurState;
-
-							int xDist = Math.Abs( player.X - boxX );
-							int yDist = Math.Abs( player.Y - boxY );
-
-							if ( 1 == xDist + yDist )
-							{
-								if ( Box.State.GrabByPlayer == boxState )
-									boxState = Box.State.Idle;
-								else
-									boxState = Box.State.GrabByPlayer;
-
-								boxes[i].CurState = boxState;
-							}
-						}
-
-						break;
-					case Player.ActionKind.Kick:
-						for ( int i = 0; i < BOX_COUNT; ++i )
-						{
-							int boxX = boxes[i].X;
-							int boxY = boxes[i].Y;
-
-							int xDist = Math.Abs( player.X - boxX );
-							int yDist = Math.Abs( player.Y - boxY );
-
-							if ( 1 == xDist + yDist )
-							{
-								int curBoxIndex = i;
-
-								// 박스 상태 변경 및 그와 관련된 값 설정..
-								boxes[curBoxIndex].CurState = Box.State.Move;
-
-								int dirX = player.X - boxX;
-								int dirY = player.Y - boxY;
-
-								boxes[curBoxIndex].DirX = dirX;
-								boxes[curBoxIndex].DirY = dirY;
-							}
-						}
-
-						break;
-				}
-			}
-
-			// 충돌 했는가..
-			bool IsCollision( int x, int y, int x2, int y2 )
-			{
-				if( x == x2 && y == y2)
-				{
-					return true;
-				}
-
-				return false;
-			}
-
-			// 범위 안에 있는가..
-			bool IsInRange( int x, int y, int x2, int y2, int range )
-			{
-				int xDistance = Math.Abs(x - x2);
-				int yDistance = Math.Abs(y - y2);
-
-				if ( xDistance + yDistance <= range )
-				{
-					return true;
-				}
-
-				return false;
-			}
-
-			// 포탈 밟았을 때 다른 게이트로 이동시키는 기능..
-			void PushPortal(in Portal[] portals, ref int curPosX, ref int curPosY, int prevPosX, int prevPosY )
-			{
-				bool isFindPortal = false;
-
-				for ( int portalIdx = 0; portalIdx < PORTAL_COUNT; ++portalIdx )
-				{
-					for ( int gateIndex = 0; gateIndex < PORTAL_GATE_COUNT; ++gateIndex )
+            /// <summary>
+            /// 박스가 몇개나 골인했는가..
+            /// </summary>
+            int CountBoxOnGoal( ref Goal[] goals, in Box[] boxes )
+            {
+                // 골인 지점과 박스 위치가 몇개나 같은지 비교하는 곳..
+                int goalBoxCount = 0;
+                for ( int goalIndex = 0; goalIndex < GOAL_COUNT; ++goalIndex )
+                {
+					// 박스가 골 위에 있는 경우에만 count 증가..
+					if( true == goals[goalIndex].CheckOnBox( boxes ) )
 					{
-						int curPortalX = portals[portalIdx].GatesX[gateIndex];
-						int curPortalY = portals[portalIdx].GatesY[gateIndex];
-
-						if ( IsCollision( curPortalX, curPortalY, curPosX, curPosY ) )
-						{
-							// 다른 포탈 게이트 위치 계산..
-							ComputeOtherPortalGatePosition( portals[portalIdx], gateIndex, out curPortalX, out curPortalY );
-
-							// 다른 포탈 게이트 이동 시 현재 이동한 방향으로 1칸 이동한 위치에 순간이동시키기..
-							int dirX = curPosX - prevPosX;
-							int dirY = curPosY - prevPosY;
-
-							int teleportPosX = curPortalX + dirX;
-							int teleportPosY = curPortalY + dirY;
-
-							// 현재 포탈 이동한 지점에 다른 오브젝트가 있는지 검사..
-							MapSpaceType curPosSpaceType = mapDatas[teleportPosY, teleportPosX];
-							if ( MapSpaceType.Pass == curPosSpaceType || MapSpaceType.Item == curPosSpaceType )
-							{
-								curPosX = teleportPosX;
-								curPosY = teleportPosY;
-							}
-							else
-							{
-								curPosX = prevPosX;
-								curPosY = prevPosY;
-							}
-
-							isFindPortal = true;
-
-							break;
-						}
+						++goalBoxCount;
 					}
+                }
+
+                return goalBoxCount;
+            }
+
+            /// <summary>
+            /// 엔딩 종류를 구하는 함수( 엔딩이 아니라면 EndingType.None 을 반환 )..
+            /// </summary>
+            EndingType ComputeEnding( int curGoalInCount, int goalCount, in Player player )
+            {
+                EndingType endingType = EndingType.None;
+
+                // 현재 골인지점과 박스위치가 전부 같다면( GG )..
+                if ( curGoalInCount == goalCount )
+                {
+                    endingType = EndingType.Clear;
+                }
+
+                if ( player.CurHp <= 0 )
+                {
+                    endingType = EndingType.Die;
+                }
+
+                return endingType;
+            }
+
+            /// <summary>
+            /// 포탈 밟았을 때 다른 게이트로 이동시키는 기능..
+            /// </summary>
+            void PushPortal( in Portal[] portals, ref int curPosX, ref int curPosY, int prevPosX, int prevPosY )
+            {
+                bool isFindPortal = false;
+
+                for ( int portalIdx = 0; portalIdx < PORTAL_COUNT; ++portalIdx )
+                {
+                    for ( int gateIndex = 0; gateIndex < PORTAL_GATE_COUNT; ++gateIndex )
+                    {
+                        int curPortalX = portals[portalIdx].GatesX[gateIndex];
+                        int curPortalY = portals[portalIdx].GatesY[gateIndex];
+
+                        if ( IsCollision( curPortalX, curPortalY, curPosX, curPosY ) )
+                        {
+							// 다른 포탈 게이트 위치 계산..
+							portals[portalIdx].ComputeOtherPortalGatePosition( gateIndex, out curPortalX, out curPortalY );
+
+                            // 다른 포탈 게이트 이동 시 현재 이동한 방향으로 1칸 이동한 위치에 순간이동시키기..
+                            int dirX = curPosX - prevPosX;
+                            int dirY = curPosY - prevPosY;
+
+                            int teleportPosX = curPortalX + dirX;
+                            int teleportPosY = curPortalY + dirY;
+
+                            // 현재 포탈 이동한 지점에 다른 오브젝트가 있는지 검사..
+                            Map.SpaceType curPosSpaceType = map.GetCurStandSpaceType( teleportPosX, teleportPosY );
+                            if ( Map.SpaceType.Pass == curPosSpaceType || Map.SpaceType.Item == curPosSpaceType )
+                            {
+                                curPosX = teleportPosX;
+                                curPosY = teleportPosY;
+                            }
+                            else
+                            {
+                                curPosX = prevPosX;
+                                curPosY = prevPosY;
+                            }
+
+                            isFindPortal = true;
+
+                            break;
+                        }
+                    }
 
                     if ( isFindPortal )
                     {
                         break;
                     }
                 }
-			}
+            }
 
-			// Portal 현재 서 있는 게이트가 아닌 다른 게이트의 위치를 계산..
-			void ComputeOtherPortalGatePosition( in Portal portal, int ignoreIndex, out int gateX, out int gateY )
-			{
-				Random random = new Random();
-
-                int curGateX = -1;
-                int curGateY = -1;
-                int curIndex = ignoreIndex;
-				while ( curIndex == ignoreIndex )
-				{
-					curIndex = random.Next( PORTAL_GATE_COUNT );
-
-                    curGateX = portal.GatesX[curIndex];
-                    curGateY = portal.GatesY[curIndex];
+            /// <summary>
+            /// 충돌 했는가..
+            /// </summary>
+            bool IsCollision( int x, int y, int x2, int y2 )
+            {
+                if ( x == x2 && y == y2 )
+                {
+                    return true;
                 }
 
-                gateX = curGateX;
-                gateY = curGateY;
-			}
+                return false;
+            }
         }
     }
 }
