@@ -120,6 +120,8 @@ namespace Sokoban
 
         private void ProcessInputKey(ConsoleKey inputKey, ref MoveInfo outMoveInfo )
         {
+            actionKind = ActionKind.None;
+
             switch ( inputKey )
             {
                 case ConsoleKey.RightArrow:
