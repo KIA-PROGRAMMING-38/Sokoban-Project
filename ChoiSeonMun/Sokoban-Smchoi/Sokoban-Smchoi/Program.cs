@@ -102,9 +102,10 @@ class Program
                     continue;
                 }
 
-                OnCollision(playerMoveDirection,
-                    ref playerX, ref playerY,
-                    in wallPositionsX[i], in wallPositionsY[i]);
+                OnCollision(() =>
+                {
+                    PushOut(playerMoveDirection, ref playerX, ref playerY, wallPositionsX[i], wallPositionsY[i]);
+                });
             }
             
             // 박스 업데이트
@@ -115,29 +116,10 @@ class Program
                     continue;
                 }
 
-                switch (playerMoveDirection)
+                OnCollision(() =>
                 {
-                    case Direction.Left:
-                        MoveToLeftOfTarget(out boxPositionsX[i], in playerX);
-
-                        break;
-                    case Direction.Right:
-                        MoveToRightOfTarget(out boxPositionsX[i], in playerX);
-
-                        break;
-                    case Direction.Up:
-                        MoveToUpOfTarget(out boxPositionsY[i], in playerY);
-                        
-                        break;
-                    case Direction.Down:
-                        MoveToDownOfTarget(out boxPositionsY[i], in playerY);
-                        
-                        break;
-                    default:    // Error
-                        ExitWithError($"[Error] 플레이어 방향 : {playerMoveDirection}");
-
-                        break;
-                }
+                    MoveBox(playerMoveDirection, ref boxPositionsX[i], ref boxPositionsY[i], playerX, playerY);
+                });
 
                 // 어떤 박스를 밀었는지 저장해야 한다 
                 pushedBoxIndex = i;
@@ -160,12 +142,16 @@ class Program
                     continue;
                 }
 
-                OnCollision(playerMoveDirection,
-                    ref boxPositionsX[pushedBoxIndex], ref boxPositionsY[pushedBoxIndex],
-                    in boxPositionsX[i], in boxPositionsY[i]);
-                OnCollision(playerMoveDirection,
-                    ref playerX, ref playerY,
-                    in boxPositionsX[pushedBoxIndex], in boxPositionsY[pushedBoxIndex]);
+                OnCollision(() =>
+                {
+                    PushOut(playerMoveDirection,
+                        ref boxPositionsX[pushedBoxIndex], ref boxPositionsY[pushedBoxIndex],
+                        boxPositionsX[i], boxPositionsY[i]);
+
+                    PushOut(playerMoveDirection,
+                        ref playerX, ref playerY,
+                        boxPositionsX[pushedBoxIndex], boxPositionsY[pushedBoxIndex]);
+                });
             }
 
             // 박스와 벽의 충돌 처리
@@ -177,12 +163,17 @@ class Program
                     continue;
                 }
 
-                OnCollision(playerMoveDirection,
-                    ref boxPositionsX[pushedBoxIndex], ref boxPositionsY[pushedBoxIndex],
-                    in wallPositionsX[i], in wallPositionsY[i]);
-                OnCollision(playerMoveDirection,
-                    ref playerX, ref playerY,
-                    in boxPositionsX[pushedBoxIndex], in boxPositionsY[pushedBoxIndex]);
+                OnCollision(() =>
+                {
+                    PushOut(playerMoveDirection,
+                        ref boxPositionsX[pushedBoxIndex], ref boxPositionsY[pushedBoxIndex],
+                        wallPositionsX[i], wallPositionsY[i]);
+
+                    PushOut(playerMoveDirection,
+                        ref playerX, ref playerY,
+                        boxPositionsX[pushedBoxIndex], boxPositionsY[pushedBoxIndex]);
+                });
+                
                 break;
             }
 
@@ -200,7 +191,6 @@ class Program
 
         // 게임이 끝났으니 콘솔 세팅을 다시 정상화한다.
         Console.ResetColor();
-
 
         // 오브젝트를 그린다
         void RenderObject(int x, int y, string icon)
@@ -272,8 +262,14 @@ class Program
             }
         }
 
+        // 충돌을 처리한다 
+        void OnCollision(Action action)
+        {
+            action();
+        }
+
         // 충돌을 처리한다
-        void OnCollision(Direction playerMoveDirection,
+        void PushOut(Direction playerMoveDirection,
             ref int objX, ref int objY, in int collidedObjX, in int collidedObjY)
         {
             switch (playerMoveDirection)
@@ -292,6 +288,35 @@ class Program
                     break;
                 case Direction.Down:
                     MoveToUpOfTarget(out objY, in collidedObjY);
+
+                    break;
+            }
+        }
+
+        // 박스를 움직인다 
+        void MoveBox(Direction playerMoveDirection,
+            ref int boxX, ref int boxY, in int playerX, in int playerY)
+        {
+            switch (playerMoveDirection)
+            {
+                case Direction.Left:
+                    MoveToLeftOfTarget(out boxX, in playerX);
+
+                    break;
+                case Direction.Right:
+                    MoveToRightOfTarget(out boxX, in playerX);
+
+                    break;
+                case Direction.Up:
+                    MoveToUpOfTarget(out boxY, in playerY);
+
+                    break;
+                case Direction.Down:
+                    MoveToDownOfTarget(out boxY, in playerY);
+
+                    break;
+                default:    // Error
+                    ExitWithError($"[Error] 플레이어 방향 : {playerMoveDirection}");
 
                     break;
             }
