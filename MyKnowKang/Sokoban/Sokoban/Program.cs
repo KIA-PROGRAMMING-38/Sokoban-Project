@@ -154,7 +154,7 @@ namespace KMH_Sokoban
 			INIT_OPENCLOSE_WALL_INDEX[0] = new int[4] { 3, 4, 5, 6 };
 
 			// Trap 관련 상수 설정..
-			const int TRAP_COUNT = 6;
+			const int TRAP_COUNT = 7;
 			const ConsoleColor TRAP_COLOR = ConsoleColor.DarkMagenta;
 			const string TRAP_IMAGE_WIN11 = "▒";
 			const string TRAP_IMAGE_WIN10 = "Y";
@@ -286,33 +286,39 @@ namespace KMH_Sokoban
 
 			// Trap 관련 변수 설정..
 			Trap[] traps = new Trap[TRAP_COUNT];
-			traps[0] = new BombTrap
+			int trapIndexTemp = 0;
+			traps[trapIndexTemp++] = new BombTrap
 			{
 				X = 15, Y = 10, Damage = 5, Image = initTrapImage, Color = TRAP_COLOR, BurstRange = 5
 				, MyType = Trap.TrapType.Bomb
 			};
-			traps[1] = new TriggerTrap
+            traps[trapIndexTemp++] = new BombTrap
+            {
+                X = 4, Y = 2, Damage = 5, Image = initTrapImage, Color = TRAP_COLOR, BurstRange = 5
+                , MyType = Trap.TrapType.Bomb
+            };
+            traps[trapIndexTemp++] = new TriggerTrap
 			{
 				X = 15, Y = 7, Image = initTrapImage, Color = TRAP_COLOR, MyType = Trap.TrapType.Trigger
 			};
-            traps[2] = new TriggerTrap
+            traps[trapIndexTemp++] = new TriggerTrap
             {
                 X = 33, Y = 2, Image = initTrapImage, Color = TRAP_COLOR, MyType = Trap.TrapType.Trigger
             };
-            traps[3] = new TriggerTrap
+            traps[trapIndexTemp++] = new TriggerTrap
             {
                 X = 33, Y = 3, Image = initTrapImage, Color = TRAP_COLOR, MyType = Trap.TrapType.Trigger
             };
-            traps[4] = new TriggerTrap
+            traps[trapIndexTemp++] = new TriggerTrap
             {
                 X = 33, Y = 4, Image = initTrapImage, Color = TRAP_COLOR, MyType = Trap.TrapType.Trigger
             };
-            traps[5] = new TriggerTrap
+            traps[trapIndexTemp++] = new TriggerTrap
             {
                 X = 33, Y = 5, Image = initTrapImage, Color = TRAP_COLOR, MyType = Trap.TrapType.Trigger
             };
 
-			for( int trapIndex = 1; trapIndex < TRAP_COUNT; ++trapIndex )
+			for( int trapIndex = 2; trapIndex < TRAP_COUNT; ++trapIndex )
 			{
                 ((TriggerTrap)traps[trapIndex]).CreateSpawnObjectArray( MAP_RANGE_MAX_Y - 1 );
                 for ( int i = 0; i < MAP_RANGE_MAX_Y - 1; ++i )
@@ -945,6 +951,10 @@ namespace KMH_Sokoban
 
 			void RenderObject(int x, int y, string image, ConsoleColor color)
 			{
+				if ( MAP_RANGE_MIN_X - 1 > x || x > MAP_RANGE_MAX_X ||
+					MAP_RANGE_MIN_Y - 1 > y || y > MAP_RANGE_MAX_Y )
+					return;
+
 				ConsoleColor prevColor = Console.ForegroundColor;
 
                 Console.ForegroundColor = color;
