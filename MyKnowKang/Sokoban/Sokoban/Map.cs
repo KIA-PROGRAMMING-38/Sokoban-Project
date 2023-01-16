@@ -41,5 +41,10 @@ namespace Sokoban
         {
             return SpaceData[y, x];
         }
+
+        void Update()
+        {
+
+        }
     }
 }

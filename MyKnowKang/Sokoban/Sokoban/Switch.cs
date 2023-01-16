@@ -13,5 +13,22 @@ namespace Sokoban
         
         public bool IsHolding;           // 스위치 누르는 중이냐..
         public int[] OpenCloseWallIndex;	// 스위치 누르거나 땔 때 열거나 닫는 벽 인덱스..
+
+        public void SetSwitchState( Wall[] walls, bool newIsHolding )
+        {
+            if ( newIsHolding != IsHolding )
+            {
+                IsHolding = newIsHolding;
+
+                int loopCount = OpenCloseWallIndex.Length;
+                for ( int loopIndex = 0; loopIndex < loopCount; ++loopIndex )
+                {
+                    int wallIndex = OpenCloseWallIndex[loopIndex];
+
+                    walls[wallIndex].IsActive = !IsHolding;
+                    walls[wallIndex].IsRender = !IsHolding;
+                }
+            }
+        }
     }
 }

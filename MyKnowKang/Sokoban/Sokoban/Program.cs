@@ -668,17 +668,15 @@ namespace KMH_Sokoban
 			int activeItemCount = 0;
 
 			#region 기타 변/상수 설정
+
 			// 타이머 관련..
 			const int FRAME_PER_SECOND = 20;
-			double frameInterval = 1.0 / FRAME_PER_SECOND;
-			double elaspedTime = 0.0;
-			double runTime = 0.0;
-			double prevRunTime = 0.0;
-			double gameOverTime = 0.0;
-			Stopwatch stopwatch = new Stopwatch();
+			Sokoban.Timer timer = new Sokoban.Timer(FRAME_PER_SECOND);
+            float gameOverTime = 0.0f;
 			// 렌더 관련( 그릴지 말지 )..
 			bool isSkipRender = false;
 			bool isConsoleClear = false;
+
 			#endregion
 
 			EndingType endingType = EndingType.None;
@@ -810,31 +808,25 @@ namespace KMH_Sokoban
 			clearPlayerStateLog.AppendLine( "                               " );
 			clearPlayerStateLog.AppendLine( "                               " );
 
-			// 타이머 스타트..
-			stopwatch.Start();
 			#endregion
 			#endregion
 
 			#region GameLoop
 			while ( true )
 			{
-				// 실행 시간 계산..
-				elaspedTime += runTime - prevRunTime;
-				prevRunTime = runTime;
-				runTime = stopwatch.Elapsed.TotalMilliseconds * 0.001;
+                // 실행 시간 계산..
+                bool isCanStartGameUpdate = timer.Update();
 
 				// 현재 실행 시간 로그 업데이트..
 				logMessage.RemoveLast();
-				logMessage.AddLast( new KeyValuePair<int, string>( 1, $"실행 시간 : {runTime:F3}" ) );
+				logMessage.AddLast( new KeyValuePair<int, string>( 1, $"실행 시간 : {timer.RunTime:F3}" ) );
 
                 // Player 의 State 갱신..
                 playerStateLog.Clear();
 				playerStateLog.AppendLine( "========== Player State ==========" );
 
-				if ( elaspedTime >= frameInterval )	// 현재 지나간 시간이 Frame 간격보다 클 때 실행..
+				if ( isCanStartGameUpdate )	// 현재 지나간 시간이 Frame 간격보다 클 때 실행..
 				{
-					elaspedTime = 0.0;
-
 					// --------------------------------------------------------------- ProcessInput.. ---------------------------------------------------------------
 					// 입력한 키 가져오기..
 					ConsoleKey inputKey = ConsoleKey.NoName;
@@ -843,7 +835,7 @@ namespace KMH_Sokoban
 						inputKey = Console.ReadKey().Key;
 						isSkipRender = false;
 					}
-
+ 
 					if( EndingType.None == endingType )
 						Update( inputKey );
 
@@ -856,12 +848,12 @@ namespace KMH_Sokoban
 						endingType = ComputeEnding( goalInBoxCount, GOAL_COUNT, in player );
 						if(EndingType.None != endingType )
 						{
-							gameOverTime = runTime;
+							gameOverTime = timer.RunTime;
 						}
                     }
 					else
 					{
-                        if ( runTime - gameOverTime > 1 )
+                        if ( timer.RunTime - gameOverTime > 1 )
                         {
                             break;
                         }
@@ -1462,6 +1454,7 @@ namespace KMH_Sokoban
 								break;
 							}
 						}
+
 						break;
 
 					case Map.SpaceType.Trap:
@@ -1490,42 +1483,20 @@ namespace KMH_Sokoban
 					int switchButtonY = switches[switchIdx].Y + switches[switchIdx].ButtonOffsetY;
 
 					Map.SpaceType curPushPosSpaceType = map.GetCurStandSpaceType( switchButtonX, switchButtonY );
+
+					// 스위치 실제 누르는 부분에 어떠한 오브젝트가 있다면 스위치 On..
 					if ( Map.SpaceType.Pass != curPushPosSpaceType )
 					{
-						if ( false == switches[switchIdx].IsHolding )
-						{
-							switches[switchIdx].IsHolding = true;
+						switches[switchIdx].SetSwitchState( walls, true );
 
-							int loopCount = switches[switchIdx].OpenCloseWallIndex.Length;
-							for ( int loopIndex = 0; loopIndex < loopCount; ++loopIndex )
-							{
-								int wallIndex = switches[switchIdx].OpenCloseWallIndex[loopIndex];
-
-								walls[wallIndex].IsActive = false;
-								walls[wallIndex].IsRender = false;
-                            }
-
-							isSkipRender = false;
-						}
+						isSkipRender = false;
 					}
-					else
-					{
-						if ( true == switches[switchIdx].IsHolding )
-						{
-							switches[switchIdx].IsHolding = false;
+                    else    // 스위치 실제 누르는 부분에 아무것도 없다면 스위치 Off..
+                    {
+						switches[switchIdx].SetSwitchState( walls, false );
 
-							int loopCount = switches[switchIdx].OpenCloseWallIndex.Length;
-							for ( int loopIndex = 0; loopIndex < loopCount; ++loopIndex )
-							{
-								int wallIndex = switches[switchIdx].OpenCloseWallIndex[loopIndex];
-
-								walls[wallIndex].IsActive = true;
-                                walls[wallIndex].IsRender = true;
-                            }
-
-							isSkipRender = false;
-						}
-					}
+                        isSkipRender = false;
+                    }
 				}
 
 				#endregion
