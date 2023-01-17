@@ -39,5 +39,11 @@ namespace Sokoban
             X += DirX;
             Y += DirY;
         }
+
+        public void Render()
+        {
+            Renderer.Render( PrevX, PrevY, " ", Game.FOREGROUND_COLOR );
+            Renderer.Render( X, Y, Image, Color );
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Sokoban
 {
-    internal struct Player
+    internal class Player
     {
         public enum ActionKind
         {
@@ -148,6 +148,15 @@ namespace Sokoban
                 default:
                     return;
             }
+        }
+
+        public void Render( Map.SpaceType prevPosSpaceType )
+        {
+            if ( Map.SpaceType.Pass == prevPosSpaceType )
+            {
+                Renderer.Render( PrevX, PrevY, " ", Game.FOREGROUND_COLOR );
+            }
+            Renderer.Render( X, Y, Image, Color );
         }
     }
 }

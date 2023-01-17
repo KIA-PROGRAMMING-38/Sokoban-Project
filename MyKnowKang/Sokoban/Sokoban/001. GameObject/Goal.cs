@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Sokoban
 {
-    internal struct Goal
+    internal class Goal
     {
         public int X;
         public int Y;
@@ -12,6 +12,22 @@ namespace Sokoban
         public ConsoleColor Color;
         public ConsoleColor GoalInColor;
         public bool IsGoalIn;
+
+        public void Render()
+        {
+            ConsoleColor renderColor = Color;
+
+            if ( IsGoalIn )
+            {
+                renderColor = GoalInColor;
+            }
+            else
+            {
+                renderColor = Color;
+            }
+
+            Renderer.Render( X, Y, Image, renderColor );
+        }
 
         public bool CheckOnBox(in Box[] boxes)
         {

@@ -67,6 +67,36 @@ namespace Sokoban
             ++curBurstRange;
         }
 
+        public void Render()
+        {
+            int loopStart = -curBurstRange;
+            int loopEnd = curBurstRange;
+
+            for ( int offsetX = loopStart; offsetX < loopEnd; ++offsetX )
+            {
+                int trapX = X + offsetX;
+                int trapY = Y - curBurstRange;
+
+                Renderer.Render( trapX, trapY, Image, Color );
+
+                trapY = Y + curBurstRange;
+
+                Renderer.Render( trapX, trapY, Image, Color );
+            }
+
+            for ( int offsetY = loopStart; offsetY < loopEnd; ++offsetY )
+            {
+                int trapX = X - curBurstRange;
+                int trapY = Y - offsetY;
+
+                Renderer.Render( trapX, trapY, Image, Color );
+
+                trapX = X + curBurstRange;
+
+                Renderer.Render( trapX, trapY, Image, Color );
+            }
+        }
+
         /// <summary>
         /// 범위 안에 있는가..
         /// </summary>

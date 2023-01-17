@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Sokoban
 {
-    internal struct Map
+    internal class Map
     {
         public enum SpaceType
         {
@@ -24,10 +24,16 @@ namespace Sokoban
         public int Width;
         public int Height;
 
-        public Map( int minX, int minY, int maxX, int maxY )
+        public string BorderLineImage;
+        public ConsoleColor BorderLineColor;
+
+        public Map( int minX, int minY, int maxX, int maxY, string newBorderLineImage, ConsoleColor newBorderLineColor )
         {
             Width = maxX - minX + 1;
             Height = maxY - minY + 1;
+
+            BorderLineImage = newBorderLineImage;
+            BorderLineColor = newBorderLineColor;
 
             SpaceData = new SpaceType[Height, Width];
         }
@@ -42,9 +48,26 @@ namespace Sokoban
             return SpaceData[y, x];
         }
 
-        void Update()
+        public void Update( Action updateAction )
         {
+            if ( null != updateAction )
+            {
+                updateAction.Invoke();
+            }
+        }
 
+        public void Render()
+        {
+            for ( int i = Game.MAP_RANGE_MIN_X - 1; i < Game.MAP_RANGE_MAX_X; ++i )
+            {
+                Renderer.Render( i, Game.MAP_RANGE_MIN_Y - 1, BorderLineImage, BorderLineColor );
+                Renderer.Render( i, Game.MAP_RANGE_MAX_Y - 1, BorderLineImage, BorderLineColor );
+            }
+            for ( int i = Game.MAP_RANGE_MIN_Y - 1; i < Game.MAP_RANGE_MAX_Y; ++i )
+            {
+                Renderer.Render( Game.MAP_RANGE_MIN_X - 1, i, BorderLineImage, BorderLineColor );
+                Renderer.Render( Game.MAP_RANGE_MAX_X - 1, i, BorderLineImage, BorderLineColor );
+            }
         }
     }
 }
