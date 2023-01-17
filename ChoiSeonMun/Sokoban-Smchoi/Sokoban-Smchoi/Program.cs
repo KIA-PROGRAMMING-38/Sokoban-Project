@@ -35,11 +35,14 @@ class Program
         int[] boxPositionsY = { 5, 4 };
 
         // 각 박스마다 골 위에 올라와 있는지에 관한 데이터다
-        bool[] isBoxOnGoal = new bool[boxPositionsX.Length]; 
+        bool[] isBoxOnGoal = new bool[boxPositionsX.Length];
 
         // 벽 좌표
-        int[] wallPositionsX = { 7, 11 };
-        int[] wallPositionsY = { 7, 5 };
+        Wall[] walls = new Wall[2]
+        {
+            new Wall { X = 7, Y = 7 },
+            new Wall { X = 11, Y = 5 }
+        };
 
         // 골 좌표
         Goal[] goals = new Goal[2]
@@ -74,10 +77,10 @@ class Program
             }
 
             // 벽을 그린다
-            int wallCount = wallPositionsX.Length;
+            int wallCount = walls.Length;
             for (int i = 0; i < wallCount; ++i)
             {
-                RenderObject(wallPositionsX[i], wallPositionsY[i], "W");
+                RenderObject(walls[i].X, walls[i].Y, "W");
             }
             
             // ======================= ProcessInput =======================
@@ -91,14 +94,14 @@ class Program
             // 플레이어와 벽의 충돌 처리
             for (int i = 0; i < wallCount; ++i)
             {
-                if (false == IsCollided(playerX, playerY, wallPositionsX[i], wallPositionsY[i]))
+                if (false == IsCollided(playerX, playerY, walls[i].X, walls[i].Y))
                 {
                     continue;
                 }
 
                 OnCollision(() =>
                 {
-                    PushOut(playerMoveDirection, ref playerX, ref playerY, wallPositionsX[i], wallPositionsY[i]);
+                    PushOut(playerMoveDirection, ref playerX, ref playerY, walls[i].X, walls[i].Y);
                 });
             }
             
@@ -151,8 +154,7 @@ class Program
             // 박스와 벽의 충돌 처리
             for (int i = 0; i < wallCount; ++i)
             {
-                if (false == IsCollided(boxPositionsX[pushedBoxIndex], boxPositionsY[pushedBoxIndex],
-                                    wallPositionsX[i], wallPositionsY[i]))
+                if (false == IsCollided(boxPositionsX[pushedBoxIndex], boxPositionsY[pushedBoxIndex], walls[i].X, walls[i].Y))
                 {
                     continue;
                 }
@@ -161,7 +163,7 @@ class Program
                 {
                     PushOut(playerMoveDirection,
                         ref boxPositionsX[pushedBoxIndex], ref boxPositionsY[pushedBoxIndex],
-                        wallPositionsX[i], wallPositionsY[i]);
+                        walls[i].X, walls[i].Y);
 
                     PushOut(playerMoveDirection,
                         ref playerX, ref playerY,
