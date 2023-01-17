@@ -21,12 +21,8 @@ class Program
         const int MAX_Y = 20;
 
         // 플레이어 위치 좌표
-        int playerX = 0;
-        int playerY = 0;
-
-        // 플레이어의 이동 방향
-        Direction playerMoveDirection = Direction.None;
-
+        Player player = new Player();
+        
         // 코드 최적화를 위해 플레이어가 민 박스의 인덱스를 저장한다
         int pushedBoxIndex = 0;
 
@@ -59,7 +55,7 @@ class Program
             Console.Clear();
 
             // 플레이어를 그린다
-            RenderObject(playerX, playerY, "P");
+            RenderObject(player.X, player.Y, "P");
 
             // 골을 그린다
             int goalCount = goals.Length;
@@ -89,33 +85,33 @@ class Program
             ConsoleKey key = keyInfo.Key;   // 실제 키는 ConsoleKeyInfo에 Key에 있다 
 
             // ======================= Update =======================
-            MovePlayer(key, ref playerX, ref playerY, ref playerMoveDirection);
+            MovePlayer(key, player);
 
             // 플레이어와 벽의 충돌 처리
             for (int i = 0; i < wallCount; ++i)
             {
-                if (false == IsCollided(playerX, playerY, walls[i].X, walls[i].Y))
+                if (false == IsCollided(player.X, player.Y, walls[i].X, walls[i].Y))
                 {
                     continue;
                 }
 
                 OnCollision(() =>
                 {
-                    PushOut(playerMoveDirection, ref playerX, ref playerY, walls[i].X, walls[i].Y);
+                    PushOut(player.MoveDirection, ref player.X, ref player.Y, walls[i].X, walls[i].Y);
                 });
             }
             
             // 박스 업데이트
             for (int i = 0; i < boxCount; ++i)
             {
-                if (false == IsCollided(playerX, playerY, boxes[i].X, boxes[i].Y))
+                if (false == IsCollided(player.X, player.Y, boxes[i].X, boxes[i].Y))
                 {
                     continue;
                 }
 
                 OnCollision(() =>
                 {
-                    MoveBox(playerMoveDirection, boxes[i], playerX, playerY);
+                    MoveBox(player, boxes[i]);
                 });
 
                 // 어떤 박스를 밀었는지 저장해야 한다 
@@ -140,12 +136,12 @@ class Program
 
                 OnCollision(() =>
                 {
-                    PushOut(playerMoveDirection,
+                    PushOut(player.MoveDirection,
                         ref boxes[pushedBoxIndex].X, ref boxes[pushedBoxIndex].Y,
                         boxes[i].X, boxes[i].Y);
 
-                    PushOut(playerMoveDirection,
-                        ref playerX, ref playerY,
+                    PushOut(player.MoveDirection,
+                        ref player.X, ref player.Y,
                         boxes[pushedBoxIndex].X, boxes[pushedBoxIndex].Y);
                 });
             }
@@ -160,12 +156,12 @@ class Program
 
                 OnCollision(() =>
                 {
-                    PushOut(playerMoveDirection,
+                    PushOut(player.MoveDirection,
                         ref boxes[pushedBoxIndex].X, ref boxes[pushedBoxIndex].Y,
                         walls[i].X, walls[i].Y);
 
-                    PushOut(playerMoveDirection,
-                        ref playerX, ref playerY,
+                    PushOut(player.MoveDirection,
+                        ref player.X, ref player.Y,
                         boxes[pushedBoxIndex].X, boxes[pushedBoxIndex].Y);
                 });
                 
@@ -227,30 +223,30 @@ class Program
         void MoveToDownOfTarget(out int y, in int target) => y = Math.Min(target + 1, MAX_Y);
 
         // 플레이어를 움직인다
-        void MovePlayer(ConsoleKey key, ref int x, ref int y, ref Direction moveDirection)
+        void MovePlayer(ConsoleKey key, Player player)
         {
             if (key == ConsoleKey.LeftArrow)
             {
-                MoveToLeftOfTarget(out x, in x);
-                moveDirection = Direction.Left;
+                MoveToLeftOfTarget(out player.X, in player.X);
+                player.MoveDirection = Direction.Left;
             }
 
             if (key == ConsoleKey.RightArrow)
             {
-                MoveToRightOfTarget(out x, in x);
-                moveDirection = Direction.Right;
+                MoveToRightOfTarget(out player.X, in player.X);
+                player.MoveDirection = Direction.Right;
             }
 
             if (key == ConsoleKey.UpArrow)
             {
-                MoveToUpOfTarget(out y, in y);
-                moveDirection = Direction.Up;
+                MoveToUpOfTarget(out player.Y, in player.Y);
+                player.MoveDirection = Direction.Up;
             }
 
             if (key == ConsoleKey.DownArrow)
             {
-                MoveToDownOfTarget(out y, in y);
-                moveDirection = Direction.Down;
+                MoveToDownOfTarget(out player.Y, in player.Y);
+                player.MoveDirection = Direction.Down;
             }
         }
 
@@ -286,28 +282,28 @@ class Program
         }
 
         // 박스를 움직인다 
-        void MoveBox(Direction playerMoveDirection, Box box, int playerX, int playerY)
+        void MoveBox(Player player, Box box)
         {
-            switch (playerMoveDirection)
+            switch (player.MoveDirection)
             {
                 case Direction.Left:
-                    MoveToLeftOfTarget(out box.X, in playerX);
+                    MoveToLeftOfTarget(out box.X, in player.X);
 
                     break;
                 case Direction.Right:
-                    MoveToRightOfTarget(out box.X, in playerX);
+                    MoveToRightOfTarget(out box.X, in player.X);
 
                     break;
                 case Direction.Up:
-                    MoveToUpOfTarget(out box.Y, in playerY);
+                    MoveToUpOfTarget(out box.Y, in player.Y);
 
                     break;
                 case Direction.Down:
-                    MoveToDownOfTarget(out box.Y, in playerY);
+                    MoveToDownOfTarget(out box.Y, in player.Y);
 
                     break;
                 default:    // Error
-                    ExitWithError($"[Error] 플레이어 방향 : {playerMoveDirection}");
+                    ExitWithError($"[Error] 플레이어 방향 : {player.MoveDirection}");
 
                     break;
             }
