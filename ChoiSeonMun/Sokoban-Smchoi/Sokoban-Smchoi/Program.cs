@@ -31,11 +31,11 @@ class Program
         int pushedBoxIndex = 0;
 
         // 박스 좌표
-        int[] boxPositionsX = { 5, 8 };
-        int[] boxPositionsY = { 5, 4 };
-
-        // 각 박스마다 골 위에 올라와 있는지에 관한 데이터다
-        bool[] isBoxOnGoal = new bool[boxPositionsX.Length];
+        Box[] boxes = new Box[2]
+        {
+            new Box { X = 5, Y = 5, IsOnGoal = false },
+            new Box { X = 8, Y = 4, IsOnGoal = false }
+        };
 
         // 벽 좌표
         Wall[] walls = new Wall[2]
@@ -69,11 +69,11 @@ class Program
             }
 
             // 박스를 그린다
-            int boxCount = boxPositionsX.Length;
+            int boxCount = boxes.Length;
             for (int i = 0; i < boxCount; ++i)
             {
-                string boxIcon = isBoxOnGoal[i] ? "O" : "B";
-                RenderObject(boxPositionsX[i], boxPositionsY[i], boxIcon);
+                string boxIcon = boxes[i].IsOnGoal ? "O" : "B";
+                RenderObject(boxes[i].X, boxes[i].Y, boxIcon);
             }
 
             // 벽을 그린다
@@ -108,14 +108,14 @@ class Program
             // 박스 업데이트
             for (int i = 0; i < boxCount; ++i)
             {
-                if (false == IsCollided(playerX, playerY, boxPositionsX[i], boxPositionsY[i]))
+                if (false == IsCollided(playerX, playerY, boxes[i].X, boxes[i].Y))
                 {
                     continue;
                 }
 
                 OnCollision(() =>
                 {
-                    MoveBox(playerMoveDirection, ref boxPositionsX[i], ref boxPositionsY[i], playerX, playerY);
+                    MoveBox(playerMoveDirection, boxes[i], playerX, playerY);
                 });
 
                 // 어떤 박스를 밀었는지 저장해야 한다 
@@ -133,8 +133,7 @@ class Program
                     continue;
                 }
 
-                if (false == IsCollided(boxPositionsX[pushedBoxIndex], boxPositionsY[pushedBoxIndex],
-                                    boxPositionsX[i], boxPositionsY[i]))
+                if (false == IsCollided(boxes[pushedBoxIndex].X, boxes[pushedBoxIndex].Y, boxes[i].X, boxes[i].Y))
                 {
                     continue;
                 }
@@ -142,19 +141,19 @@ class Program
                 OnCollision(() =>
                 {
                     PushOut(playerMoveDirection,
-                        ref boxPositionsX[pushedBoxIndex], ref boxPositionsY[pushedBoxIndex],
-                        boxPositionsX[i], boxPositionsY[i]);
+                        ref boxes[pushedBoxIndex].X, ref boxes[pushedBoxIndex].Y,
+                        boxes[i].X, boxes[i].Y);
 
                     PushOut(playerMoveDirection,
                         ref playerX, ref playerY,
-                        boxPositionsX[pushedBoxIndex], boxPositionsY[pushedBoxIndex]);
+                        boxes[pushedBoxIndex].X, boxes[pushedBoxIndex].Y);
                 });
             }
 
             // 박스와 벽의 충돌 처리
             for (int i = 0; i < wallCount; ++i)
             {
-                if (false == IsCollided(boxPositionsX[pushedBoxIndex], boxPositionsY[pushedBoxIndex], walls[i].X, walls[i].Y))
+                if (false == IsCollided(boxes[pushedBoxIndex].X, boxes[pushedBoxIndex].Y, walls[i].X, walls[i].Y))
                 {
                     continue;
                 }
@@ -162,18 +161,18 @@ class Program
                 OnCollision(() =>
                 {
                     PushOut(playerMoveDirection,
-                        ref boxPositionsX[pushedBoxIndex], ref boxPositionsY[pushedBoxIndex],
+                        ref boxes[pushedBoxIndex].X, ref boxes[pushedBoxIndex].Y,
                         walls[i].X, walls[i].Y);
 
                     PushOut(playerMoveDirection,
                         ref playerX, ref playerY,
-                        boxPositionsX[pushedBoxIndex], boxPositionsY[pushedBoxIndex]);
+                        boxes[pushedBoxIndex].X, boxes[pushedBoxIndex].Y);
                 });
                 
                 break;
             }
 
-            int boxOnGoalCount = CountBoxOnGoal(in boxPositionsX, in boxPositionsY, ref isBoxOnGoal, goals);
+            int boxOnGoalCount = CountBoxOnGoal(boxes, goals);
 
             if (boxOnGoalCount == goalCount)
             {
@@ -195,24 +194,23 @@ class Program
         }
 
         // 골 위에 박스가 몇 개 있는지 센다
-        int CountBoxOnGoal(in int[] boxPositionsX, in int[] boxPositionsY, ref bool[] isBoxOnGoal, Goal[] goals)
+        int CountBoxOnGoal(Box[] boxes, Goal[] goals)
         {
-            int boxCount = boxPositionsX.Length;
+            int boxCount = boxes.Length;
             int goalCount = goals.Length;
 
             int result = 0;
             for (int boxId = 0; boxId < boxCount; ++boxId)
             {
-                isBoxOnGoal[boxId] = false;
+                boxes[boxId].IsOnGoal = false;
 
                 for (int goalId = 0; goalId < goalCount; ++goalId)
                 {
-                    if (IsCollided(boxPositionsX[boxId], boxPositionsY[boxId],
-                                    goals[goalId].X, goals[goalId].Y))
+                    if (IsCollided(boxes[boxId].X, boxes[boxId].Y, goals[goalId].X, goals[goalId].Y))
                     {
                         ++result;
 
-                        isBoxOnGoal[boxId] = true;
+                        boxes[boxId].IsOnGoal = true;
 
                         break;
                     }
@@ -288,25 +286,24 @@ class Program
         }
 
         // 박스를 움직인다 
-        void MoveBox(Direction playerMoveDirection,
-            ref int boxX, ref int boxY, in int playerX, in int playerY)
+        void MoveBox(Direction playerMoveDirection, Box box, int playerX, int playerY)
         {
             switch (playerMoveDirection)
             {
                 case Direction.Left:
-                    MoveToLeftOfTarget(out boxX, in playerX);
+                    MoveToLeftOfTarget(out box.X, in playerX);
 
                     break;
                 case Direction.Right:
-                    MoveToRightOfTarget(out boxX, in playerX);
+                    MoveToRightOfTarget(out box.X, in playerX);
 
                     break;
                 case Direction.Up:
-                    MoveToUpOfTarget(out boxY, in playerY);
+                    MoveToUpOfTarget(out box.Y, in playerY);
 
                     break;
                 case Direction.Down:
-                    MoveToDownOfTarget(out boxY, in playerY);
+                    MoveToDownOfTarget(out box.Y, in playerY);
 
                     break;
                 default:    // Error
