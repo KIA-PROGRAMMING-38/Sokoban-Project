@@ -4,7 +4,7 @@ using System.Text;
 
 namespace socobanS
 {
-    struct Wall
+    public class Wall
     {
         public int X;
         public int Y;

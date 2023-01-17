@@ -4,7 +4,7 @@ using System.Text;
 
 namespace socobanS
 {
-    class Goal
+    public class Goal
     {
         public int X;
         public int Y;

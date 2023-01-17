@@ -8,13 +8,14 @@ namespace socobanS
 {
    
 
-     struct Player
+      class Player
     {
         public int X;
         public int Y;
         public Direction MoveDirection;
-        public int PushedBoxIndex;
+        public int pushedBoxIndex;
 
-           
+
+
     }
 }
