@@ -42,8 +42,11 @@ class Program
         int[] wallPositionsY = { 7, 5 };
 
         // 골 좌표
-        int[] goalPositionsX = { 10, 3 };
-        int[] goalPositionsY = { 10, 6 };
+        Goal[] goals = new Goal[2]
+        {
+            new Goal { X = 10, Y = 10 },
+            new Goal { X = 3, Y = 6 }
+        };
         
         // 게임 루프
         while (true)
@@ -56,10 +59,10 @@ class Program
             RenderObject(playerX, playerY, "P");
 
             // 골을 그린다
-            int goalCount = goalPositionsX.Length;
+            int goalCount = goals.Length;
             for (int i = 0; i < goalCount; ++i)
             {
-                RenderObject(goalPositionsX[i], goalPositionsY[i], "G");
+                RenderObject(goals[i].X, goals[i].Y, "G");
             }
 
             // 박스를 그린다
@@ -168,8 +171,7 @@ class Program
                 break;
             }
 
-            int boxOnGoalCount = CountBoxOnGoal(in boxPositionsX, in boxPositionsY, ref isBoxOnGoal,
-                            in goalPositionsX, in goalPositionsY);
+            int boxOnGoalCount = CountBoxOnGoal(in boxPositionsX, in boxPositionsY, ref isBoxOnGoal, goals);
 
             if (boxOnGoalCount == goalCount)
             {
@@ -191,11 +193,10 @@ class Program
         }
 
         // 골 위에 박스가 몇 개 있는지 센다
-        int CountBoxOnGoal(in int[] boxPositionsX, in int[] boxPositionsY, ref bool[] isBoxOnGoal,
-                        in int[] goalPositionsX, in int[] goalPositionsY)
+        int CountBoxOnGoal(in int[] boxPositionsX, in int[] boxPositionsY, ref bool[] isBoxOnGoal, Goal[] goals)
         {
             int boxCount = boxPositionsX.Length;
-            int goalCount = goalPositionsX.Length;
+            int goalCount = goals.Length;
 
             int result = 0;
             for (int boxId = 0; boxId < boxCount; ++boxId)
@@ -205,7 +206,7 @@ class Program
                 for (int goalId = 0; goalId < goalCount; ++goalId)
                 {
                     if (IsCollided(boxPositionsX[boxId], boxPositionsY[boxId],
-                                    goalPositionsX[goalId], goalPositionsY[goalId]))
+                                    goals[goalId].X, goals[goalId].Y))
                     {
                         ++result;
 
