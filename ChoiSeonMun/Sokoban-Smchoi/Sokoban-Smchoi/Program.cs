@@ -2,15 +2,6 @@
 
 namespace ChoiSeonMun.Sokoban;
 
-enum Direction
-{
-    None,
-    Left,
-    Right,
-    Up,
-    Down
-}
-
 class Program
 {
     static void Main(string[] args)
@@ -30,29 +21,31 @@ class Program
         const int MAX_Y = 20;
 
         // 플레이어 위치 좌표
-        int playerX = 0;
-        int playerY = 0;
-
-        // 플레이어의 이동 방향
-        Direction playerMoveDirection = Direction.None;
-
+        Player player = new Player();
+        
         // 코드 최적화를 위해 플레이어가 민 박스의 인덱스를 저장한다
         int pushedBoxIndex = 0;
 
         // 박스 좌표
-        int[] boxPositionsX = { 5, 8 };
-        int[] boxPositionsY = { 5, 4 };
-
-        // 각 박스마다 골 위에 올라와 있는지에 관한 데이터다
-        bool[] isBoxOnGoal = new bool[boxPositionsX.Length]; 
+        Box[] boxes = new Box[2]
+        {
+            new Box { X = 5, Y = 5, IsOnGoal = false },
+            new Box { X = 8, Y = 4, IsOnGoal = false }
+        };
 
         // 벽 좌표
-        int[] wallPositionsX = { 7, 11 };
-        int[] wallPositionsY = { 7, 5 };
+        Wall[] walls = new Wall[2]
+        {
+            new Wall { X = 7, Y = 7 },
+            new Wall { X = 11, Y = 5 }
+        };
 
         // 골 좌표
-        int[] goalPositionsX = { 10, 3 };
-        int[] goalPositionsY = { 10, 6 };
+        Goal[] goals = new Goal[2]
+        {
+            new Goal { X = 10, Y = 10 },
+            new Goal { X = 3, Y = 6 }
+        };
         
         // 게임 루프
         while (true)
@@ -62,28 +55,28 @@ class Program
             Console.Clear();
 
             // 플레이어를 그린다
-            RenderObject(playerX, playerY, "P");
+            RenderObject(player.X, player.Y, "P");
 
             // 골을 그린다
-            int goalCount = goalPositionsX.Length;
+            int goalCount = goals.Length;
             for (int i = 0; i < goalCount; ++i)
             {
-                RenderObject(goalPositionsX[i], goalPositionsY[i], "G");
+                RenderObject(goals[i].X, goals[i].Y, "G");
             }
 
             // 박스를 그린다
-            int boxCount = boxPositionsX.Length;
+            int boxCount = boxes.Length;
             for (int i = 0; i < boxCount; ++i)
             {
-                string boxIcon = isBoxOnGoal[i] ? "O" : "B";
-                RenderObject(boxPositionsX[i], boxPositionsY[i], boxIcon);
+                string boxIcon = boxes[i].IsOnGoal ? "O" : "B";
+                RenderObject(boxes[i].X, boxes[i].Y, boxIcon);
             }
 
             // 벽을 그린다
-            int wallCount = wallPositionsX.Length;
+            int wallCount = walls.Length;
             for (int i = 0; i < wallCount; ++i)
             {
-                RenderObject(wallPositionsX[i], wallPositionsY[i], "W");
+                RenderObject(walls[i].X, walls[i].Y, "W");
             }
             
             // ======================= ProcessInput =======================
@@ -92,52 +85,34 @@ class Program
             ConsoleKey key = keyInfo.Key;   // 실제 키는 ConsoleKeyInfo에 Key에 있다 
 
             // ======================= Update =======================
-            MovePlayer(key, ref playerX, ref playerY, ref playerMoveDirection);
+            MovePlayer(key, player);
 
             // 플레이어와 벽의 충돌 처리
             for (int i = 0; i < wallCount; ++i)
             {
-                if (false == IsCollided(playerX, playerY, wallPositionsX[i], wallPositionsY[i]))
+                if (false == IsCollided(player.X, player.Y, walls[i].X, walls[i].Y))
                 {
                     continue;
                 }
 
-                OnCollision(playerMoveDirection,
-                    ref playerX, ref playerY,
-                    in wallPositionsX[i], in wallPositionsY[i]);
+                OnCollision(() =>
+                {
+                    PushOut(player.MoveDirection, ref player.X, ref player.Y, walls[i].X, walls[i].Y);
+                });
             }
             
             // 박스 업데이트
             for (int i = 0; i < boxCount; ++i)
             {
-                if (false == IsCollided(playerX, playerY, boxPositionsX[i], boxPositionsY[i]))
+                if (false == IsCollided(player.X, player.Y, boxes[i].X, boxes[i].Y))
                 {
                     continue;
                 }
 
-                switch (playerMoveDirection)
+                OnCollision(() =>
                 {
-                    case Direction.Left:
-                        MoveToLeftOfTarget(out boxPositionsX[i], in playerX);
-
-                        break;
-                    case Direction.Right:
-                        MoveToRightOfTarget(out boxPositionsX[i], in playerX);
-
-                        break;
-                    case Direction.Up:
-                        MoveToUpOfTarget(out boxPositionsY[i], in playerY);
-                        
-                        break;
-                    case Direction.Down:
-                        MoveToDownOfTarget(out boxPositionsY[i], in playerY);
-                        
-                        break;
-                    default:    // Error
-                        ExitWithError($"[Error] 플레이어 방향 : {playerMoveDirection}");
-
-                        break;
-                }
+                    MoveBox(player, boxes[i]);
+                });
 
                 // 어떤 박스를 밀었는지 저장해야 한다 
                 pushedBoxIndex = i;
@@ -154,40 +129,46 @@ class Program
                     continue;
                 }
 
-                if (false == IsCollided(boxPositionsX[pushedBoxIndex], boxPositionsY[pushedBoxIndex],
-                                    boxPositionsX[i], boxPositionsY[i]))
+                if (false == IsCollided(boxes[pushedBoxIndex].X, boxes[pushedBoxIndex].Y, boxes[i].X, boxes[i].Y))
                 {
                     continue;
                 }
 
-                OnCollision(playerMoveDirection,
-                    ref boxPositionsX[pushedBoxIndex], ref boxPositionsY[pushedBoxIndex],
-                    in boxPositionsX[i], in boxPositionsY[i]);
-                OnCollision(playerMoveDirection,
-                    ref playerX, ref playerY,
-                    in boxPositionsX[pushedBoxIndex], in boxPositionsY[pushedBoxIndex]);
+                OnCollision(() =>
+                {
+                    PushOut(player.MoveDirection,
+                        ref boxes[pushedBoxIndex].X, ref boxes[pushedBoxIndex].Y,
+                        boxes[i].X, boxes[i].Y);
+
+                    PushOut(player.MoveDirection,
+                        ref player.X, ref player.Y,
+                        boxes[pushedBoxIndex].X, boxes[pushedBoxIndex].Y);
+                });
             }
 
             // 박스와 벽의 충돌 처리
             for (int i = 0; i < wallCount; ++i)
             {
-                if (false == IsCollided(boxPositionsX[pushedBoxIndex], boxPositionsY[pushedBoxIndex],
-                                    wallPositionsX[i], wallPositionsY[i]))
+                if (false == IsCollided(boxes[pushedBoxIndex].X, boxes[pushedBoxIndex].Y, walls[i].X, walls[i].Y))
                 {
                     continue;
                 }
 
-                OnCollision(playerMoveDirection,
-                    ref boxPositionsX[pushedBoxIndex], ref boxPositionsY[pushedBoxIndex],
-                    in wallPositionsX[i], in wallPositionsY[i]);
-                OnCollision(playerMoveDirection,
-                    ref playerX, ref playerY,
-                    in boxPositionsX[pushedBoxIndex], in boxPositionsY[pushedBoxIndex]);
+                OnCollision(() =>
+                {
+                    PushOut(player.MoveDirection,
+                        ref boxes[pushedBoxIndex].X, ref boxes[pushedBoxIndex].Y,
+                        walls[i].X, walls[i].Y);
+
+                    PushOut(player.MoveDirection,
+                        ref player.X, ref player.Y,
+                        boxes[pushedBoxIndex].X, boxes[pushedBoxIndex].Y);
+                });
+                
                 break;
             }
 
-            int boxOnGoalCount = CountBoxOnGoal(in boxPositionsX, in boxPositionsY, ref isBoxOnGoal,
-                            in goalPositionsX, in goalPositionsY);
+            int boxOnGoalCount = CountBoxOnGoal(boxes, goals);
 
             if (boxOnGoalCount == goalCount)
             {
@@ -201,7 +182,6 @@ class Program
         // 게임이 끝났으니 콘솔 세팅을 다시 정상화한다.
         Console.ResetColor();
 
-
         // 오브젝트를 그린다
         void RenderObject(int x, int y, string icon)
         {
@@ -210,25 +190,23 @@ class Program
         }
 
         // 골 위에 박스가 몇 개 있는지 센다
-        int CountBoxOnGoal(in int[] boxPositionsX, in int[] boxPositionsY, ref bool[] isBoxOnGoal,
-                        in int[] goalPositionsX, in int[] goalPositionsY)
+        int CountBoxOnGoal(Box[] boxes, Goal[] goals)
         {
-            int boxCount = boxPositionsX.Length;
-            int goalCount = goalPositionsX.Length;
+            int boxCount = boxes.Length;
+            int goalCount = goals.Length;
 
             int result = 0;
             for (int boxId = 0; boxId < boxCount; ++boxId)
             {
-                isBoxOnGoal[boxId] = false;
+                boxes[boxId].IsOnGoal = false;
 
                 for (int goalId = 0; goalId < goalCount; ++goalId)
                 {
-                    if (IsCollided(boxPositionsX[boxId], boxPositionsY[boxId],
-                                    goalPositionsX[goalId], goalPositionsY[goalId]))
+                    if (IsCollided(boxes[boxId].X, boxes[boxId].Y, goals[goalId].X, goals[goalId].Y))
                     {
                         ++result;
 
-                        isBoxOnGoal[boxId] = true;
+                        boxes[boxId].IsOnGoal = true;
 
                         break;
                     }
@@ -245,35 +223,41 @@ class Program
         void MoveToDownOfTarget(out int y, in int target) => y = Math.Min(target + 1, MAX_Y);
 
         // 플레이어를 움직인다
-        void MovePlayer(ConsoleKey key, ref int x, ref int y, ref Direction moveDirection)
+        void MovePlayer(ConsoleKey key, Player player)
         {
             if (key == ConsoleKey.LeftArrow)
             {
-                MoveToLeftOfTarget(out x, in x);
-                moveDirection = Direction.Left;
+                MoveToLeftOfTarget(out player.X, in player.X);
+                player.MoveDirection = Direction.Left;
             }
 
             if (key == ConsoleKey.RightArrow)
             {
-                MoveToRightOfTarget(out x, in x);
-                moveDirection = Direction.Right;
+                MoveToRightOfTarget(out player.X, in player.X);
+                player.MoveDirection = Direction.Right;
             }
 
             if (key == ConsoleKey.UpArrow)
             {
-                MoveToUpOfTarget(out y, in y);
-                moveDirection = Direction.Up;
+                MoveToUpOfTarget(out player.Y, in player.Y);
+                player.MoveDirection = Direction.Up;
             }
 
             if (key == ConsoleKey.DownArrow)
             {
-                MoveToDownOfTarget(out y, in y);
-                moveDirection = Direction.Down;
+                MoveToDownOfTarget(out player.Y, in player.Y);
+                player.MoveDirection = Direction.Down;
             }
         }
 
+        // 충돌을 처리한다 
+        void OnCollision(Action action)
+        {
+            action();
+        }
+
         // 충돌을 처리한다
-        void OnCollision(Direction playerMoveDirection,
+        void PushOut(Direction playerMoveDirection,
             ref int objX, ref int objY, in int collidedObjX, in int collidedObjY)
         {
             switch (playerMoveDirection)
@@ -292,6 +276,34 @@ class Program
                     break;
                 case Direction.Down:
                     MoveToUpOfTarget(out objY, in collidedObjY);
+
+                    break;
+            }
+        }
+
+        // 박스를 움직인다 
+        void MoveBox(Player player, Box box)
+        {
+            switch (player.MoveDirection)
+            {
+                case Direction.Left:
+                    MoveToLeftOfTarget(out box.X, in player.X);
+
+                    break;
+                case Direction.Right:
+                    MoveToRightOfTarget(out box.X, in player.X);
+
+                    break;
+                case Direction.Up:
+                    MoveToUpOfTarget(out box.Y, in player.Y);
+
+                    break;
+                case Direction.Down:
+                    MoveToDownOfTarget(out box.Y, in player.Y);
+
+                    break;
+                default:    // Error
+                    ExitWithError($"[Error] 플레이어 방향 : {player.MoveDirection}");
 
                     break;
             }
