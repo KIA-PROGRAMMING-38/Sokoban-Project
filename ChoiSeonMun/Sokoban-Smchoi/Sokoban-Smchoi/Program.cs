@@ -2,15 +2,6 @@
 
 namespace ChoiSeonMun.Sokoban;
 
-enum Direction
-{
-    None,
-    Left,
-    Right,
-    Up,
-    Down
-}
-
 class Program
 {
     static void Main(string[] args)
