@@ -8,6 +8,8 @@ namespace Sokoban
 {
     internal class Game
     {
-
+        public int PushedBoxId;
+        public int ActivatedTrapId;
+        public int HowMuchOperation;
     }
 }

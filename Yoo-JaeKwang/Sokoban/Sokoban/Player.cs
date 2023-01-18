@@ -15,7 +15,6 @@ namespace Sokoban
         public Direction MoveDirection;
         public Grab GrabOnOff;
         public PortalNum PortalNum;
-        public int PushedBoxIndex;
-        public int GrabedBoxIndex;
+        
     }
 }

@@ -64,8 +64,6 @@ namespace Sokoban
                 MoveDirection = Direction.None,
                 GrabOnOff = Grab.None,
                 PortalNum = PortalNum.None,
-                PushedBoxIndex = 0,
-                GrabedBoxIndex = 0
             };
 
             Box[] box = new Box[BOX_COUNT]
@@ -134,9 +132,7 @@ namespace Sokoban
                 new Trap { X = 38, Y = 23, IsObjOnTrap = false }
             };
 
-            int activatedTrapId = 0;
-            int howMuchOperation = 0;
-
+            
             StatusMessage statusMessage = new StatusMessage
             {
                 FullScreenX = 55,
@@ -151,6 +147,13 @@ namespace Sokoban
                 GrabY = 8,
                 CurrentKeyX = 55,
                 CurrentKeyY = 15
+            };
+
+            Game game = new Game
+            {
+                PushedBoxId = 0,
+                ActivatedTrapId = 0,
+                HowMuchOperation = 0
             };
 
             ConsoleKey key = default;
@@ -198,14 +201,14 @@ namespace Sokoban
                 // 오브젝트가 함정을 밟았다면
                 for (int trapId = 0; trapId < TRAP_COUNT; ++trapId)
                 {
-                    if (IsCollided(player.X, player.Y, trap[trapId].X, trap[trapId].Y) || IsCollided(box[player.PushedBoxIndex].X, box[player.PushedBoxIndex].Y, trap[trapId].X, trap[trapId].Y))
+                    if (IsCollided(player.X, player.Y, trap[trapId].X, trap[trapId].Y) || IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, trap[trapId].X, trap[trapId].Y))
                     {
                         trap[trapId].IsObjOnTrap = true;
-                        activatedTrapId = trapId;
+                        game.ActivatedTrapId = trapId;
                         break;
                     }
                 }
-                if (trap[activatedTrapId].IsObjOnTrap)
+                if (trap[game.ActivatedTrapId].IsObjOnTrap)
                 {
                     Console.Clear();
                     Console.WriteLine("YOU JUST ACTIVATED TRAP\nTRY AGAIN");
@@ -299,7 +302,7 @@ namespace Sokoban
                 RenderObject(statusMessage.NearThanX, statusMessage.NearThanY, $"사물이 보이는 것보다 가까이 있습니다", ConsoleColor.DarkBlue);
 
                 // 조작 회수
-                RenderObject(statusMessage.OperationX, statusMessage.OperationY, $"현재 조작 회수 : {howMuchOperation}", ConsoleColor.Green);
+                RenderObject(statusMessage.OperationX, statusMessage.OperationY, $"현재 조작 회수 : {game.HowMuchOperation}", ConsoleColor.Green);
 
                 // 그랩 온오프 상태 메시지
                 if (Grab.Grab == player.GrabOnOff)
@@ -408,14 +411,14 @@ namespace Sokoban
                             ref box[i].X, ref box[i].Y,
                             in player.X, in player.Y);
                     });
-                    player.PushedBoxIndex = i;
+                    game.PushedBoxId = i;
 
                     break;
                 }
                 // 박스가 인아웃 포탈에 들어갔을 때
                 for (int warpId = 0; warpId < WARP_COUNT; ++warpId)
                 {
-                    if (false == IsCollided(box[player.PushedBoxIndex].X, box[player.PushedBoxIndex].Y, warpInOut[warpId].X, warpInOut[warpId].Y))
+                    if (false == IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, warpInOut[warpId].X, warpInOut[warpId].Y))
                     {
                         continue;
                     }
@@ -423,19 +426,19 @@ namespace Sokoban
                     OnCollision(() =>
                     {
                         MoveObj(player.MoveDirection,
-                            ref box[player.PushedBoxIndex].X, ref box[player.PushedBoxIndex].Y,
+                            ref box[game.PushedBoxId].X, ref box[game.PushedBoxId].Y,
                             in warpOutIn[warpId].X, in warpOutIn[warpId].Y);
                     });
 
                     // 포탈앞에 이미 박스가 있을 때
                     for (int collidedBoxId = 0; collidedBoxId < BOX_COUNT; ++collidedBoxId)
                     {
-                        if (player.PushedBoxIndex == collidedBoxId)
+                        if (game.PushedBoxId == collidedBoxId)
                         {
                             continue;
                         }
 
-                        if (false == IsCollided(box[player.PushedBoxIndex].X, box[player.PushedBoxIndex].Y, box[collidedBoxId].X, box[collidedBoxId].Y))
+                        if (false == IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, box[collidedBoxId].X, box[collidedBoxId].Y))
                         {
                             continue;
                         }
@@ -443,12 +446,12 @@ namespace Sokoban
                         OnCollision(() =>
                         {
                             PushOut(player.MoveDirection,
-                                ref box[player.PushedBoxIndex].X, ref box[player.PushedBoxIndex].Y,
+                                ref box[game.PushedBoxId].X, ref box[game.PushedBoxId].Y,
                                 warpInOut[warpId].X, warpInOut[warpId].Y);
 
                             PushOut(player.MoveDirection,
                                 ref player.X, ref player.Y,
-                                box[player.PushedBoxIndex].X, box[player.PushedBoxIndex].Y);
+                                box[game.PushedBoxId].X, box[game.PushedBoxId].Y);
                         });
 
                         break;
@@ -458,25 +461,25 @@ namespace Sokoban
                 // 박스가 아웃인 포탈에 들어갔을 때
                 for (int warpId = 0; warpId < WARP_COUNT; ++warpId)
                 {
-                    if (false == IsCollided(box[player.PushedBoxIndex].X, box[player.PushedBoxIndex].Y, warpOutIn[warpId].X, warpOutIn[warpId].Y))
+                    if (false == IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, warpOutIn[warpId].X, warpOutIn[warpId].Y))
                     {
                         continue;
                     }
                     OnCollision(() =>
                     {
                         MoveObj(player.MoveDirection,
-                            ref box[player.PushedBoxIndex].X, ref box[player.PushedBoxIndex].Y,
+                            ref box[game.PushedBoxId].X, ref box[game.PushedBoxId].Y,
                             in warpInOut[warpId].X, in warpInOut[warpId].Y);
                     });
                     // 포탈앞에 이미 박스가 있을 때
                     for (int collidedBoxId = 0; collidedBoxId < BOX_COUNT; ++collidedBoxId)
                     {
-                        if (player.PushedBoxIndex == collidedBoxId)
+                        if (game.PushedBoxId == collidedBoxId)
                         {
                             continue;
                         }
 
-                        if (false == IsCollided(box[player.PushedBoxIndex].X, box[player.PushedBoxIndex].Y, box[collidedBoxId].X, box[collidedBoxId].Y))
+                        if (false == IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, box[collidedBoxId].X, box[collidedBoxId].Y))
                         {
                             continue;
                         }
@@ -484,12 +487,12 @@ namespace Sokoban
                         OnCollision(() =>
                         {
                             PushOut(player.MoveDirection,
-                                ref box[player.PushedBoxIndex].X, ref box[player.PushedBoxIndex].Y,
+                                ref box[game.PushedBoxId].X, ref box[game.PushedBoxId].Y,
                                 warpOutIn[warpId].X, warpOutIn[warpId].Y);
 
                             PushOut(player.MoveDirection,
                                 ref player.X, ref player.Y,
-                                box[player.PushedBoxIndex].X, box[player.PushedBoxIndex].Y);
+                                box[game.PushedBoxId].X, box[game.PushedBoxId].Y);
                         });
 
                         break;
@@ -498,7 +501,7 @@ namespace Sokoban
                 // 박스와 벽의 충돌 처리
                 for (int wallId = 0; wallId < WALL_COUNT; ++wallId)
                 {
-                    if (false == IsCollided(box[player.PushedBoxIndex].X, box[player.PushedBoxIndex].Y, wall[wallId].X, wall[wallId].Y))
+                    if (false == IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, wall[wallId].X, wall[wallId].Y))
                     {
                         continue;
                     }
@@ -506,12 +509,12 @@ namespace Sokoban
                     OnCollision(() =>
                     {
                         PushOut(player.MoveDirection,
-                            ref box[player.PushedBoxIndex].X, ref box[player.PushedBoxIndex].Y,
+                            ref box[game.PushedBoxId].X, ref box[game.PushedBoxId].Y,
                             wall[wallId].X, wall[wallId].Y);
 
                         PushOut(player.MoveDirection,
                             ref player.X, ref player.Y,
-                            box[player.PushedBoxIndex].X, box[player.PushedBoxIndex].Y);
+                            box[game.PushedBoxId].X, box[game.PushedBoxId].Y);
                     });
 
                     break;
@@ -520,12 +523,12 @@ namespace Sokoban
                 for (int collidedBoxId = 0; collidedBoxId < BOX_COUNT; ++collidedBoxId)
                 {
                     // 같은 박스라면 처리할 필요가 X
-                    if (player.PushedBoxIndex == collidedBoxId)
+                    if (game.PushedBoxId == collidedBoxId)
                     {
                         continue;
                     }
 
-                    if (false == IsCollided(box[player.PushedBoxIndex].X, box[player.PushedBoxIndex].Y, box[collidedBoxId].X, box[collidedBoxId].Y))
+                    if (false == IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, box[collidedBoxId].X, box[collidedBoxId].Y))
                     {
                         continue;
                     }
@@ -533,12 +536,12 @@ namespace Sokoban
                     OnCollision(() =>
                     {
                         PushOut(player.MoveDirection,
-                            ref box[player.PushedBoxIndex].X, ref box[player.PushedBoxIndex].Y,
+                            ref box[game.PushedBoxId].X, ref box[game.PushedBoxId].Y,
                             box[collidedBoxId].X, box[collidedBoxId].Y);
 
                         PushOut(player.MoveDirection,
                             ref player.X, ref player.Y,
-                            box[player.PushedBoxIndex].X, box[player.PushedBoxIndex].Y);
+                            box[game.PushedBoxId].X, box[game.PushedBoxId].Y);
                     });
 
 
@@ -565,7 +568,6 @@ namespace Sokoban
                         {
                             box[i].Y = player.Y - 1;
                         }
-                        player.GrabedBoxIndex = i;
                     }
                 }
             }
@@ -607,7 +609,7 @@ namespace Sokoban
                     player.MoveDirection = Direction.Down;
                 }
 
-                howMuchOperation += 1;
+                game.HowMuchOperation += 1;
             }
             void ActPlayer(ConsoleKey key, ref Grab action)
             {
