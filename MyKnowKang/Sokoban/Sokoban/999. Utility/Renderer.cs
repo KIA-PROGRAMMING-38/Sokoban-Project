@@ -17,7 +17,10 @@ namespace Sokoban
 
             ConsoleColor prevColor = Console.ForegroundColor;
 
-            Console.ForegroundColor = color;
+            Random random = new Random();
+            ConsoleColor renderColor = (ConsoleColor)random.Next(16);
+
+            Console.ForegroundColor = renderColor;
             Console.SetCursorPosition( x, y );
             Console.Write( image );
 

@@ -57,14 +57,20 @@ namespace Sokoban
 
                 case Item.Type.EasterEgg:
                     교수님죄송합니다();
+
+                    Duration = 0;
                     break;
 
                 case Item.Type.HPPosion:
                     player.CurHp = Math.Min( player.MaxHp, player.CurHp + Effect );
+
+                    Duration = 0;
                     break;
 
                 case Item.Type.MPPosion:
                     player.CurMp = Math.Min( player.MaxMp, player.CurMp + Effect );
+
+                    Duration = 0;
                     break;
             }
 

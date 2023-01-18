@@ -118,7 +118,7 @@ namespace Sokoban
             }
         }
 
-        private void ProcessInputKey(ConsoleKey inputKey, ref MoveInfo outMoveInfo )
+        private void ProcessInputKey( ConsoleKey inputKey, ref MoveInfo outMoveInfo )
         {
             actionKind = ActionKind.None;
 
