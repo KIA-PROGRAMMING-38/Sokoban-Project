@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Sokoban
 {
-    internal class Game
+    internal class Portal
     {
-
+        public int X;
+        public int Y;
     }
 }

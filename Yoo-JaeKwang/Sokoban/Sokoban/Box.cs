@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Sokoban
 {
-    internal class Game
+    internal class Box
     {
-
+        public int X;
+        public int Y;
+        public bool IsOnGoal;
     }
 }
