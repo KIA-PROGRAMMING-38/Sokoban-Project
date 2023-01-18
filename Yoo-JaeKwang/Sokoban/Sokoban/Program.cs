@@ -1,82 +1,45 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Sokoban;
 
 namespace Sokoban
 {
-    internal enum Direction
-    {
-        None,
-        Up,
-        Down,
-        Left,
-        Right
-    }
-    enum Grab
-    {
-        None,
-        Grab
-    }
-
-    enum PortalNum
-    {
-        None,
-        One,
-        Two,
-        Three,
-        Four,
-    }
+    
 
     class Program
     {
         static void Main()
         {
-            // 초기 세팅
-            Console.ResetColor();                                // 컬러를 초기화한다.
-            Console.CursorVisible = false;                       // 커서를 숨긴다.
-            Console.Title = "경이루 아카데미";                    // 타이틀을 설정한다.
-            Console.BackgroundColor = ConsoleColor.White;       // 배경색을 설정한다.
-            Console.ForegroundColor = ConsoleColor.Black;       // 글꼴색을 설정한다.
-            Console.OutputEncoding = System.Text.Encoding.UTF8; // UTF8 문자 허용
-            Console.Clear();                                    // 출력된 모든 내용을 지운다.
-
-
-            // 기호 상수 정의
-            const int GOAL_COUNT = 4;
-            const int BOX_COUNT = GOAL_COUNT;
-            const int WALL_COUNT = 19;
-            const int WARP_COUNT = 1;
-            const int PORTAL_COUNT = 5;
-            const int TRAP_COUNT = 4;
-
-            const int MIN_X = 6;
-            const int MIN_Y = 3;
-            const int MAX_X = 38;
-            const int MAX_Y = 23;
-            const int OUTLINE_LENGTH_X = 33;
-            const int OUTLINE_LENGTH_Y = 20;
-
             Player player = new Player
             {
-                X = 8,
+                X = 7,
                 Y = 4,
-                PastX = 8,
+                PastX = 7,
                 PastY = 4,
                 MoveDirection = Direction.None,
                 GrabOnOff = Grab.None,
-                PortalNum = PortalNum.None,
+                OnMain = true,
+                OnMine = false
             };
 
-            Box[] box = new Box[BOX_COUNT]
+            Game game = new Game
             {
-                new Box { X = 15, Y = 4, IsOnGoal = false },
-                new Box { X = 10, Y = 12, IsOnGoal = false },
-                new Box { X = 17, Y = 14, IsOnGoal = false },
-                new Box { X = 9, Y = 9, IsOnGoal = false }
+                PushedBoxId = 0,
+                // GrabedBoxId = 0,
+                ActivatedTrapId = 0,
+                PortalId = PortalNum.None,
             };
 
-            Wall[] wall = new Wall[WALL_COUNT]
+            Box[] box = new Box[Game.BOX_COUNT]
             {
-                new Wall { X = 38, Y = 15 },
+                new Box { X = 14, Y = 4, PastX = 0, PastY = 0, IsOnGoal = false },
+                new Box { X = 9, Y = 12, PastX = 0, PastY = 0, IsOnGoal = false },
+                new Box { X = 16, Y = 14, PastX = 0, PastY = 0, IsOnGoal = false },
+                new Box { X = 8, Y = 9, PastX = 0, PastY = 0, IsOnGoal = false }
+            };
+
+            Wall[] wall = new Wall[Game.WALL_COUNT]
+            {
                 new Wall { X = 37, Y = 15 },
                 new Wall { X = 36, Y = 15 },
                 new Wall { X = 35, Y = 15 },
@@ -87,81 +50,97 @@ namespace Sokoban
                 new Wall { X = 30, Y = 15 },
                 new Wall { X = 29, Y = 15 },
                 new Wall { X = 28, Y = 15 },
-                new Wall { X = 28, Y = 16 },
-                new Wall { X = 28, Y = 17 },
-                new Wall { X = 28, Y = 18 },
-                new Wall { X = 28, Y = 19 },
-                new Wall { X = 28, Y = 20 },
-                new Wall { X = 28, Y = 21 },
-                new Wall { X = 28, Y = 22 },
-                new Wall { X = 28, Y = 23 }
+                new Wall { X = 27, Y = 15 },
+                new Wall { X = 27, Y = 16 },
+                new Wall { X = 27, Y = 17 },
+                new Wall { X = 27, Y = 18 },
+                new Wall { X = 27, Y = 19 },
+                new Wall { X = 27, Y = 20 },
+                new Wall { X = 27, Y = 21 },
+                new Wall { X = 27, Y = 22 },
+                new Wall { X = 27, Y = 23 }
 
             };
 
-            Goal[] goal = new Goal[GOAL_COUNT]
+            Goal[] goal = new Goal[Game.GOAL_COUNT]
             {
-                new Goal { X = 25, Y = 17 },
-                new Goal { X = 20, Y = 12 },
-                new Goal { X = 20, Y = 17 },
-                new Goal { X = 36, Y = 21 }
+                new Goal { X = 24, Y = 17 },
+                new Goal { X = 19, Y = 12 },
+                new Goal { X = 19, Y = 17 },
+                new Goal { X = 35, Y = 21 }
             };
 
-            WarpInOut[] warpInOut = new WarpInOut[WARP_COUNT]
+            WarpInOut[] warpInOut = new WarpInOut[Game.WARP_COUNT]
             {
-                new WarpInOut { X = 15, Y = 7 }
+                new WarpInOut { X = 14, Y = 7 }
             };
-            WarpOutIn[] warpOutIn = new WarpOutIn[WARP_COUNT]
+            WarpOutIn[] warpOutIn = new WarpOutIn[Game.WARP_COUNT]
             {
-                new WarpOutIn { X = 32, Y = 19 }
+                new WarpOutIn { X = 31, Y = 19 }
             };
 
-            Portal[] portal = new Portal[PORTAL_COUNT]
+            Portal[] portal = new Portal[Game.PORTAL_COUNT]
             {
                 new Portal { X = 0, Y = 0 },
-                new Portal { X = 9, Y = 5 },
-                new Portal { X = 35, Y = 5 },
-                new Portal{ X = 9, Y = 22 },
-                new Portal{ X = 35, Y = 22 }
+                new Portal { X = 8, Y = 5 },
+                new Portal { X = 34, Y = 5 },
+                new Portal{ X = 8, Y = 22 },
+                new Portal{ X = 34, Y = 22 }
             };
 
-            Trap[] trap = new Trap[TRAP_COUNT]
+            Trap[] trap = new Trap[Game.TRAP_COUNT]
             {
-                new Trap { X = 6 , Y = 3, IsObjOnTrap = false },
-                new Trap { X = 6 , Y = 23, IsObjOnTrap = false },
-                new Trap { X = 38 , Y = 3, IsObjOnTrap = false },
-                new Trap { X = 38, Y = 23, IsObjOnTrap = false }
+                new Trap { X = 5, Y = 3, IsObjOnTrap = false },
+                new Trap { X = 5, Y = 23, IsObjOnTrap = false },
+                new Trap { X = 37, Y = 3, IsObjOnTrap = false },
+                new Trap { X = 37, Y = 23, IsObjOnTrap = false }
             };
 
+            Mine.Tunnel mineTunnel = new Mine.Tunnel
+            {
+                InMainX = 37,
+                InMainY = 16,
+                InMineX = 72,
+                InMineY = 20
+            };
+        
+            Mine.Mineral[] mineral = new Mine.Mineral[Game.MINERAL_COUNT]
+            {
+                new Mine.Mineral { X = 0, Y = 0, Name = "" },
+                new Mine.Mineral { X = 52, Y = 16, Name = "Ruby" },
+                new Mine.Mineral { X = 72, Y = 16, Name = "Gold" },
+                new Mine.Mineral { X = 92, Y = 16, Name = "Emerald" },
+                new Mine.Mineral { X = 52, Y = 23, Name = "Sapphire" },
+                new Mine.Mineral { X = 72, Y = 23, Name = "Aquamarine" },
+                new Mine.Mineral { X = 92, Y = 23, Name = "Diamond" }
+            };
             
             StatusMessage statusMessage = new StatusMessage
             {
-                FullScreenX = 55,
+                FullScreenX = 51,
                 FullScreenY = 2,
-                FontX = 55,
+                FontX = 51,
                 FontY = 3,
-                NearThanX = 55,
+                NearThanX = 51,
                 NearThanY = 5,
-                OperationX = 55,
+                OperationX = 51,
                 OperationY = 7,
-                GrabX = 55,
+                GrabX = 51,
                 GrabY = 8,
-                CurrentKeyX = 55,
-                CurrentKeyY = 15
-            };
-
-            Game game = new Game
-            {
-                PushedBoxId = 0,
-                ActivatedTrapId = 0,
+                CurrentKeyX = 51,
+                CurrentKeyY = 12,
                 HowMuchOperation = 0
+
             };
 
             ConsoleKey key = default;
 
-            // 게임 루프 구성
+            RenderOutGameLoop();
+
+            // 게임 루프
             while (true)
             {
-                Render();
+                RenderInGameLoop();
 
                 key = Console.ReadKey().Key;
 
@@ -169,20 +148,18 @@ namespace Sokoban
 
                 int boxOnGoalCount = 0;
 
-                // 골 지점에 박스에 존재하냐?
-                for (int boxId = 0; boxId < BOX_COUNT; ++boxId) // 모든 골 지점에 대해서
+                // 골인
+                for (int boxId = 0; boxId < Game.BOX_COUNT; ++boxId)
                 {
-                    // 현재 박스가 골 위에 올라와 있는지 체크한다.
-                    box[boxId].IsOnGoal = false; // 없을 가능성이 높기 때문에 false로 초기화 한다.
+                    box[boxId].IsOnGoal = false; 
 
-                    for (int goalId = 0; goalId < GOAL_COUNT; ++goalId) // 모든 박스에 대해서
+                    for (int goalId = 0; goalId < Game.GOAL_COUNT; ++goalId)
                     {
-                        // 박스가 골 지점 위에 있는지 확인한다.
-                        if (IsCollided(box[boxId].X, box[boxId].Y, goal[goalId].X, goal[goalId].Y))
+                        if (Game.Function.IsCollided(box[boxId].X, box[boxId].Y, goal[goalId].X, goal[goalId].Y))
                         {
                             ++boxOnGoalCount;
 
-                            box[boxId].IsOnGoal = true; // 박스가 골 위에 있다는 사실을 저장해둔다.
+                            box[boxId].IsOnGoal = true; 
 
                             break;
                         }
@@ -190,18 +167,19 @@ namespace Sokoban
                 }
 
                 // 모든 골 지점에 박스가 올라와 있다면?
-                if (boxOnGoalCount == GOAL_COUNT)
+                if (boxOnGoalCount == Game.GOAL_COUNT)
                 {
                     Console.Clear();
+                    Console.ForegroundColor = ConsoleColor.Black;
                     Console.WriteLine("축하합니다. 클리어 하셨습니다.");
 
                     break;
                 }
 
                 // 오브젝트가 함정을 밟았다면
-                for (int trapId = 0; trapId < TRAP_COUNT; ++trapId)
+                for (int trapId = 0; trapId < Game.TRAP_COUNT; ++trapId)
                 {
-                    if (IsCollided(player.X, player.Y, trap[trapId].X, trap[trapId].Y) || IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, trap[trapId].X, trap[trapId].Y))
+                    if (Game.Function.IsCollided(player.X, player.Y, trap[trapId].X, trap[trapId].Y) || Game.Function.IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, trap[trapId].X, trap[trapId].Y))
                     {
                         trap[trapId].IsObjOnTrap = true;
                         game.ActivatedTrapId = trapId;
@@ -211,6 +189,7 @@ namespace Sokoban
                 if (trap[game.ActivatedTrapId].IsObjOnTrap)
                 {
                     Console.Clear();
+                    Console.ForegroundColor = ConsoleColor.Black;
                     Console.WriteLine("YOU JUST ACTIVATED TRAP\nTRY AGAIN");
 
                     break;
@@ -218,238 +197,315 @@ namespace Sokoban
 
             }
 
-
-            // 프레임을 그립니다.
-            void Render()
+            // Render
+            void RenderInGameLoop()
             {
-                // 이전 프레임을 지운다.
-                Console.Clear();
-
-                // 골을 그린다.
-                for (int i = 0; i < GOAL_COUNT; ++i)
+                // 움직이는 오브젝트의 이전 프레임을 지운다.
+                Game.Function.RenderObject(player.PastX, player.PastY, " ", ConsoleColor.Black);
+                for (int boxId = 0; boxId < Game.BOX_COUNT; ++boxId)
                 {
-                    RenderObject(goal[i].X, goal[i].Y, "▢", ConsoleColor.DarkBlue);
+                    if (true == Game.Function.IsCollided(box[boxId].X, box[boxId].Y, box[boxId].PastX, box[boxId].PastY))
+                    {
+                        continue;
+                    }
+                    Game.Function.RenderObject(box[boxId].PastX, box[boxId].PastY, " ", ConsoleColor.Black);
                 }
 
                 // 플레이어를 그린다.
-                RenderObject(player.X, player.Y, "☺", ConsoleColor.Black);
+                Game.Function.RenderObject(player.X, player.Y, "☺", ConsoleColor.Black);
 
-
-                // 벽을 그린다.
-                for (int wallId = 0; wallId < WALL_COUNT; ++wallId)
+                // 골을 그린다.
+                for (int i = 0; i < Game.GOAL_COUNT; ++i)
                 {
-                    RenderObject(wall[wallId].X, wall[wallId].Y, "▒", ConsoleColor.DarkMagenta);
-                }
-
-                // 테두리를 그린다.
-                for (int i = -1; i <= OUTLINE_LENGTH_X; ++i)
-                {
-                    RenderObject(MIN_X + i, MIN_Y - 1, "▒", ConsoleColor.DarkMagenta);
-                    RenderObject(MIN_X + i, MAX_Y + 1, "▒", ConsoleColor.DarkMagenta);
-                }
-                for (int i = 0; i <= OUTLINE_LENGTH_Y; ++i)
-                {
-                    RenderObject(MIN_X - 1, MIN_Y + i, "▒", ConsoleColor.DarkMagenta);
-                    RenderObject(MAX_X + 1, MIN_Y + i, "▒", ConsoleColor.DarkMagenta);
-                }
-
-                // 워프를 그린다.
-                for (int i = 0; i < WARP_COUNT; ++i)
-                {
-                    RenderObject(warpInOut[i].X, warpInOut[i].Y, "℧", ConsoleColor.Cyan);
-                    RenderObject(warpOutIn[i].X, warpOutIn[i].Y, "℧", ConsoleColor.Cyan);
-                }
-
-                // 포탈을 그린다.
-                for (int i = 1; i < PORTAL_COUNT; ++i)
-                {
-                    if (player.X == portal[i].X && player.Y == portal[i].Y)
+                    if (true == Game.Function.IsCollided(player.X, player.Y, goal[i].X, goal[i].Y))
                     {
-                        RenderObject(portal[i].X, portal[i].Y, "☻", ConsoleColor.DarkCyan);
+                        Game.Function.RenderObject(player.X, player.Y, "☺", ConsoleColor.Black);
                     }
                     else
                     {
-                        RenderObject(portal[i].X, portal[i].Y, "Ω", ConsoleColor.DarkCyan);
+                        Game.Function.RenderObject(goal[i].X, goal[i].Y, "▢", ConsoleColor.DarkBlue);
+                    }
+                }
+
+                // 워프를 그림
+                for (int i = 0; i < Game.WARP_COUNT; ++i)
+                {
+                    Game.Function.RenderObject(warpInOut[i].X, warpInOut[i].Y, "℧", ConsoleColor.Cyan);
+                    Game.Function.RenderObject(warpOutIn[i].X, warpOutIn[i].Y, "℧", ConsoleColor.Cyan);
+                }
+
+                // 포탈을 그림
+                for (int i = 1; i < Game.PORTAL_COUNT; ++i)
+                {
+                    if (true == Game.Function.IsCollided(player.X, player.Y, portal[i].X, portal[i].Y))
+                    {
+                        Game.Function.RenderObject(portal[i].X, portal[i].Y, "☻", ConsoleColor.DarkCyan);
+                    }
+                    else
+                    {
+                        Game.Function.RenderObject(portal[i].X, portal[i].Y, "Ω", ConsoleColor.DarkCyan);
                     }
                 }
                 // 박스를 그린다.
-                for (int boxId = 0; boxId < BOX_COUNT; ++boxId)
+
+                for (int boxId = 0; boxId < Game.BOX_COUNT; ++boxId)
                 {
                     if (true == box[boxId].IsOnGoal)
                     {
-                        RenderObject(box[boxId].X, box[boxId].Y, "▣", ConsoleColor.DarkBlue);
+                        Game.Function.RenderObject(box[boxId].X, box[boxId].Y, "▣", ConsoleColor.DarkBlue);
                     }
                     else
                     {
-                        RenderObject(box[boxId].X, box[boxId].Y, "▨", ConsoleColor.DarkYellow);
+                        Game.Function.RenderObject(box[boxId].X, box[boxId].Y, "▨", ConsoleColor.DarkYellow);
                     }
                 }
 
                 // 함정을 그린다.
-                for (int trapId = 0; trapId < TRAP_COUNT; ++trapId)
+                for (int trapId = 0; trapId < Game.TRAP_COUNT; ++trapId)
                 {
-                    RenderObject(trap[trapId].X, trap[trapId].Y, "⊗", ConsoleColor.Red);
+                    Game.Function.RenderObject(trap[trapId].X, trap[trapId].Y, "⊗", ConsoleColor.Red);
                 }
 
-
-                // 메시지 모음
-
-                // 전체화면
-                RenderObject(statusMessage.FullScreenX, statusMessage.FullScreenY, $"전체 화면이 아닌 큰 화면 플레이를 권장합니다", ConsoleColor.DarkBlue);
-                // 폰트
-                RenderObject(statusMessage.FontX, statusMessage.FontY, $"폰트 크기를 크게 사용하기를 권장합니다", ConsoleColor.DarkBlue);
-                // 왈왈
-                RenderObject(statusMessage.NearThanX, statusMessage.NearThanY, $"사물이 보이는 것보다 가까이 있습니다", ConsoleColor.DarkBlue);
-
-                // 조작 회수
-                RenderObject(statusMessage.OperationX, statusMessage.OperationY, $"현재 조작 회수 : {game.HowMuchOperation}", ConsoleColor.Green);
-
-                // 그랩 온오프 상태 메시지
-                if (Grab.Grab == player.GrabOnOff)
+                // 메인 터널을 그린다.
+                if (true == Game.Function.IsCollided(player.X, player.Y, mineTunnel.InMainX, mineTunnel.InMainY))
                 {
-                    RenderObject(statusMessage.GrabX, statusMessage.GrabY, "Grab Toggle : On", ConsoleColor.Green);
+                    Game.Function.RenderObject(mineTunnel.InMainX, mineTunnel.InMainY, "☻", ConsoleColor.Gray);
                 }
                 else
                 {
-                    RenderObject(statusMessage.GrabX, statusMessage.GrabY, "Grab Toggle : Off", ConsoleColor.Green);
+                    Game.Function.RenderObject(mineTunnel.InMainX, mineTunnel.InMainY, "≎", ConsoleColor.Gray);
                 }
 
-                RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY, $"현재 입력 키 : {key}", ConsoleColor.Red);
-                RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY + 1, $"플레이어의 현재 좌표 ({player.X}, {player.Y})", ConsoleColor.Red);
+                if (true == Game.Function.IsCollided(player.X, player.Y, mineTunnel.InMineX, mineTunnel.InMineY))
+                {
+                    Game.Function.RenderObject(mineTunnel.InMineX, mineTunnel.InMineY, "☻", ConsoleColor.Gray);
+                }
+                else
+                {
+                    Game.Function.RenderObject(mineTunnel.InMineX, mineTunnel.InMineY, "≎", ConsoleColor.Gray);
+                }
+
+                // 메시지
+                // 조작 회수
+                Game.Function.RenderObject(statusMessage.OperationX, statusMessage.OperationY, $"현재 조작 회수 : {statusMessage.HowMuchOperation}", ConsoleColor.Green);
+                // 그랩 온오프 상태 메시지
+                if (Grab.Grab == player.GrabOnOff)
+                {
+                    Game.Function.RenderObject(statusMessage.GrabX, statusMessage.GrabY, "Grab Toggle : On ", ConsoleColor.Green);
+                }
+                else
+                {
+                    Game.Function.RenderObject(statusMessage.GrabX, statusMessage.GrabY, "Grab Toggle : Off", ConsoleColor.Green);
+                }
+
+                
+                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY, $"현재 입력 키 :                                ", ConsoleColor.Red);
+                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY, $"현재 입력 키 : {key}", ConsoleColor.Red);
+                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY + 1, $"플레이어의 현재 좌표 (  ,        ", ConsoleColor.Red);
+                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY + 1, $"플레이어의 현재 좌표 ({player.X}, {player.Y})", ConsoleColor.Red);
 
                 Console.SetCursorPosition(0, 0);
 
             }
-
-            // 오브젝트를 그립니다.
-            void RenderObject(int x, int y, string obj, ConsoleColor color)
+            void RenderOutGameLoop()
             {
-                ConsoleColor temp = Console.ForegroundColor;
-                Console.SetCursorPosition(x, y);
-                Console.ForegroundColor = color;
-                Console.Write(obj);
-                Console.ForegroundColor = temp;
+                // 초기 세팅
+                Console.ResetColor();                                // 컬러를 초기화한다.
+                Console.CursorVisible = false;                       // 커서를 숨긴다.
+                Console.Title = "경이루 아카데미";                    // 타이틀을 설정한다.
+                Console.BackgroundColor = ConsoleColor.White;       // 배경색을 설정한다.
+                Console.ForegroundColor = ConsoleColor.White;       // 글꼴색을 설정한다.
+                Console.OutputEncoding = System.Text.Encoding.UTF8; // UTF8 문자 허용
+                Console.Clear();                                    // 출력된 모든 내용을 지운다.
+
+                // 메시지
+                // 전체화면
+                Game.Function.RenderObject(statusMessage.FullScreenX, statusMessage.FullScreenY, $"전체 화면이 아닌 큰 화면 플레이를 권장합니다", ConsoleColor.DarkBlue);
+                // 폰트
+                Game.Function.RenderObject(statusMessage.FontX, statusMessage.FontY, $"폰트 크기를 크게 사용하기를 권장합니다", ConsoleColor.DarkBlue);
+                // 왈왈
+                Game.Function.RenderObject(statusMessage.NearThanX, statusMessage.NearThanY, $"사물이 보이는 것보다 가까이 있습니다", ConsoleColor.DarkBlue);
+                // 조작 가능 키
+                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY - 2, $"조작 가능 키 : 1, 2, 3, 4,↑", ConsoleColor.Red);
+                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY - 1, $"                  G, M, ←↓→  ", ConsoleColor.Red);
+
+                // 벽을 그린다.
+                for (int wallId = 0; wallId < Game.WALL_COUNT; ++wallId)
+                {
+                    Game.Function.RenderObject(wall[wallId].X, wall[wallId].Y, "▒", ConsoleColor.DarkMagenta);
+                }
+                // 메인 스테이지 테두리를 그린다.
+                for (int i = -1; i <= Game.OUTLINE_LENGTH_X; ++i)
+                {
+                    Game.Function.RenderObject(Game.MIN_X + i, Game.MIN_Y - 1, "▒", ConsoleColor.DarkMagenta);
+                    Game.Function.RenderObject(Game.MIN_X + i, Game.MAX_Y + 1, "▒", ConsoleColor.DarkMagenta);
+                }
+                for (int i = 0; i <= Game.OUTLINE_LENGTH_Y; ++i)
+                {
+                    Game.Function.RenderObject(Game.MIN_X - 1, Game.MIN_Y + i, "▒", ConsoleColor.DarkMagenta);
+                    Game.Function.RenderObject(Game.MAX_X + 1, Game.MIN_Y + i, "▒", ConsoleColor.DarkMagenta);
+                }
+                // 광산 테두리를 그린다.
+                for (int i = -1; i <= Game.MINE_OUTLINE_LENGTH_X; ++i)
+                {
+                    Game.Function.RenderObject(Game.MINE_MIN_X + i, Game.MINE_MIN_Y - 1, "▒", ConsoleColor.DarkMagenta);
+                    Game.Function.RenderObject(Game.MINE_MIN_X + i, Game.MINE_MAX_Y + 1, "▒", ConsoleColor.DarkMagenta);
+                }
+                for (int i = 0; i <= Game.MINE_OUTLINE_LENGTH_Y; ++i)
+                {
+                    Game.Function.RenderObject(Game.MINE_MIN_X - 1, Game.MINE_MIN_Y + i, "▒", ConsoleColor.DarkMagenta);
+                    Game.Function.RenderObject(Game.MINE_MAX_X + 1, Game.MINE_MIN_Y + i, "▒", ConsoleColor.DarkMagenta);
+                }
+                // 미네랄을 그린다.
+                Game.Function.RenderObject(mineral[(int)Mineral.Ruby].X, mineral[(int)Mineral.Ruby].Y, "♦", ConsoleColor.Red);
+                Game.Function.RenderObject(mineral[(int)Mineral.Gold].X, mineral[(int)Mineral.Gold].Y, "♦", ConsoleColor.DarkYellow);
+                Game.Function.RenderObject(mineral[(int)Mineral.Emerald].X, mineral[(int)Mineral.Emerald].Y, "♦", ConsoleColor.Green);
+                Game.Function.RenderObject(mineral[(int)Mineral.Sapphire].X, mineral[(int)Mineral.Sapphire].Y, "♦", ConsoleColor.DarkBlue);
+                Game.Function.RenderObject(mineral[(int)Mineral.Aquamarine].X, mineral[(int)Mineral.Aquamarine].Y, "♦", ConsoleColor.Cyan);
+                Game.Function.RenderObject(mineral[(int)Mineral.Diamond].X, mineral[(int)Mineral.Diamond].Y, "♦", ConsoleColor.DarkGray);
             }
 
+            // Update
             void Update(ConsoleKey key)
             {
                 // 플레이어 이동 처리
-                MovePlayer(key, player);
-                ActPlayer(key, ref player.GrabOnOff);
+                Game.Function.MovePlayer(key, player, statusMessage);
+                Game.Function.ActPlayer(key, ref player.GrabOnOff);
+                // 플레이어가 터널을 사용할 때
+                Game.Function.TunnelPlayer(key, player, mineTunnel);
                 // 플레이어가 포탈에 들어갔을 때
-                for (int i = 1; i < PORTAL_COUNT; ++i)
+                for (int i = 1; i < Game.PORTAL_COUNT; ++i)
                 {
-                    if (false == IsCollided(player.X, player.Y, portal[i].X, portal[i].Y))
+                    if (false == Game.Function.IsCollided(player.X, player.Y, portal[i].X, portal[i].Y))
                     {
                         continue;
                     }
 
-                    PortalPlayer(key, player);
+                    Game.Function.PortalPlayer(key, player, portal);
 
                     break;
                 }
                 // 플레이어가 인아웃 워프에 들어갔을 때
-                for (int warpId = 0; warpId < WARP_COUNT; ++warpId)
+                for (int warpId = 0; warpId < Game.WARP_COUNT; ++warpId)
                 {
-                    if (false == IsCollided(player.X, player.Y, warpInOut[warpId].X, warpInOut[warpId].Y))
+                    if (false == Game.Function.IsCollided(player.X, player.Y, warpInOut[warpId].X, warpInOut[warpId].Y))
                     {
                         continue;
                     }
-                    OnCollision(() =>
+                    Game.Function.OnCollision(() =>
                     {
-                        MoveObj(player.MoveDirection,
+                        Game.Function.MoveObj(player.MoveDirection,
                             ref player.X, ref player.Y,
                             in warpOutIn[warpId].X, in warpOutIn[warpId].Y);
                     });
                     break;
                 }
                 // 플레이어가 아웃인 워프에 들어갔을 때
-                for (int warpId = 0; warpId < WARP_COUNT; ++warpId)
+                for (int warpId = 0; warpId < Game.WARP_COUNT; ++warpId)
                 {
-                    if (false == IsCollided(player.X, player.Y, warpOutIn[warpId].X, warpOutIn[warpId].Y))
+                    if (false == Game.Function.IsCollided(player.X, player.Y, warpOutIn[warpId].X, warpOutIn[warpId].Y))
                     {
                         continue;
                     }
-                    OnCollision(() =>
+                    Game.Function.OnCollision(() =>
                     {
-                        MoveObj(player.MoveDirection,
+                        Game.Function.MoveObj(player.MoveDirection,
                             ref player.X, ref player.Y,
                             in warpInOut[warpId].X, in warpInOut[warpId].Y);
                     });
                     break;
                 }
                 // 플레이어와 벽의 충돌 처리
-                for (int wallId = 0; wallId < WALL_COUNT; ++wallId)
+                for (int wallId = 0; wallId < Game.WALL_COUNT; ++wallId)
                 {
-                    if (false == IsCollided(player.X, player.Y, wall[wallId].X, wall[wallId].Y))
+                    if (false == Game.Function.IsCollided(player.X, player.Y, wall[wallId].X, wall[wallId].Y))
                     {
                         continue;
                     }
 
-                    OnCollision(() =>
+                    Game.Function.OnCollision(() =>
                     {
-                        PushOut(player.MoveDirection,
+                        Game.Function.PushOutInMain(player.MoveDirection,
                             ref player.X, ref player.Y,
                             wall[wallId].X, wall[wallId].Y);
                     });
 
                     break;
                 }
-
-
-                // 박스 이동 처리
-                // 플레이어가 박스를 밀었을 때라는 게 무엇을 의미하는가? => 플레이어가 이동했는데 플레이어의 위치와 박스 위치가 겹쳤다.
-                for (int i = 0; i < BOX_COUNT; ++i)
+                // 플레이어와 미네랄의 충돌 처리
+                for (int mineralId = 1; mineralId < Game.MINERAL_COUNT; ++mineralId)
                 {
-                    if (false == IsCollided(player.X, player.Y, box[i].X, box[i].Y))
+                    if (false == Game.Function.IsCollided(player.X, player.Y, mineral[mineralId].X, mineral[mineralId].Y))
                     {
                         continue;
                     }
-                    OnCollision(() =>
+
+                    Game.Function.OnCollision(() =>
                     {
-                        MoveObj(player.MoveDirection,
+                        Game.Function.PushOutInMine(player.MoveDirection,
+                            ref player.X, ref player.Y,
+                            mineral[mineralId].X, mineral[mineralId].Y);
+                    });
+
+                }
+
+
+                // 박스 이동 처리
+                for (int i = 0; i < Game.BOX_COUNT; ++i)
+                {
+                    if (false == Game.Function.IsCollided(player.X, player.Y, box[i].X, box[i].Y))
+                    {
+                        continue;
+                    }
+                    Game.Function.OnCollision(() =>
+                    {
+                        Game.Function.MoveObj(player.MoveDirection,
                             ref box[i].X, ref box[i].Y,
                             in player.X, in player.Y);
+
+                        Game.Function.PushOutInMain(player.MoveDirection,
+                            ref player.X, ref player.Y,
+                            in box[i].X, in box[i].Y);
                     });
                     game.PushedBoxId = i;
 
                     break;
                 }
                 // 박스가 인아웃 포탈에 들어갔을 때
-                for (int warpId = 0; warpId < WARP_COUNT; ++warpId)
+                for (int warpId = 0; warpId < Game.WARP_COUNT; ++warpId)
                 {
-                    if (false == IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, warpInOut[warpId].X, warpInOut[warpId].Y))
+                    if (false == Game.Function.IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, warpInOut[warpId].X, warpInOut[warpId].Y))
                     {
                         continue;
                     }
 
-                    OnCollision(() =>
+                    Game.Function.OnCollision(() =>
                     {
-                        MoveObj(player.MoveDirection,
+                        Game.Function.MoveObj(player.MoveDirection,
                             ref box[game.PushedBoxId].X, ref box[game.PushedBoxId].Y,
                             in warpOutIn[warpId].X, in warpOutIn[warpId].Y);
                     });
 
                     // 포탈앞에 이미 박스가 있을 때
-                    for (int collidedBoxId = 0; collidedBoxId < BOX_COUNT; ++collidedBoxId)
+                    for (int collidedBoxId = 0; collidedBoxId < Game.BOX_COUNT; ++collidedBoxId)
                     {
                         if (game.PushedBoxId == collidedBoxId)
                         {
                             continue;
                         }
 
-                        if (false == IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, box[collidedBoxId].X, box[collidedBoxId].Y))
+                        if (false == Game.Function.IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, box[collidedBoxId].X, box[collidedBoxId].Y))
                         {
                             continue;
                         }
 
-                        OnCollision(() =>
+                        Game.Function.OnCollision(() =>
                         {
-                            PushOut(player.MoveDirection,
+                            Game.Function.PushOutInMain(player.MoveDirection,
                                 ref box[game.PushedBoxId].X, ref box[game.PushedBoxId].Y,
                                 warpInOut[warpId].X, warpInOut[warpId].Y);
 
-                            PushOut(player.MoveDirection,
+                            Game.Function.PushOutInMain(player.MoveDirection,
                                 ref player.X, ref player.Y,
                                 box[game.PushedBoxId].X, box[game.PushedBoxId].Y);
                         });
@@ -459,38 +515,38 @@ namespace Sokoban
 
                 }
                 // 박스가 아웃인 포탈에 들어갔을 때
-                for (int warpId = 0; warpId < WARP_COUNT; ++warpId)
+                for (int warpId = 0; warpId < Game.WARP_COUNT; ++warpId)
                 {
-                    if (false == IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, warpOutIn[warpId].X, warpOutIn[warpId].Y))
+                    if (false == Game.Function.IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, warpOutIn[warpId].X, warpOutIn[warpId].Y))
                     {
                         continue;
                     }
-                    OnCollision(() =>
+                    Game.Function.OnCollision(() =>
                     {
-                        MoveObj(player.MoveDirection,
+                        Game.Function.MoveObj(player.MoveDirection,
                             ref box[game.PushedBoxId].X, ref box[game.PushedBoxId].Y,
                             in warpInOut[warpId].X, in warpInOut[warpId].Y);
                     });
                     // 포탈앞에 이미 박스가 있을 때
-                    for (int collidedBoxId = 0; collidedBoxId < BOX_COUNT; ++collidedBoxId)
+                    for (int collidedBoxId = 0; collidedBoxId < Game.BOX_COUNT; ++collidedBoxId)
                     {
                         if (game.PushedBoxId == collidedBoxId)
                         {
                             continue;
                         }
 
-                        if (false == IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, box[collidedBoxId].X, box[collidedBoxId].Y))
+                        if (false == Game.Function.IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, box[collidedBoxId].X, box[collidedBoxId].Y))
                         {
                             continue;
                         }
 
-                        OnCollision(() =>
+                        Game.Function.OnCollision(() =>
                         {
-                            PushOut(player.MoveDirection,
+                            Game.Function.PushOutInMain(player.MoveDirection,
                                 ref box[game.PushedBoxId].X, ref box[game.PushedBoxId].Y,
                                 warpOutIn[warpId].X, warpOutIn[warpId].Y);
 
-                            PushOut(player.MoveDirection,
+                            Game.Function.PushOutInMain(player.MoveDirection,
                                 ref player.X, ref player.Y,
                                 box[game.PushedBoxId].X, box[game.PushedBoxId].Y);
                         });
@@ -498,48 +554,47 @@ namespace Sokoban
                         break;
                     }
                 }
-                // 박스와 벽의 충돌 처리
-                for (int wallId = 0; wallId < WALL_COUNT; ++wallId)
+                // 박스와 벽의 충돌
+                for (int wallId = 0; wallId < Game.WALL_COUNT; ++wallId)
                 {
-                    if (false == IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, wall[wallId].X, wall[wallId].Y))
+                    if (false == Game.Function.IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, wall[wallId].X, wall[wallId].Y))
                     {
                         continue;
                     }
 
-                    OnCollision(() =>
+                    Game.Function.OnCollision(() =>
                     {
-                        PushOut(player.MoveDirection,
+                        Game.Function.PushOutInMain(player.MoveDirection,
                             ref box[game.PushedBoxId].X, ref box[game.PushedBoxId].Y,
                             wall[wallId].X, wall[wallId].Y);
 
-                        PushOut(player.MoveDirection,
+                        Game.Function.PushOutInMain(player.MoveDirection,
                             ref player.X, ref player.Y,
                             box[game.PushedBoxId].X, box[game.PushedBoxId].Y);
                     });
 
                     break;
                 }
-                // 박스끼리 충돌 처리
-                for (int collidedBoxId = 0; collidedBoxId < BOX_COUNT; ++collidedBoxId)
+                // 박스끼리 충돌
+                for (int collidedBoxId = 0; collidedBoxId < Game.BOX_COUNT; ++collidedBoxId)
                 {
-                    // 같은 박스라면 처리할 필요가 X
                     if (game.PushedBoxId == collidedBoxId)
                     {
                         continue;
                     }
 
-                    if (false == IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, box[collidedBoxId].X, box[collidedBoxId].Y))
+                    if (false == Game.Function.IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, box[collidedBoxId].X, box[collidedBoxId].Y))
                     {
                         continue;
                     }
 
-                    OnCollision(() =>
+                    Game.Function.OnCollision(() =>
                     {
-                        PushOut(player.MoveDirection,
+                        Game.Function.PushOutInMain(player.MoveDirection,
                             ref box[game.PushedBoxId].X, ref box[game.PushedBoxId].Y,
                             box[collidedBoxId].X, box[collidedBoxId].Y);
 
-                        PushOut(player.MoveDirection,
+                        Game.Function.PushOutInMain(player.MoveDirection,
                             ref player.X, ref player.Y,
                             box[game.PushedBoxId].X, box[game.PushedBoxId].Y);
                     });
@@ -547,208 +602,45 @@ namespace Sokoban
 
                     break;
                 }
-                // 박스 그랩처리
-                for (int i = 0; i < BOX_COUNT; ++i)
+                // 박스 그랩
+                for (int i = 0; i < Game.BOX_COUNT; ++i)
                 {
                     if (Grab.Grab == player.GrabOnOff)
                     {
-                        if (Direction.Left == player.MoveDirection && IsCollided(player.X + 2, player.Y, box[i].X, box[i].Y) && IsCollided(player.PastX + 1, player.PastY, box[i].X, box[i].Y))
+                        if (Direction.Left == player.MoveDirection && Game.Function.IsCollided(player.X + 2, player.Y, box[i].X, box[i].Y) && Game.Function.IsCollided(player.PastX + 1, player.PastY, box[i].X, box[i].Y))
                         {
+                            box[i].PastX = box[i].X;
+                            box[i].PastY = box[i].Y;
                             box[i].X = player.X + 1;
+                            // game.GrabedBoxId = i;
                         }
-                        if (Direction.Right == player.MoveDirection && IsCollided(player.X - 2, player.Y, box[i].X, box[i].Y) && IsCollided(player.PastX - 1, player.PastY, box[i].X, box[i].Y))
+                        if (Direction.Right == player.MoveDirection && Game.Function.IsCollided(player.X - 2, player.Y, box[i].X, box[i].Y) && Game.Function.IsCollided(player.PastX - 1, player.PastY, box[i].X, box[i].Y))
                         {
+                            box[i].PastX = box[i].X;
+                            box[i].PastY = box[i].Y;
                             box[i].X = player.X - 1;
+                            // game.GrabedBoxId = i;
                         }
-                        if (Direction.Up == player.MoveDirection && IsCollided(player.X, player.Y + 2, box[i].X, box[i].Y) && IsCollided(player.PastX, player.PastY + 1, box[i].X, box[i].Y))
+                        if (Direction.Up == player.MoveDirection && Game.Function.IsCollided(player.X, player.Y + 2, box[i].X, box[i].Y) && Game.Function.IsCollided(player.PastX, player.PastY + 1, box[i].X, box[i].Y))
                         {
+                            box[i].PastX = box[i].X;
+                            box[i].PastY = box[i].Y;
                             box[i].Y = player.Y + 1;
+                            // game.GrabedBoxId = i;
                         }
-                        if (Direction.Down == player.MoveDirection && IsCollided(player.X, player.Y - 2, box[i].X, box[i].Y) && IsCollided(player.PastX, player.PastY - 1, box[i].X, box[i].Y))
+                        if (Direction.Down == player.MoveDirection && Game.Function.IsCollided(player.X, player.Y - 2, box[i].X, box[i].Y) && Game.Function.IsCollided(player.PastX, player.PastY - 1, box[i].X, box[i].Y))
                         {
+                            box[i].PastX = box[i].X;
+                            box[i].PastY = box[i].Y;
                             box[i].Y = player.Y - 1;
+                            // game.GrabedBoxId = i;
                         }
                     }
                 }
             }
 
-            // 플레이어를 이동시킨다.
-            void MovePlayer(ConsoleKey key, Player player)
-            {
-                player.MoveDirection = Direction.None;
-
-                if (key == ConsoleKey.LeftArrow)
-                {
-                    player.PastX = player.X;
-                    player.PastY = player.Y;
-                    MoveToLeftOfTarget(out player.X, out player.Y, in player.X, in player.Y);
-                    player.MoveDirection = Direction.Left;
-                }
-
-                if (key == ConsoleKey.RightArrow)
-                {
-                    player.PastX = player.X;
-                    player.PastY = player.Y;
-                    MoveToRightOfTarget(out player.X, out player.Y, in player.X, in player.Y);
-                    player.MoveDirection = Direction.Right;
-                }
-
-                if (key == ConsoleKey.UpArrow)
-                {
-                    player.PastX = player.X;
-                    player.PastY = player.Y;
-                    MoveToUpOfTarget(out player.X, out player.Y, in player.X, in player.Y);
-                    player.MoveDirection = Direction.Up;
-                }
-
-                if (key == ConsoleKey.DownArrow)
-                {
-                    player.PastX = player.X;
-                    player.PastY = player.Y;
-                    MoveToDownOfTarget(out player.X, out player.Y, in player.X, in player.Y);
-                    player.MoveDirection = Direction.Down;
-                }
-
-                game.HowMuchOperation += 1;
-            }
-            void ActPlayer(ConsoleKey key, ref Grab action)
-            {
-
-                // 그랩 토글처리
-                if (key == ConsoleKey.G)
-                {
-                    if (action == Grab.Grab)
-                    {
-                        action = Grab.None;
-                    }
-                    else
-                    {
-                        action = Grab.Grab;
-                    }
-
-                }
-            }
-            void PortalPlayer(ConsoleKey key, Player player)
-            {
-                if (key == ConsoleKey.D1)
-                {
-                    player.X = portal[(int)PortalNum.One].X;
-                    player.Y = portal[(int)PortalNum.One].Y;
-                }
-                if (key == ConsoleKey.D2)
-                {
-                    player.X = portal[(int)PortalNum.Two].X;
-                    player.Y = portal[(int)PortalNum.Two].Y;
-                }
-                if (key == ConsoleKey.D3)
-                {
-                    player.X = portal[(int)PortalNum.Three].X;
-                    player.Y = portal[(int)PortalNum.Three].Y;
-                }
-                if (key == ConsoleKey.D4)
-                {
-                    player.X = portal[(int)PortalNum.Four].X;
-                    player.Y = portal[(int)PortalNum.Four].Y;
-                }
-            }
-
-            // 두 물체가 충돌했는지 판별합니다.
-            bool IsCollided(in int objX, in int objY, in int targetX, in int targetY)
-            {
-                if (objX == targetX && objY == targetY)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            // 충돌처리
-            void OnCollision(Action action)
-            {
-                action.Invoke();
-            }
-
-            void PushOut(Direction playerMoveDirection,
-                ref int objX, ref int objY,
-                in int collidedObjX, in int collidedObjY)
-            {
-                switch (playerMoveDirection)
-                {
-                    case Direction.Left:
-                        MoveToRightOfTarget(out objX, out objY, in collidedObjX, in collidedObjY);
-                        break;
-                    case Direction.Right:
-                        MoveToLeftOfTarget(out objX, out objY, in collidedObjX, in collidedObjY);
-                        break;
-                    case Direction.Up:
-                        MoveToDownOfTarget(out objX, out objY, in collidedObjX, in collidedObjY);
-                        break;
-                    case Direction.Down:
-                        MoveToUpOfTarget(out objX, out objY, in collidedObjX, in collidedObjY);
-                        break;
-                    default:
-                        ExitWithError($"[Error] 플레이어 이동 방향 데이터가 오류입니다. : {playerMoveDirection}");
-                        return;
-                }
-            }
-            void MoveObj(Direction playerMoveDirection,
-                ref int objX, ref int objY,
-                in int targetX, in int targetY)
-            {
-                switch (playerMoveDirection)
-                {
-                    case Direction.Left:
-                        MoveToLeftOfTarget(out objX, out objY, in targetX, in targetY);
-                        break;
-                    case Direction.Right:
-                        MoveToRightOfTarget(out objX, out objY, in targetX, in targetY);
-                        break;
-                    case Direction.Up:
-                        MoveToUpOfTarget(out objX, out objY, in targetX, in targetY);
-                        break;
-                    case Direction.Down:
-                        MoveToDownOfTarget(out objX, out objY, in targetX, in targetY);
-                        break;
-                    default:
-                        ExitWithError($"[Error] 플레이어 이동 방향 데이터가 오류입니다. : {playerMoveDirection}");
-                        return;
-                }
-            }
 
 
-
-            // 에러 메시지 출력 후 종료 처리
-            void ExitWithError(string errorMessage)
-            {
-                Console.Clear();
-                Console.WriteLine(errorMessage);
-                Environment.Exit(1);
-            }
-
-            // 타겟 근처로 이동시킨다.
-            void MoveToLeftOfTarget(out int x, out int y, in int targetX, in int targetY)
-            {
-                x = Math.Max(MIN_X, targetX - 1);
-                y = targetY;
-            }
-            void MoveToRightOfTarget(out int x, out int y, in int targetX, in int targetY)
-            {
-                x = Math.Min(targetX + 1, MAX_X);
-                y = targetY;
-            }
-            void MoveToUpOfTarget(out int x, out int y, in int targetX, in int targetY)
-            {
-                x = targetX;
-                y = Math.Max(MIN_Y, targetY - 1);
-            }
-            void MoveToDownOfTarget(out int x, out int y, in int targetX, in int targetY)
-            {
-                x = targetX;
-                y = Math.Min(targetY + 1, MAX_Y);
-            }
 
         }
     }

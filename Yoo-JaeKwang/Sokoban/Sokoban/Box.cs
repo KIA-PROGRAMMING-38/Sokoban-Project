@@ -10,6 +10,8 @@ namespace Sokoban
     {
         public int X;
         public int Y;
+        public int PastX;
+        public int PastY;
         public bool IsOnGoal;
     }
 }
