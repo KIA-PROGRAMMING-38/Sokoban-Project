@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sokoban
 {
-    struct Exit
+    struct ExitPoint
     {
         public int X;
         public int Y;

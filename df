@@ -1,0 +1,25 @@
+* [33mf77897c[m[33m ([m[1;36mHEAD -> [m[1;32mTryStruct[m[33m)[m Add Function
+* [33me0c6779[m add item
+[31m|[m * [33mad3a646[m[33m ([m[1;32mrestart[m[33m)[m use struct
+[31m|[m * [33m6714719[m reset
+[31m|[m [32m|[m * [33me5a545f[m[33m ([m[1;32m0105KCY[m[33m)[m Stop Moudulize
+[31m|[m [32m|[m[31m/[m  
+[31m|[m[31m/[m[32m|[m   
+* [32m|[m [33ma58a484[m Second Modulize
+* [32m|[m [33m935080d[m First Modulize
+* [32m|[m [33m94e248f[m[33m ([m[1;31morigin/0105KCY[m[33m)[m 모듈화 시작
+[32m|[m[32m/[m  
+* [33m1af0890[m Refectoring
+* [33m9338e08[m wall & box refectoring
+* [33m8aa2e4f[m 뼈대 완성
+* [33m1163828[m 주석 정리
+* [33m3ce91e3[m enum 추가
+* [33mfe0e0a8[m 박스 구현 리팩토링
+* [33m8476541[m 박스, 이동 제한 구현
+* [33mde9d6d8[m 프로그램 초기 세팅
+*   [33m178213b[m Merge branch '0105KCY' of https://github.com/0105kcy/Sokoban-Project into 0105KCY
+[34m|[m[35m\[m  
+[34m|[m * [33m094f274[m 프로제그 초기설정
+* [35m|[m [33mbd0c16e[m 프로젝트 초기설정
+[35m|[m[35m/[m  
+* [33m6032c32[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m Initial commit

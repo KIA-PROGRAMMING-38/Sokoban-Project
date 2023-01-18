@@ -11,7 +11,7 @@ namespace Sokoban
     {
         public int X;
         public int Y;
-        public PLAYER_DIRECTION PlayerDir;
+        public GameSet.PLAYER_DIRECTION PlayerDir;
         public int PushedBoxId;
         public char Symbol;
         public ConsoleColor Color;

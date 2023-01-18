@@ -10,8 +10,8 @@ namespace Sokoban
     {
         public int X;
         public int Y;
-        public string Symbol;
-        public string InSymbol;
+        public char Symbol;
+        public char InSymbol;
         public ConsoleColor Color;
     }
 }

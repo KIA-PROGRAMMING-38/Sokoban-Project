@@ -14,4 +14,5 @@ namespace Sokoban
         public char Symbol;
         public ConsoleColor Color;
     }
+
 }
