@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace socobanS
+{
+    public class  Box
+    {
+        public int X;
+        public int Y;
+        public bool IsOnGoal;
+    }
+}
