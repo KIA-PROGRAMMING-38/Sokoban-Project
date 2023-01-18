@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace socobanS
 {
@@ -49,6 +50,11 @@ namespace socobanS
             const int MAP_MAX_X = 21;
             const int MAP_MAX_Y = 16;
 
+            Random random = new Random();
+
+            
+
+
 
             //int playerX = 2;
             //int playerY = 2;
@@ -71,10 +77,10 @@ namespace socobanS
 
             Box[] box = new Box[]
             {
-                new Box{X = 4 , Y = 8 },
-                new Box{X = 4 , Y = 4 },
-                new Box{X = 10 , Y = 5 },
-                new Box{X = 12 , Y = 10 }
+                new Box{X = 4 , Y = 8 , IsOnGoal =false },
+                new Box{X = 4 , Y = 4 , IsOnGoal =false },
+                new Box{X = 10 , Y = 5 , IsOnGoal =false },
+                new Box{X = 12 , Y = 10 , IsOnGoal =false }
             };
             // 박스가 골 위에 있는지를 저장하기 위한 변수
             bool[] isBoxOnGoal = new bool[box.Length];
@@ -112,7 +118,7 @@ namespace socobanS
 
 
 
-
+            
 
             // 게임 루프 구성
             while (true)
@@ -131,8 +137,26 @@ namespace socobanS
 
                 ConsoleKey key = keyInfo.Key;
                 // ---------------------------업데이트-----------------------
+                if (key == ConsoleKey.A || key == ConsoleKey.S
+                    || key == ConsoleKey.LeftArrow || key == ConsoleKey.RightArrow
+                    || key == ConsoleKey.UpArrow || key == ConsoleKey.DownArrow)
+                {
+                    int fake = random.Next(0, 100);
 
-                MovePlayer(key, ref player.X, ref player.Y, ref playerMoveDirection);
+                    if (5 > fake)
+                    {
+                        player.X = 2;
+                        player.Y = 1;
+
+                        Console.SetCursorPosition(30, 8);
+                        Console.WriteLine("@@@@@@@@@@@@@@@@@@@@@@메롱@@@@@@@@@@@@@@@@@@@@@@");
+                        Console.SetCursorPosition(30, 9);
+                        Console.WriteLine("@@@@@@@@@@@@@@@@@@@다시돌아가셈@@@@@@@@@@@@@@@@@@");
+                        Thread.Sleep(700);
+                    }
+                }
+                Move.MovePlayer(key, player);
+                
 
 
                 Update(key);
@@ -149,7 +173,7 @@ namespace socobanS
                     for (int goalId = 0; goalId < GOAL_COUNT; ++goalId) // 모든 박스에 대해서
                     {
                         // 박스가 골 지점 위에 있는지 확인한다.
-                        if (IsCollided(box[boxId].X, box[boxId].Y, goal[goalId].X, goal[goalId].Y))
+                        if (Collision.IsCollided(box[boxId].X, box[boxId].Y, goal[goalId].X, goal[goalId].Y))
                         {
                             ++boxOnGoalCount;
 
@@ -194,41 +218,44 @@ namespace socobanS
 
                     // 플레이어를 그린다.
                     RenderObject(player.X, player.Y, "P");
+                   
                     objectDraw();
                     // 골을 그린다.
 
 
                 }
 
+               
                 // 업데이트
                 void Update(ConsoleKey key)
                 {
+                    
 
                     // 플레이어와 벽의 충돌 처리
                     for (int wallId = 0; wallId < WALL_COUNT; ++wallId)
                     {
-                        if (false == IsCollided(player.X, player.Y, wall[wallId].X, wall[wallId].Y))
+                        if (false == Collision.IsCollided(player.X, player.Y, wall[wallId].X, wall[wallId].Y))
                         {
                             continue;
                         }
-                        OnCollision(() =>
+                        Collision.OnCollision(() =>
                         {
-                            PushOut(playerMoveDirection, ref player.X, ref player.Y, wall[wallId].X, wall[wallId].Y);
+                            Collision.PushOut(player.MoveDirection, ref player.X, ref player.Y, wall[wallId].X, wall[wallId].Y);
                         });
                     }
 
-
+                    
                     // 박스 이동 처리
                     for (int i = 0; i < BOX_COUNT; ++i)
                     {
-                        if (false == IsCollided(player.X, player.Y, box[i].X, box[i].Y))
+                        if (false == Collision.IsCollided(player.X, player.Y, box[i].X, box[i].Y))
                         {
                             continue;
                         }
 
-                        OnCollision(() =>
+                        Collision.OnCollision(() =>
                         {
-                            MoveBox(playerMoveDirection, ref box[i].X, ref box[i].Y, player.X, player.Y);
+                            Move.MoveBox(player, box[i]);
                         });
 
                         player.pushedBoxIndex = i;
@@ -246,17 +273,17 @@ namespace socobanS
                             continue;
                         }
 
-                        if (false == IsCollided(box[player.pushedBoxIndex].X, box[player.pushedBoxIndex].Y, box[i].X, box[i].Y))
+                        if (false == Collision.IsCollided(box[player.pushedBoxIndex].X, box[player.pushedBoxIndex].Y, box[i].X, box[i].Y))
                         {
                             continue;
                         }
-                        OnCollision(() =>
+                        Collision.OnCollision(() =>
                         {
-                            PushOut(playerMoveDirection,
+                            Collision.PushOut(player.MoveDirection,
                             ref box[player.pushedBoxIndex].X, ref box[player.pushedBoxIndex].Y,
                             box[i].X, box[i].Y);
 
-                            PushOut(playerMoveDirection,
+                            Collision.PushOut(player.MoveDirection,
                             ref player.X, ref player.Y,
                             box[player.pushedBoxIndex].X, box[player.pushedBoxIndex].Y);
                         });
@@ -266,27 +293,30 @@ namespace socobanS
                     // 박스와 벽의 충돌 처리
                     for (int i = 0; i < WALL_COUNT; ++i)
                     {
-                        if (false == IsCollided(box[player.pushedBoxIndex].X, box[player.pushedBoxIndex].Y,
+                        if (false == Collision.IsCollided(box[player.pushedBoxIndex].X, box[player.pushedBoxIndex].Y,
                                      wall[i].X, wall[i].Y))
                         {
                             continue;
                         }
 
-                        OnCollision(() =>
+                        Collision.OnCollision(() =>
                         {
-                            PushOut(playerMoveDirection,
+                            Collision.PushOut(player.MoveDirection,
                             ref box[player.pushedBoxIndex].X, ref box[player.pushedBoxIndex].Y,
                             wall[i].X, wall[i].Y);
 
-                            PushOut(playerMoveDirection,
+                            Collision.PushOut(player.MoveDirection,
                             ref player.X, ref player.Y,
                             box[player.pushedBoxIndex].X, box[player.pushedBoxIndex].Y);
                         });
 
                         break;
                     }
-
+                    
+                    
                 }
+
+               
 
                 // 오브젝트를 그립니다.
                 void RenderObject(int x, int y, string obj)
@@ -303,7 +333,7 @@ namespace socobanS
                     // 박스를 그린다.
                     for (int boxId = 0; boxId < BOX_COUNT; ++boxId)
                     {
-                        string boxIcon = isBoxOnGoal[boxId] ? "O" : "B";
+                        string boxIcon = box[boxId].IsOnGoal ? "O" : "B";
                         RenderObject(box[boxId].X, box[boxId].Y, boxIcon);
                     }
                     // 벽을 그린다.
@@ -311,25 +341,26 @@ namespace socobanS
                     {
                         RenderObject(wall[wallId].X, wall[wallId].Y, "W");
                     }
+
+                    
                 }
-                int CountBoxOnGoal(in int[] boxPositionsX, in int[] boxPositionsY, ref bool[] isBoxOnGoal,
-                    in int[] goalPositionsX, in int[] goalPositionsY)
+                int CountBoxOnGoal(Box[]box, Goal[] goal)
                 {
-                    int boxCount = boxPositionsX.Length;
-                    int goalCount = goalPositionsX.Length;
+                    int boxCount = box.Length;
+                    int goalCount = goal.Length;
 
                     int result = 0;
 
                     for (int boxId = 0; boxId < boxCount; ++boxId)
                     {
-                        isBoxOnGoal[boxId] = false;
+                        box[boxId].IsOnGoal = false;
                         for (int goalId = 0; goalId < goalCount; ++goalId)
                         {
-                            if (IsCollided(boxPositionsX[boxId], boxPositionsY[boxId],
-                                goalPositionsX[goalId], goalPositionsY[goalId]))
+                            if (Collision.IsCollided(box[boxId].X, box[boxId].Y,
+                                goal[goalId].X, goal[goalId].Y))
                             {
                                 ++result;
-                                isBoxOnGoal[boxId] = true;
+                                box[boxId].IsOnGoal = true;
                                 break;
                             }
                         }
@@ -338,116 +369,12 @@ namespace socobanS
                     return result;
                 }
                 // 두 물체가 충돌했는지 판별합니다.
-                bool IsCollided(int x1, int y1, int x2, int y2)
-                {
-                    if (x1 == x2 && y1 == y2)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                void MoveToLeftOfTarget(out int x, in int target) => x = Math.Max(MIN_X, target - 1);
-                void MoveToRightOfTarget(out int x, in int target) => x = Math.Min(MAX_X, target + 1);
-                void MoveToUpOfTarget(out int y, in int target) => y = Math.Max(MIN_Y, target - 1);
-                void MoveToDownOfTarget(out int y, in int target) => y = Math.Min(MAX_Y, target + 1);
+              
+                
 
-                void OnCollision(Action action)
-                {
-                    action();
-                }
-                void PushOut(Direction playerMoveDirection, ref int objX, ref int objY,
-                    in int collidedObjX, in int collidedObjY)
-                {
-                    switch (playerMoveDirection)
-                    {
-                        case Direction.Left:
-                            MoveToRightOfTarget(out objX, in collidedObjX);
+                
 
-                            break;
-                        case Direction.Right:
-                            MoveToLeftOfTarget(out objX, in collidedObjX);
-
-                            break;
-                        case Direction.Up:
-                            MoveToDownOfTarget(out objY, in collidedObjY);
-
-                            break;
-                        case Direction.Down:
-                            MoveToUpOfTarget(out objY, in collidedObjY);
-
-                            break;
-                    }
-                }
-
-                void MoveBox(Direction playerMoveDirection, ref int boxX, ref int boxY,
-                    in int playerX, in int playerY)
-                {
-                    switch (playerMoveDirection)
-                    {
-                        case Direction.Left:
-                            MoveToLeftOfTarget(out boxX, in playerX);
-
-                            break;
-                        case Direction.Right:
-                            MoveToRightOfTarget(out boxX, in playerX);
-
-                            break;
-                        case Direction.Up:
-                            MoveToUpOfTarget(out boxY, in playerY);
-
-                            break;
-                        case Direction.Down:
-                            MoveToDownOfTarget(out boxY, in playerY);
-
-                            break;
-                        default: // Error
-                            ExitWithError($"[Error] 플레이어 방향 : {playerMoveDirection}");
-
-                            break;
-                    }
-                }
-
-
-                void MovePlayer(ConsoleKey key, ref int x, ref int y, ref Direction moveDirection)
-                {
-
-                    if (key == ConsoleKey.A)
-                    {
-                        x = Math.Max(x - 2, MIN_X);
-                        moveDirection = Direction.a;
-                    }
-                    if (key == ConsoleKey.S)
-                    {
-                        x = Math.Min(x + 2, MAX_X);
-                        moveDirection = Direction.s;
-                    }
-                    if (key == ConsoleKey.LeftArrow)
-                    {
-                        MoveToLeftOfTarget(out x, in x);
-                        moveDirection = Direction.Left;
-                    }
-
-                    if (key == ConsoleKey.RightArrow)
-                    {
-                        MoveToRightOfTarget(out x, in x);
-                        moveDirection = Direction.Right;
-                    }
-
-                    if (key == ConsoleKey.UpArrow)
-                    {
-                        MoveToUpOfTarget(out y, in y);
-                        moveDirection = Direction.Up;
-                    }
-
-                    if (key == ConsoleKey.DownArrow)
-                    {
-                        MoveToDownOfTarget(out y, in y);
-                        moveDirection = Direction.Down;
-                    }
-                }
+               
 
                 void ExitWithError(string errorMessage)
                 {
@@ -455,7 +382,7 @@ namespace socobanS
                     Console.WriteLine(errorMessage);
                     Environment.Exit(1);
                 }
-
+                int boxOngoalCount = CountBoxOnGoal(box, goal);
             }//게임루프 중괄호
         }
     }
