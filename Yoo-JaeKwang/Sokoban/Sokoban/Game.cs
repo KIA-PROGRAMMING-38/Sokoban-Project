@@ -47,6 +47,8 @@ namespace Sokoban
         public int ActivatedTrapId;
         public PortalNum PortalId;
         public int Money;
+        public int BoxOnGoalCount;
+        public int HowMuchOperation;
 
         // 기호 상수 정의
         public const int GOAL_COUNT = 4;
@@ -85,7 +87,7 @@ namespace Sokoban
             }
 
             // 플레이어 이동
-            public static void MovePlayer(ConsoleKey key, Player player, StatusMessage statusMessage)
+            public static void MovePlayer(ConsoleKey key, Player player, Game game)
             {
                 player.MoveDirection = Direction.None;
 
@@ -149,7 +151,7 @@ namespace Sokoban
                     player.MoveDirection = Direction.Down;
                 }
 
-                statusMessage.HowMuchOperation += 1;
+                game.HowMuchOperation += 1;
             }
             // 그랩
             public static void ActPlayer(ConsoleKey key, ref Grab action)
@@ -170,31 +172,35 @@ namespace Sokoban
                 }
             }
             // 포탈 이동
-            public static void PortalPlayer(ConsoleKey key, Player player, Portal[] portal)
+            public static void PortalPlayer(ConsoleKey key, Player player, Portal[] portal, Game game)
             {
                 if (key == ConsoleKey.D1)
                 {
                     player.X = portal[(int)PortalNum.One].X;
                     player.Y = portal[(int)PortalNum.One].Y;
+                    game.Money -= 100;
                 }
                 if (key == ConsoleKey.D2)
                 {
                     player.X = portal[(int)PortalNum.Two].X;
                     player.Y = portal[(int)PortalNum.Two].Y;
+                    game.Money -= 100;
                 }
                 if (key == ConsoleKey.D3)
                 {
                     player.X = portal[(int)PortalNum.Three].X;
                     player.Y = portal[(int)PortalNum.Three].Y;
+                    game.Money -= 100;
                 }
                 if (key == ConsoleKey.D4)
                 {
                     player.X = portal[(int)PortalNum.Four].X;
                     player.Y = portal[(int)PortalNum.Four].Y;
+                    game.Money -= 100;
                 }
             }
             // 터널 이동
-            public static void TunnelPlayer(ConsoleKey key, Player player, Mine.Tunnel mineTunnel)
+            public static void TunnelPlayer(ConsoleKey key, Player player, Mine.Tunnel mineTunnel, Game game)
             {
                 if (key == ConsoleKey.M)
                 {
@@ -211,6 +217,7 @@ namespace Sokoban
                         player.Y = mineTunnel.InMainY;
                         player.OnMain = true;
                         player.OnMine = false;
+                        game.Money -= 300;
                     }
                 }
 
@@ -320,8 +327,61 @@ namespace Sokoban
                         return;
                 }
             }
+            // 트랩 구현
+            public static void ObjOnTrap(Trap[] trap, Player player, Box[] box, Game game)
+            {
+                // 오브젝트가 함정을 밟았다면
+                for (int trapId = 0; trapId < Game.TRAP_COUNT; ++trapId)
+                {
+                    if (Game.Function.IsCollided(player.X, player.Y, trap[trapId].X, trap[trapId].Y) || Game.Function.IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, trap[trapId].X, trap[trapId].Y))
+                    {
+                        trap[trapId].IsObjOnTrap = true;
+                        game.ActivatedTrapId = trapId;
+                        break;
+                    }
+                }
+                if (trap[game.ActivatedTrapId].IsObjOnTrap)
+                {
+                    Console.Clear();
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.WriteLine("YOU JUST ACTIVATED TRAP\nTRY AGAIN");
+                    Environment.Exit(2);
+                }
+            }
 
+            // 골인 구현
+            public static void BoxInGoal(Box[] box, Goal[] goal, Game game)
+            {
 
+                game.BoxOnGoalCount = 0;
+
+                // 골인
+                for (int boxId = 0; boxId < Game.BOX_COUNT; ++boxId)
+                {
+
+                    box[boxId].IsOnGoal = false;
+
+                    for (int goalId = 0; goalId < Game.GOAL_COUNT; ++goalId)
+                    {
+                        if (Game.Function.IsCollided(box[boxId].X, box[boxId].Y, goal[goalId].X, goal[goalId].Y))
+                        {
+                            ++game.BoxOnGoalCount;
+
+                            box[boxId].IsOnGoal = true;
+
+                            break;
+                        }
+                    }
+                }
+            }
+            // 게임 클리어
+            public static void GameClear()
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine("축하합니다. 클리어 하셨습니다.");
+                Environment.Exit(0);
+            }
 
             // 에러 메시지 출력 후 종료
             public static void ExitWithError(string errorMessage)

@@ -18,7 +18,6 @@ namespace Sokoban
         public int NearThanY;
         public int CurrentKeyX;
         public int CurrentKeyY;
-        public int HowMuchOperation;
         public int MoneyX;
         public int MoneyY;
     }

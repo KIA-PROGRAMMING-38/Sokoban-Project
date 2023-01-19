@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using Sokoban;
 
@@ -31,6 +32,8 @@ namespace Sokoban
                 GainMineralId = 0,
                 PortalId = PortalNum.None,
                 Money = 0,
+                BoxOnGoalCount = 0,
+                HowMuchOperation = 0,
             };
 
             Box[] box = new Box[Game.BOX_COUNT]
@@ -130,7 +133,6 @@ namespace Sokoban
                 GrabY = 6,
                 CurrentKeyX = 46,
                 CurrentKeyY = 10,
-                HowMuchOperation = 0,
                 MoneyX = 79,
                 MoneyY = 5,
             };
@@ -148,54 +150,8 @@ namespace Sokoban
 
                 Update(key);
 
-                int boxOnGoalCount = 0;
-
-                // 골인
-                for (int boxId = 0; boxId < Game.BOX_COUNT; ++boxId)
-                {
-                    box[boxId].IsOnGoal = false; 
-
-                    for (int goalId = 0; goalId < Game.GOAL_COUNT; ++goalId)
-                    {
-                        if (Game.Function.IsCollided(box[boxId].X, box[boxId].Y, goal[goalId].X, goal[goalId].Y))
-                        {
-                            ++boxOnGoalCount;
-
-                            box[boxId].IsOnGoal = true; 
-
-                            break;
-                        }
-                    }
-                }
-
-                // 모든 골 지점에 박스가 올라와 있다면?
-                if (boxOnGoalCount == Game.GOAL_COUNT)
-                {
-                    Console.Clear();
-                    Console.ForegroundColor = ConsoleColor.Black;
-                    Console.WriteLine("축하합니다. 클리어 하셨습니다.");
-
-                    break;
-                }
-
-                // 오브젝트가 함정을 밟았다면
-                for (int trapId = 0; trapId < Game.TRAP_COUNT; ++trapId)
-                {
-                    if (Game.Function.IsCollided(player.X, player.Y, trap[trapId].X, trap[trapId].Y) || Game.Function.IsCollided(box[game.PushedBoxId].X, box[game.PushedBoxId].Y, trap[trapId].X, trap[trapId].Y))
-                    {
-                        trap[trapId].IsObjOnTrap = true;
-                        game.ActivatedTrapId = trapId;
-                        break;
-                    }
-                }
-                if (trap[game.ActivatedTrapId].IsObjOnTrap)
-                {
-                    Console.Clear();
-                    Console.ForegroundColor = ConsoleColor.Black;
-                    Console.WriteLine("YOU JUST ACTIVATED TRAP\nTRY AGAIN");
-
-                    break;
-                }
+                
+                
 
             }
 
@@ -289,18 +245,24 @@ namespace Sokoban
 
                 // 메시지
                 // 조작 회수
-                Game.Function.RenderObject(statusMessage.OperationX, statusMessage.OperationY, $"현재 조작 회수 : {statusMessage.HowMuchOperation}", ConsoleColor.Green);
+                Game.Function.RenderObject(statusMessage.OperationX, statusMessage.OperationY, $"현재 조작 회수 : {game.HowMuchOperation}", ConsoleColor.Black);
                 // 그랩 온오프 상태 메시지
                 if (Grab.Grab == player.GrabOnOff)
                 {
-                    Game.Function.RenderObject(statusMessage.GrabX, statusMessage.GrabY, "Grab Toggle : On ", ConsoleColor.Green);
+                    Game.Function.RenderObject(statusMessage.GrabX, statusMessage.GrabY, "Grab Toggle : On ", ConsoleColor.Black);
                 }
                 else
                 {
-                    Game.Function.RenderObject(statusMessage.GrabX, statusMessage.GrabY, "Grab Toggle : Off", ConsoleColor.Green);
+                    Game.Function.RenderObject(statusMessage.GrabX, statusMessage.GrabY, "Grab Toggle : Off", ConsoleColor.Black);
                 }
-
-                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY, $"Money : {game.Money}", ConsoleColor.DarkYellow);
+                if (game.Money >= 0)
+                {
+                    Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY, $"Money : {game.Money}     ", ConsoleColor.DarkYellow);
+                }
+                else
+                {
+                    Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY, $"Money : {game.Money}     ", ConsoleColor.Red);
+                }
                 switch (game.GainMineralId)
                 {
                     case (int)Mineral.None:
@@ -328,10 +290,10 @@ namespace Sokoban
                     
                     
 
-                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY, $"현재 입력 키 :                   ", ConsoleColor.Red);
-                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY, $"현재 입력 키 : {key}", ConsoleColor.Red);
-                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY + 1, $"플레이어의 현재 좌표 (  ,        ", ConsoleColor.Red);
-                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY + 1, $"플레이어의 현재 좌표 ({player.X}, {player.Y})", ConsoleColor.Red);
+                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY, $"현재 입력 키 :                   ", ConsoleColor.Black);
+                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY, $"현재 입력 키 : {key}", ConsoleColor.Black);
+                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY + 1, $"플레이어의 현재 좌표 (  ,        ", ConsoleColor.Black);
+                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY + 1, $"플레이어의 현재 좌표 ({player.X}, {player.Y})", ConsoleColor.Black);
 
                 Console.SetCursorPosition(0, 0);
 
@@ -353,8 +315,8 @@ namespace Sokoban
                 // 왈왈
                 Game.Function.RenderObject(statusMessage.NearThanX, statusMessage.NearThanY, $"사물이 보이는 것보다 가까이 있습니다", ConsoleColor.Black);
                 // 조작 가능 키
-                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY - 2, $"조작 가능 키 : 1, 2, 3, 4, ↑", ConsoleColor.Red);
-                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY - 1, $"                  G, M,  ← ↓ →  ", ConsoleColor.Red);
+                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY - 2, $"조작 가능 키 : 1, 2, 3, 4, ↑", ConsoleColor.Black);
+                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY - 1, $"                  G, M,  ← ↓ →  ", ConsoleColor.Black);
 
                 // 벽을 그린다.
                 for (int wallId = 0; wallId < Game.WALL_COUNT; ++wallId)
@@ -392,12 +354,12 @@ namespace Sokoban
                 Game.Function.RenderObject(mineral[(int)Mineral.Amethyst].X, mineral[(int)Mineral.Amethyst].Y, "♦", ConsoleColor.DarkMagenta);
 
                 // 미네랄 밸류를 그린다.
-                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 3, $"{mineral[(int)Mineral.Ruby].Name}'s Value      : {mineral[(int)Mineral.Ruby].Value}", ConsoleColor.DarkRed);
-                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 4, $"{mineral[(int)Mineral.Gold].Name}'s Value      : {mineral[(int)Mineral.Gold].Value}", ConsoleColor.Yellow);
-                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 5, $"{mineral[(int)Mineral.Emerald].Name}'s Value   : {mineral[(int)Mineral.Emerald].Value}", ConsoleColor.DarkGreen);
-                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 6, $"{mineral[(int)Mineral.Sapphire].Name}'s Value  : {mineral[(int)Mineral.Sapphire].Value}", ConsoleColor.DarkBlue);
-                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 7, $"{mineral[(int)Mineral.Aquamarine].Name}'s Value: {mineral[(int)Mineral.Aquamarine].Value}", ConsoleColor.Cyan);
-                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 8, $"{mineral[(int)Mineral.Amethyst].Name}'s Value  : {mineral[(int)Mineral.Amethyst].Value}", ConsoleColor.DarkMagenta);
+                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 3, $"{mineral[(int)Mineral.Ruby].Name}       : {mineral[(int)Mineral.Ruby].Value}  ({mineral[(int)Mineral.Ruby].Weight / 10}%)", ConsoleColor.DarkRed);
+                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 4, $"{mineral[(int)Mineral.Gold].Name}       : {mineral[(int)Mineral.Gold].Value}  ({mineral[(int)Mineral.Gold].Weight / 10}%)", ConsoleColor.Yellow);
+                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 5, $"{mineral[(int)Mineral.Emerald].Name}    : {mineral[(int)Mineral.Emerald].Value}  ({mineral[(int)Mineral.Emerald].Weight / 10}%)", ConsoleColor.DarkGreen);
+                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 6, $"{mineral[(int)Mineral.Sapphire].Name}   : {mineral[(int)Mineral.Sapphire].Value} ({mineral[(int)Mineral.Sapphire].Weight / 10}%)", ConsoleColor.DarkBlue);
+                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 7, $"{mineral[(int)Mineral.Aquamarine].Name} : {mineral[(int)Mineral.Aquamarine].Value} ({mineral[(int)Mineral.Aquamarine].Weight / 10}%)", ConsoleColor.Cyan);
+                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 8, $"{mineral[(int)Mineral.Amethyst].Name}   : {mineral[(int)Mineral.Amethyst].Value} ({mineral[(int)Mineral.Amethyst].Weight / 10}%)", ConsoleColor.DarkMagenta);
 
             }
 
@@ -405,10 +367,10 @@ namespace Sokoban
             void Update(ConsoleKey key)
             {
                 // 플레이어 이동 처리
-                Game.Function.MovePlayer(key, player, statusMessage);
+                Game.Function.MovePlayer(key, player, game);
                 Game.Function.ActPlayer(key, ref player.GrabOnOff);
                 // 플레이어가 터널을 사용할 때
-                Game.Function.TunnelPlayer(key, player, mineTunnel);
+                Game.Function.TunnelPlayer(key, player, mineTunnel, game);
                 // 플레이어가 포탈에 들어갔을 때
                 for (int i = 1; i < Game.PORTAL_COUNT; ++i)
                 {
@@ -417,7 +379,7 @@ namespace Sokoban
                         continue;
                     }
 
-                    Game.Function.PortalPlayer(key, player, portal);
+                    Game.Function.PortalPlayer(key, player, portal, game);
 
                     break;
                 }
@@ -495,17 +457,28 @@ namespace Sokoban
                     {
                         continue;
                     }
-                    Game.Function.OnCollision(() =>
+                    if (game.Money >= 0)
                     {
-                        Game.Function.MoveObj(player.MoveDirection,
-                            ref box[i].X, ref box[i].Y,
-                            in player.X, in player.Y);
 
+                        Game.Function.OnCollision(() =>
+                        {
+                            Game.Function.MoveObj(player.MoveDirection,
+                                ref box[i].X, ref box[i].Y,
+                                in player.X, in player.Y);
+
+                            Game.Function.PushOutInMain(player.MoveDirection,
+                                ref player.X, ref player.Y,
+                                in box[i].X, in box[i].Y);
+                        });
+                        game.PushedBoxId = i;
+                        game.Money -= 10;
+                    }
+                    else
+                    {
                         Game.Function.PushOutInMain(player.MoveDirection,
                             ref player.X, ref player.Y,
                             in box[i].X, in box[i].Y);
-                    });
-                    game.PushedBoxId = i;
+                    }
 
                     break;
                 }
@@ -643,6 +616,11 @@ namespace Sokoban
                 // 박스 그랩
                 for (int i = 0; i < Game.BOX_COUNT; ++i)
                 {
+                    if(game.Money < 0)
+                    {
+                        continue;
+                    }
+
                     if (Grab.Grab == player.GrabOnOff)
                     {
                         if (Direction.Left == player.MoveDirection && Game.Function.IsCollided(player.X + 2, player.Y, box[i].X, box[i].Y) && Game.Function.IsCollided(player.PastX + 1, player.PastY, box[i].X, box[i].Y))
@@ -651,6 +629,7 @@ namespace Sokoban
                             box[i].PastY = box[i].Y;
                             box[i].X = player.X + 1;
                             // game.GrabedBoxId = i;
+                            game.Money -= 20;
                         }
                         if (Direction.Right == player.MoveDirection && Game.Function.IsCollided(player.X - 2, player.Y, box[i].X, box[i].Y) && Game.Function.IsCollided(player.PastX - 1, player.PastY, box[i].X, box[i].Y))
                         {
@@ -658,6 +637,7 @@ namespace Sokoban
                             box[i].PastY = box[i].Y;
                             box[i].X = player.X - 1;
                             // game.GrabedBoxId = i;
+                            game.Money -= 20;
                         }
                         if (Direction.Up == player.MoveDirection && Game.Function.IsCollided(player.X, player.Y + 2, box[i].X, box[i].Y) && Game.Function.IsCollided(player.PastX, player.PastY + 1, box[i].X, box[i].Y))
                         {
@@ -665,6 +645,7 @@ namespace Sokoban
                             box[i].PastY = box[i].Y;
                             box[i].Y = player.Y + 1;
                             // game.GrabedBoxId = i;
+                            game.Money -= 20;
                         }
                         if (Direction.Down == player.MoveDirection && Game.Function.IsCollided(player.X, player.Y - 2, box[i].X, box[i].Y) && Game.Function.IsCollided(player.PastX, player.PastY - 1, box[i].X, box[i].Y))
                         {
@@ -672,8 +653,15 @@ namespace Sokoban
                             box[i].PastY = box[i].Y;
                             box[i].Y = player.Y - 1;
                             // game.GrabedBoxId = i;
+                            game.Money -= 20;
                         }
                     }
+                }
+                Game.Function.ObjOnTrap(trap, player, box, game);
+                Game.Function.BoxInGoal(box, goal, game);
+                if (game.BoxOnGoalCount == Game.GOAL_COUNT)
+                {
+                    Game.Function.GameClear();
                 }
             }
 
