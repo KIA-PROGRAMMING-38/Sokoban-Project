@@ -37,15 +37,16 @@ namespace Sokoban
         Emerald,
         Sapphire,
         Aquamarine,
-        Diamond
+        Amethyst
     }
     internal class Game
     {
         public int PushedBoxId;
         // public int GrabedBoxId;
+        public int GainMineralId;
         public int ActivatedTrapId;
-        public int HowMuchOperation;
         public PortalNum PortalId;
+        public int Money;
 
         // 기호 상수 정의
         public const int GOAL_COUNT = 4;
@@ -63,12 +64,13 @@ namespace Sokoban
         public const int OUTLINE_LENGTH_X = 33;
         public const int OUTLINE_LENGTH_Y = 20;
 
-        public const int MINE_MIN_X = 52;
+        public const int MINE_MIN_X = 47;
         public const int MINE_MIN_Y = 16;
-        public const int MINE_MAX_X = 92;
+        public const int MINE_MAX_X = 87;
         public const int MINE_MAX_Y = 23;
         public const int MINE_OUTLINE_LENGTH_X = 41;
         public const int MINE_OUTLINE_LENGTH_Y = 7;
+
 
         public static class Function
         {
@@ -212,6 +214,20 @@ namespace Sokoban
                     }
                 }
 
+            }
+
+            // 광질
+            public static void Mining(int mineralWeight, int mineralValue, int index, ref int money, ref int gainMineralId)
+            {
+                Random random = new Random();
+
+                int selectedNumber = random.Next(1, 1091);
+                gainMineralId = 0;
+                if (selectedNumber <= mineralWeight)
+                {
+                    money += mineralValue;
+                    gainMineralId = index;
+                }
             }
 
             // 충돌 판별

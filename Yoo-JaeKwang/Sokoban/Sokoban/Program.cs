@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Text;
 using Sokoban;
 
 namespace Sokoban
@@ -8,7 +9,7 @@ namespace Sokoban
 
     class Program
     {
-        static void Main()
+        static void Main(string[] arg)
         {
             Player player = new Player
             {
@@ -27,7 +28,9 @@ namespace Sokoban
                 PushedBoxId = 0,
                 // GrabedBoxId = 0,
                 ActivatedTrapId = 0,
+                GainMineralId = 0,
                 PortalId = PortalNum.None,
+                Money = 0,
             };
 
             Box[] box = new Box[Game.BOX_COUNT]
@@ -100,37 +103,36 @@ namespace Sokoban
             {
                 InMainX = 37,
                 InMainY = 16,
-                InMineX = 72,
-                InMineY = 20
+                InMineX = 67,
+                InMineY = 19
             };
-        
+
             Mine.Mineral[] mineral = new Mine.Mineral[Game.MINERAL_COUNT]
             {
-                new Mine.Mineral { X = 0, Y = 0, Name = "" },
-                new Mine.Mineral { X = 52, Y = 16, Name = "Ruby" },
-                new Mine.Mineral { X = 72, Y = 16, Name = "Gold" },
-                new Mine.Mineral { X = 92, Y = 16, Name = "Emerald" },
-                new Mine.Mineral { X = 52, Y = 23, Name = "Sapphire" },
-                new Mine.Mineral { X = 72, Y = 23, Name = "Aquamarine" },
-                new Mine.Mineral { X = 92, Y = 23, Name = "Diamond" }
+                new Mine.Mineral { X = 0, Y = 0, Name = "", Weight = 0, Value = 0 },
+                new Mine.Mineral { X = 47, Y = 16, Name = "Ruby", Weight = 800, Value = 1 },
+                new Mine.Mineral { X = 67, Y = 16, Name = "Gold", Weight = 600, Value = 3 },
+                new Mine.Mineral { X = 87, Y = 16, Name = "Emerald", Weight = 400, Value = 7 },
+                new Mine.Mineral { X = 47, Y = 23, Name = "Sapphire", Weight = 200, Value = 15 },
+                new Mine.Mineral { X = 67, Y = 23, Name = "Aquamarine", Weight = 100, Value = 35 },
+                new Mine.Mineral { X = 87, Y = 23, Name = "Amethyst", Weight = 50, Value = 100 }
             };
             
             StatusMessage statusMessage = new StatusMessage
             {
-                FullScreenX = 51,
-                FullScreenY = 2,
-                FontX = 51,
-                FontY = 3,
-                NearThanX = 51,
-                NearThanY = 5,
-                OperationX = 51,
-                OperationY = 7,
-                GrabX = 51,
-                GrabY = 8,
-                CurrentKeyX = 51,
-                CurrentKeyY = 12,
-                HowMuchOperation = 0
-
+                ScreenSetX = 46,
+                ScreenSetY = 2,
+                NearThanX = 46,
+                NearThanY = 3,
+                OperationX = 46,
+                OperationY = 5,
+                GrabX = 46,
+                GrabY = 6,
+                CurrentKeyX = 46,
+                CurrentKeyY = 10,
+                HowMuchOperation = 0,
+                MoneyX = 79,
+                MoneyY = 5,
             };
 
             ConsoleKey key = default;
@@ -269,20 +271,20 @@ namespace Sokoban
                 // 메인 터널을 그린다.
                 if (true == Game.Function.IsCollided(player.X, player.Y, mineTunnel.InMainX, mineTunnel.InMainY))
                 {
-                    Game.Function.RenderObject(mineTunnel.InMainX, mineTunnel.InMainY, "☻", ConsoleColor.Gray);
+                    Game.Function.RenderObject(mineTunnel.InMainX, mineTunnel.InMainY, "☻", ConsoleColor.DarkGray);
                 }
                 else
                 {
-                    Game.Function.RenderObject(mineTunnel.InMainX, mineTunnel.InMainY, "≎", ConsoleColor.Gray);
+                    Game.Function.RenderObject(mineTunnel.InMainX, mineTunnel.InMainY, "ℴ", ConsoleColor.DarkGray);
                 }
 
                 if (true == Game.Function.IsCollided(player.X, player.Y, mineTunnel.InMineX, mineTunnel.InMineY))
                 {
-                    Game.Function.RenderObject(mineTunnel.InMineX, mineTunnel.InMineY, "☻", ConsoleColor.Gray);
+                    Game.Function.RenderObject(mineTunnel.InMineX, mineTunnel.InMineY, "☻", ConsoleColor.DarkGray);
                 }
                 else
                 {
-                    Game.Function.RenderObject(mineTunnel.InMineX, mineTunnel.InMineY, "≎", ConsoleColor.Gray);
+                    Game.Function.RenderObject(mineTunnel.InMineX, mineTunnel.InMineY, "ℴ", ConsoleColor.DarkGray);
                 }
 
                 // 메시지
@@ -298,8 +300,35 @@ namespace Sokoban
                     Game.Function.RenderObject(statusMessage.GrabX, statusMessage.GrabY, "Grab Toggle : Off", ConsoleColor.Green);
                 }
 
-                
-                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY, $"현재 입력 키 :                                ", ConsoleColor.Red);
+                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY, $"Money : {game.Money}", ConsoleColor.DarkYellow);
+                switch (game.GainMineralId)
+                {
+                    case (int)Mineral.None:
+                        Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 1, $"                    ", ConsoleColor.Green);
+                        break;
+                    case (int)Mineral.Ruby:
+                        Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 1, $"{mineral[game.GainMineralId].Name} 획득!", ConsoleColor.DarkRed);
+                        break;
+                    case (int)Mineral.Gold:
+                        Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 1, $"{mineral[game.GainMineralId].Name} 획득!", ConsoleColor.Yellow);
+                        break;
+                    case (int)Mineral.Emerald:
+                        Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 1, $"{mineral[game.GainMineralId].Name} 획득!", ConsoleColor.DarkGreen);
+                        break;
+                    case (int)Mineral.Sapphire:
+                        Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 1, $"{mineral[game.GainMineralId].Name} 획득!", ConsoleColor.DarkBlue);
+                        break;
+                    case (int)Mineral.Aquamarine:
+                        Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 1, $"{mineral[game.GainMineralId].Name} 획득!", ConsoleColor.Cyan);
+                        break;
+                    case (int)Mineral.Amethyst:
+                        Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 1, $"{mineral[game.GainMineralId].Name} 획득!", ConsoleColor.DarkMagenta);
+                        break;
+                }
+                    
+                    
+
+                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY, $"현재 입력 키 :                   ", ConsoleColor.Red);
                 Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY, $"현재 입력 키 : {key}", ConsoleColor.Red);
                 Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY + 1, $"플레이어의 현재 좌표 (  ,        ", ConsoleColor.Red);
                 Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY + 1, $"플레이어의 현재 좌표 ({player.X}, {player.Y})", ConsoleColor.Red);
@@ -315,19 +344,17 @@ namespace Sokoban
                 Console.Title = "경이루 아카데미";                    // 타이틀을 설정한다.
                 Console.BackgroundColor = ConsoleColor.White;       // 배경색을 설정한다.
                 Console.ForegroundColor = ConsoleColor.White;       // 글꼴색을 설정한다.
-                Console.OutputEncoding = System.Text.Encoding.UTF8; // UTF8 문자 허용
+                Console.OutputEncoding = System.Text.Encoding.Unicode; // UTF8 문자 허용
                 Console.Clear();                                    // 출력된 모든 내용을 지운다.
 
                 // 메시지
                 // 전체화면
-                Game.Function.RenderObject(statusMessage.FullScreenX, statusMessage.FullScreenY, $"전체 화면이 아닌 큰 화면 플레이를 권장합니다", ConsoleColor.DarkBlue);
-                // 폰트
-                Game.Function.RenderObject(statusMessage.FontX, statusMessage.FontY, $"폰트 크기를 크게 사용하기를 권장합니다", ConsoleColor.DarkBlue);
+                Game.Function.RenderObject(statusMessage.ScreenSetX, statusMessage.ScreenSetY, $"전체 화면 / 폰트 크기 크게 플레이하는것을 권장합니다", ConsoleColor.Black);
                 // 왈왈
-                Game.Function.RenderObject(statusMessage.NearThanX, statusMessage.NearThanY, $"사물이 보이는 것보다 가까이 있습니다", ConsoleColor.DarkBlue);
+                Game.Function.RenderObject(statusMessage.NearThanX, statusMessage.NearThanY, $"사물이 보이는 것보다 가까이 있습니다", ConsoleColor.Black);
                 // 조작 가능 키
-                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY - 2, $"조작 가능 키 : 1, 2, 3, 4,↑", ConsoleColor.Red);
-                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY - 1, $"                  G, M, ←↓→  ", ConsoleColor.Red);
+                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY - 2, $"조작 가능 키 : 1, 2, 3, 4, ↑", ConsoleColor.Red);
+                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY - 1, $"                  G, M,  ← ↓ →  ", ConsoleColor.Red);
 
                 // 벽을 그린다.
                 for (int wallId = 0; wallId < Game.WALL_COUNT; ++wallId)
@@ -357,12 +384,21 @@ namespace Sokoban
                     Game.Function.RenderObject(Game.MINE_MAX_X + 1, Game.MINE_MIN_Y + i, "▒", ConsoleColor.DarkMagenta);
                 }
                 // 미네랄을 그린다.
-                Game.Function.RenderObject(mineral[(int)Mineral.Ruby].X, mineral[(int)Mineral.Ruby].Y, "♦", ConsoleColor.Red);
-                Game.Function.RenderObject(mineral[(int)Mineral.Gold].X, mineral[(int)Mineral.Gold].Y, "♦", ConsoleColor.DarkYellow);
-                Game.Function.RenderObject(mineral[(int)Mineral.Emerald].X, mineral[(int)Mineral.Emerald].Y, "♦", ConsoleColor.Green);
+                Game.Function.RenderObject(mineral[(int)Mineral.Ruby].X, mineral[(int)Mineral.Ruby].Y, "♦", ConsoleColor.DarkRed);
+                Game.Function.RenderObject(mineral[(int)Mineral.Gold].X, mineral[(int)Mineral.Gold].Y, "♦", ConsoleColor.Yellow);
+                Game.Function.RenderObject(mineral[(int)Mineral.Emerald].X, mineral[(int)Mineral.Emerald].Y, "♦", ConsoleColor.DarkGreen);
                 Game.Function.RenderObject(mineral[(int)Mineral.Sapphire].X, mineral[(int)Mineral.Sapphire].Y, "♦", ConsoleColor.DarkBlue);
                 Game.Function.RenderObject(mineral[(int)Mineral.Aquamarine].X, mineral[(int)Mineral.Aquamarine].Y, "♦", ConsoleColor.Cyan);
-                Game.Function.RenderObject(mineral[(int)Mineral.Diamond].X, mineral[(int)Mineral.Diamond].Y, "♦", ConsoleColor.DarkGray);
+                Game.Function.RenderObject(mineral[(int)Mineral.Amethyst].X, mineral[(int)Mineral.Amethyst].Y, "♦", ConsoleColor.DarkMagenta);
+
+                // 미네랄 밸류를 그린다.
+                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 3, $"{mineral[(int)Mineral.Ruby].Name}'s Value      : {mineral[(int)Mineral.Ruby].Value}", ConsoleColor.DarkRed);
+                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 4, $"{mineral[(int)Mineral.Gold].Name}'s Value      : {mineral[(int)Mineral.Gold].Value}", ConsoleColor.Yellow);
+                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 5, $"{mineral[(int)Mineral.Emerald].Name}'s Value   : {mineral[(int)Mineral.Emerald].Value}", ConsoleColor.DarkGreen);
+                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 6, $"{mineral[(int)Mineral.Sapphire].Name}'s Value  : {mineral[(int)Mineral.Sapphire].Value}", ConsoleColor.DarkBlue);
+                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 7, $"{mineral[(int)Mineral.Aquamarine].Name}'s Value: {mineral[(int)Mineral.Aquamarine].Value}", ConsoleColor.Cyan);
+                Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY + 8, $"{mineral[(int)Mineral.Amethyst].Name}'s Value  : {mineral[(int)Mineral.Amethyst].Value}", ConsoleColor.DarkMagenta);
+
             }
 
             // Update
@@ -432,7 +468,7 @@ namespace Sokoban
 
                     break;
                 }
-                // 플레이어와 미네랄의 충돌 처리
+                // 플레이어와 미네랄의 충돌 처리 = 광질
                 for (int mineralId = 1; mineralId < Game.MINERAL_COUNT; ++mineralId)
                 {
                     if (false == Game.Function.IsCollided(player.X, player.Y, mineral[mineralId].X, mineral[mineralId].Y))
@@ -446,6 +482,8 @@ namespace Sokoban
                             ref player.X, ref player.Y,
                             mineral[mineralId].X, mineral[mineralId].Y);
                     });
+
+                    Game.Function.Mining(mineral[mineralId].Weight, mineral[mineralId].Value, mineralId, ref game.Money, ref game.GainMineralId);
 
                 }
 
@@ -639,7 +677,7 @@ namespace Sokoban
                 }
             }
 
-
+            
 
 
         }

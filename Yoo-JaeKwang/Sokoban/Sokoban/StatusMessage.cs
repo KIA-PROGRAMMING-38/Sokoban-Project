@@ -12,14 +12,14 @@ namespace Sokoban
         public int GrabY;
         public int OperationX;
         public int OperationY;
-        public int FullScreenX;
-        public int FullScreenY;
-        public int FontX;
-        public int FontY;
+        public int ScreenSetX;
+        public int ScreenSetY;
         public int NearThanX;
         public int NearThanY;
         public int CurrentKeyX;
         public int CurrentKeyY;
         public int HowMuchOperation;
+        public int MoneyX;
+        public int MoneyY;
     }
 }

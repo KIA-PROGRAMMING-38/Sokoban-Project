@@ -20,7 +20,9 @@ namespace Sokoban
         {
             public int X;
             public int Y;
-            public string Name;
+            public string Name = "";
+            public int Weight;
+            public int Value;
         }
     }
 }
