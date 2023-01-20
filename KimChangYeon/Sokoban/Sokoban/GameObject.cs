@@ -31,7 +31,7 @@ namespace Sokoban
                 new Box {X = 22, Y = 14, IsOnGoal = false , Symbol = ' ', Color = ConsoleColor.White},
                 new Box {X = 23, Y = 14, IsOnGoal = false , Symbol = ' ', Color = ConsoleColor.DarkGreen},
                 new Box {X = 24, Y = 14, IsOnGoal = false , Symbol = ' ', Color = ConsoleColor.DarkYellow},
-                new Box {X = 25, Y = 14, IsOnGoal = false , Symbol = ' ', Color = ConsoleColor.Black}
+                new Box {X = 25, Y = 14, IsOnGoal = false , Symbol = ' ', Color = ConsoleColor.DarkGray}
         };
 
         static public ColorBox[] colorboxes = new ColorBox[]
@@ -39,7 +39,7 @@ namespace Sokoban
                 new ColorBox {X = GameSet.MAP_MAX_X + 5 , Y = GameSet.MAP_MAX_Y - 1 , Symbol = '■', Color = ConsoleColor.White},
                 new ColorBox {X = GameSet.MAP_MAX_X + 4 , Y = GameSet.MAP_MAX_Y , Symbol = '■', Color = ConsoleColor.DarkGreen},
                 new ColorBox {X = GameSet.MAP_MAX_X + 5 , Y = GameSet.MAP_MAX_Y , Symbol = '■', Color = ConsoleColor.DarkYellow},
-                new ColorBox {X = GameSet.MAP_MAX_X + 4 , Y = GameSet.MAP_MAX_Y - 1, Symbol = '■', Color = ConsoleColor.Black}
+                new ColorBox {X = GameSet.MAP_MAX_X + 4 , Y = GameSet.MAP_MAX_Y - 1, Symbol = '■', Color = ConsoleColor.DarkGray}
         };
 
         static public ExitPoint exitPoint = new ExitPoint
@@ -51,22 +51,32 @@ namespace Sokoban
 
         static public Wall[] walls = new Wall[]
         {
-                new Wall {X = 1 , DefaultX = 1, Y = 2 , DefaultY = 2, Symbol = '#', Color = ConsoleColor.Black},
-                new Wall {X = 2 , DefaultX = 2, Y = 2 , DefaultY = 2, Symbol = '#', Color = ConsoleColor.Black},
-                new Wall {X = 2 , DefaultX = 2, Y = 1 , DefaultY = 1, Symbol = '#', Color = ConsoleColor.Black},
+                new Wall {X = 1 , DefaultX = 1, Y = 2 , DefaultY = 2, Symbol = '#', Color = ConsoleColor.DarkGray},
+                new Wall {X = 2 , DefaultX = 2, Y = 2 , DefaultY = 2, Symbol = '#', Color = ConsoleColor.DarkGray},
+                new Wall {X = 2 , DefaultX = 2, Y = 1 , DefaultY = 1, Symbol = '#', Color = ConsoleColor.DarkGray},
 
-                new Wall {X = GameSet.MAP_MAX_X - 2 , DefaultX = GameSet.MAP_MAX_X - 2, Y = 1 , DefaultY = 1, Symbol = '#', Color = ConsoleColor.White},
-                new Wall {X = GameSet.MAP_MAX_X - 1 , DefaultX = GameSet.MAP_MAX_X - 1, Y = 2 , DefaultY = 2, Symbol = '#', Color = ConsoleColor.White},
-                new Wall {X = GameSet.MAP_MAX_X  , DefaultX = GameSet.MAP_MAX_X, Y = 3 , DefaultY = 3, Symbol = '#', Color = ConsoleColor.White},
+                new Wall {X = GameSet.MAP_MAX_X - 2 , DefaultX = GameSet.MAP_MAX_X - 2,
+                    Y = 1 , DefaultY = 1, Symbol = '#', Color = ConsoleColor.White},
+                new Wall {X = GameSet.MAP_MAX_X - 1 , DefaultX = GameSet.MAP_MAX_X - 1,
+                    Y = 2 , DefaultY = 2, Symbol = '#', Color = ConsoleColor.White},
+                new Wall {X = GameSet.MAP_MAX_X  , DefaultX = GameSet.MAP_MAX_X, 
+                    Y = 3 , DefaultY = 3, Symbol = '#', Color = ConsoleColor.White},
 
-                new Wall {X = 1 , DefaultX = 1, Y = GameSet.MAP_MAX_Y - 1 , DefaultY = GameSet.MAP_MAX_Y - 1, Symbol = '#', Color = ConsoleColor.DarkGreen},
-                new Wall {X = 2 ,DefaultX = 2, Y = GameSet.MAP_MAX_Y ,DefaultY = GameSet.MAP_MAX_Y, Symbol = '#', Color = ConsoleColor.DarkGreen},
-                new Wall {X = 2  ,DefaultX = 2, Y = GameSet.MAP_MAX_Y - 1 ,DefaultY = GameSet.MAP_MAX_Y - 1, Symbol = '#', Color = ConsoleColor.DarkGreen},
+                new Wall {X = 1 , DefaultX = 1, Y = GameSet.MAP_MAX_Y - 1 , DefaultY = GameSet.MAP_MAX_Y - 1,
+                    Symbol = '#', Color = ConsoleColor.DarkGreen},
+                new Wall {X = 2 ,DefaultX = 2, Y = GameSet.MAP_MAX_Y ,DefaultY = GameSet.MAP_MAX_Y,
+                    Symbol = '#', Color = ConsoleColor.DarkGreen},
+                new Wall {X = 2  ,DefaultX = 2, Y = GameSet.MAP_MAX_Y - 1 ,DefaultY = GameSet.MAP_MAX_Y - 1,
+                    Symbol = '#', Color = ConsoleColor.DarkGreen},
 
-                new Wall {X = exitPoint.X + 1 ,DefaultX = exitPoint.X + 1, Y = exitPoint.Y ,DefaultY =  exitPoint.Y, Symbol = '#', Color = ConsoleColor.DarkYellow},
-                new Wall {X = exitPoint.X - 1 ,DefaultX = exitPoint.X - 1, Y = exitPoint.Y ,DefaultY =  exitPoint.Y, Symbol = '#', Color = ConsoleColor.DarkYellow},
-                new Wall {X = exitPoint.X ,DefaultX = exitPoint.X, Y = exitPoint.Y - 1 ,DefaultY = exitPoint.Y - 1, Symbol = '#', Color = ConsoleColor.DarkYellow},
-                new Wall {X = exitPoint.X ,DefaultX = exitPoint.X, Y = exitPoint.Y + 1 ,DefaultY = exitPoint.Y + 1, Symbol = '#', Color = ConsoleColor.DarkYellow}
+                new Wall {X = exitPoint.X + 1 ,DefaultX = exitPoint.X + 1, Y = exitPoint.Y ,DefaultY =  exitPoint.Y,
+                    Symbol = '#', Color = ConsoleColor.DarkYellow},
+                new Wall {X = exitPoint.X - 1 ,DefaultX = exitPoint.X - 1, Y = exitPoint.Y ,DefaultY =  exitPoint.Y,
+                    Symbol = '#', Color = ConsoleColor.DarkYellow},
+                new Wall {X = exitPoint.X ,DefaultX = exitPoint.X, Y = exitPoint.Y - 1 ,DefaultY = exitPoint.Y - 1,
+                    Symbol = '#', Color = ConsoleColor.DarkYellow},
+                new Wall {X = exitPoint.X ,DefaultX = exitPoint.X, Y = exitPoint.Y + 1 ,DefaultY = exitPoint.Y + 1,
+                    Symbol = '#', Color = ConsoleColor.DarkYellow}
         };
 
         static public Goal[] goals = new Goal[]
@@ -74,7 +84,7 @@ namespace Sokoban
                 new Goal { X = 5 , Y = 2, Symbol = '□' , InSymbol = '▣', Color = ConsoleColor.White},
                 new Goal { X = 16 , Y = 10, Symbol = '□' , InSymbol = '▣', Color = ConsoleColor.DarkGreen},
                 new Goal { X = 5 , Y = 10, Symbol = '□' , InSymbol = '▣', Color = ConsoleColor.DarkYellow},
-                new Goal { X = 16 , Y = 2, Symbol = '□' , InSymbol = '▣', Color = ConsoleColor.Black}
+                new Goal { X = 16 , Y = 2, Symbol = '□' , InSymbol = '▣', Color = ConsoleColor.DarkGray}
         };
 
         static public PointItem[] pointItems = new PointItem[]
@@ -101,6 +111,20 @@ namespace Sokoban
                 new VerticalItem {X = 2 , Y = GameSet.MAP_MAX_Y - 2, Symbol = '↕', Color = ConsoleColor.Red}
         };
 
+        static public PlayerHp[] playerHp = new PlayerHp[]
+        {
+            new PlayerHp {Hp = '♥', LoseHp = ' ' },
+            new PlayerHp {Hp = '♥', LoseHp = ' ' },
+            new PlayerHp {Hp = '♥', LoseHp = ' ' },
+            new PlayerHp {Hp = '♥', LoseHp = ' ' },
+            new PlayerHp {Hp = '♥', LoseHp = ' ' }
+        };
+
+        static public Trap[] traps = new Trap[]
+        {
+            new Trap {X = 10, Y = 3, Symbol = '※'}
+        };
+
         static public int boxLength = boxes.Length;
         static public int wallLength = walls.Length;
         static public int goalLength = goals.Length;
@@ -112,6 +136,7 @@ namespace Sokoban
         static public int point = 0;
         static public int move = 0;
         static public int moveLimit = 10;
+        static public int playerHpNumber = 5;
 
 
         static public bool[] isBoxOnGoal = new bool[boxLength];

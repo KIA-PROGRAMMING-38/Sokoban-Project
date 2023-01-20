@@ -12,50 +12,11 @@ namespace sokoban
         static void Main()
         {
             GameSet.SetGame();
+            Render.RenderTitle();
             
-            // 게임 루프 == 프레임(Frame)
-            while (GameObject.clearJudge)
-            {
-                // --------------------------------------------- Render -------------------------------------------------------
+            GameScene.Scene1();
 
-                Render.MapRender();
-                Render.GoalRender();
-                Render.WallRender();
-                Render.RenderExit();
-                Render.ChangeRender();
-                Render.ItemRender();
-                Render.RenderColorBox();
-                Render.ChangerRender();
-                Render.RenderPointItem();
-                Render.PlayerRender();
-                Render.StringRender();
-
-                // --------------------------------------------- ProcessInput -------------------------------------------------
-
-                Input.InputKey();
-
-                // --------------------------------------------- Update -------------------------------------------------------
-
-                Move.Right();
-                Move.Left();
-                Move.Up();
-                Move.Down();
-
-                GameRule.SpawnBox();
-                OnColision.WithPlayerBox();
-                OnColision.WithBoxWall();
-                OnColision.WithBoxBox();
-                OnColision.WithPlayerWall();
-                OnColision.WithPlayerHitem();
-                OnColision.WithPlayerVitem();
-                GameRule.ChangePlayerColor();
-                GameRule.GoalInJudge();
-                GameRule.OpenWall();
-                GameRule.AddPoint();
-
-                GameRule.JudgeClear();
-            }  
-        }   
+        }
     }
 }
 

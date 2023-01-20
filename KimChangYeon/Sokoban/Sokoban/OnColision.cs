@@ -215,6 +215,16 @@ namespace Sokoban
             }
         }
 
+        public static void WithPlayerTrap()
+        {
+            if (IsCollide(GameObject.player.X, GameObject.traps[0].X, GameObject.player.Y, GameObject.traps[0].Y))
+            {
+                GameObject.playerHpNumber--;
+                
+                
+            }
+        }
+
         static bool IsCollide(int x1, int x2, int y1, int y2)
         {
             if (x1 == x2 && y1 == y2)

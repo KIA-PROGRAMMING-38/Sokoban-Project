@@ -20,7 +20,7 @@ namespace Sokoban
             IsRender(ConsoleColor.Cyan, GameObject.exitPoint.X, GameObject.exitPoint.Y, GameObject.exitPoint.Symbol);
         }
 
-        static public void MapRender()
+        static public void RenderMap()
         {
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.White;
@@ -36,7 +36,7 @@ namespace Sokoban
             }
         }
 
-        static public void GoalRender()
+        static public void RenderGoal()
         {
             for (int goalId = 0; goalId < GameObject.goalLength; goalId++)
             {
@@ -44,7 +44,7 @@ namespace Sokoban
             }
         }
 
-        static public void WallRender()
+        static public void RenderWall()
         {
             for (int wallId = 0; wallId < GameObject.wallLength; wallId++)
             {
@@ -52,7 +52,7 @@ namespace Sokoban
             }
         }
 
-        static public void ChangeRender()
+        static public void RenderChange()
         {
             for (int boxId = 0; boxId < GameObject.boxLength; boxId++)
             {
@@ -68,12 +68,12 @@ namespace Sokoban
 
         }
 
-        static public void PlayerRender()
+        static public void RenderPlayer()
         {
             IsRender(GameObject.player.Color, GameObject.player.X, GameObject.player.Y, GameObject.player.Symbol);
         }
 
-        static public void ItemRender()
+        static public void RenderItem()
         {
             for (int itemId = 0; itemId < GameObject.itemLength; itemId++)
             {
@@ -83,7 +83,7 @@ namespace Sokoban
             }
         }
 
-        static public void StringRender()
+        static public void RenderString()
         {
             Console.ForegroundColor = ConsoleColor.White;
 
@@ -101,9 +101,13 @@ namespace Sokoban
 
             Console.SetCursorPosition(GameSet.MAP_MAX_X + 4, GameSet.MAP_MAX_Y - 4);
             Console.Write($"MOVE : {GameObject.move}");
+
+            Console.SetCursorPosition(GameSet.MAP_MAX_X + 4, GameSet.MAP_MIN_Y + 1);
+            Console.Write("HP : ");
+            
         }
 
-        static public void ChangerRender()
+        static public void RenderChanger()
         {
             IsRender(GameObject.changer.Color, GameObject.changer.X, GameObject.changer.Y, GameObject.changer.Symbol);
         }
@@ -123,5 +127,78 @@ namespace Sokoban
                 IsRender(ConsoleColor.Cyan, GameObject.pointItems[itemId].X, GameObject.pointItems[itemId].Y, GameObject.pointItems[itemId].Symbol);
             }
         }
+
+        static public void RenderTrap()
+        {
+            for (int i = 0; i < GameObject.traps.Length; i++)
+            {
+                IsRender(ConsoleColor.DarkRed, GameObject.traps[i].X, GameObject.traps[i].Y, GameObject.traps[i].Symbol);
+            }
+        }
+
+        static public void RenderHp()
+        {
+            for (int i = 0; i < GameObject.playerHpNumber; i++)
+            {
+                IsRender(ConsoleColor.DarkRed, GameSet.MAP_MAX_X + 9 + i, GameSet.MAP_MIN_Y + 1, GameObject.playerHp[i].Hp);  
+            }
+            
+        }
+
+        static public void RenderLosshp()
+        {
+            switch (GameObject.playerHpNumber)
+            {
+                case 4:
+                    GameObject.playerHp[4].Hp = GameObject.playerHp[4].LoseHp;
+                    break;
+                case 3:
+                    GameObject.playerHp[3].Hp = GameObject.playerHp[3].LoseHp;
+                    break;
+                case 2:
+                    GameObject.playerHp[2].Hp = GameObject.playerHp[2].LoseHp;
+                    break;
+                case 1:
+                    GameObject.playerHp[1].Hp = GameObject.playerHp[1].LoseHp;
+                    break;
+            }
+        }
+
+        static public void RenderTitle()
+        {
+            
+           
+            Console.SetCursorPosition(93, 4);
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("                                                                                    :::::::::");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine("   ::::::::   ::::::::  :::    :::  ::::::::  :::::::::      :::     ::::    :::  :::     :::");
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("  :+:    :+: :+:    :+: :+:   :+:  :+:    :+: :+:    :+:   :+: :+:   :+:+:   :+:  :+:     :+:");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("  +:+        +:+    +:+ +:+  +:+   +:+    +:+ +:+    +:+  +:+   +:+  :+:+:+  +:+         +:+");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("  +#++:++#++ +#+    +:+ +#++:++    +#+    +:+ +#++:++#+  +#++:++#++: +#+ +:+ +#+        +#+");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("         +#+ +#+    +#+ +#+  +#+   +#+    +#+ +#+    +#+ +#+     +#+ +#+  +#+#+#      +#+");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("  #+#    #+# #+#    #+# #+#   #+#  #+#    #+# #+#    #+# #+#     #+# #+#   #+#+#      +#+  ");
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.WriteLine("   ########   ########  ###    ###  ########  #########  ###     ### ###    ####            ");
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.WriteLine("                                                                                      ###");
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.WriteLine("                                                                                      ###");
+
+            Console.SetCursorPosition(39, 20);
+            Console.WriteLine("Press F11 -> Enter");
+
+
+            ConsoleKey key = Console.ReadKey().Key;
+        }
+        
+
+        
     }
 }

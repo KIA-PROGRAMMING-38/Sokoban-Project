@@ -129,29 +129,89 @@ namespace Sokoban
 
         public static void JudgeClear()
         {
-            if (IsCollide(GameObject.player.X, GameObject.exitPoint.X, GameObject.player.Y, GameObject.exitPoint.Y) && 0 < GameObject.move && GameObject.move <= 150) // 클리어 판정
+            if (IsCollide(GameObject.player.X, GameObject.exitPoint.X, GameObject.player.Y, GameObject.exitPoint.Y) && 0 < GameObject.move && GameObject.move <= 155) // 클리어 판정
             {
                 Console.Clear();
-                Console.WriteLine("★★★ Clear!");
+                Console.WriteLine("\r\n\r\n         ~-         \r\n        ~@@,        \r\n        @@@@        \r\n       ,@@@@.          \r\n      ,@@@@@@,      \r\n  ~@@@@@@@@@@@@@@!, \r\n@@@@@@@@@@@@@@@@@@@@\r\n @@@@@@@@@@@@@@@@@@ \r\n  @@@@@@@@@@@@@@@@  \r\n   @@@@@@@@@@@@@@   \r\n    @@@@@@@@@@@@       \r\n    @@@@@@@@@@@@    \r\n   -@@@@@@@@@@@@:   \r\n   @@@@@@   @@@@\r\n   @@@@      @@@@\r\n    *,        .!    \r\n");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("\r\n ::::::::  :::        ::::::::::     :::     :::::::::  \r\n" +
+                    ":+:    :+: :+:        :+:          :+: :+:   :+:    :+: \r\n" +
+                    "+:+        +:+        +:+         +:+   +:+  +:+    +:+ \r\n" +
+                    "+#+        +#+        +#++:++#   +#++:++#++: +#++:++#:  \r\n" +
+                    "+#+        +#+        +#+        +#+     +#+ +#+    +#+ \r\n" +
+                    "#+#    #+# #+#        #+#        #+#     #+# #+#    #+# \r\n" +
+                    " ########  ########## ########## ###     ### ###    ### \r\n");
+                Thread.Sleep(3000);
 
+                Console.ReadLine();
                 GameObject.clearJudge = false;
 
             }
             else if (IsCollide(GameObject.player.X, GameObject.exitPoint.X, GameObject.player.Y, GameObject.exitPoint.Y) && 150 < GameObject.move && GameObject.move <= 180)
             {
                 Console.Clear();
-                Console.WriteLine("★★☆ Clear!");
+                Console.WriteLine("\r\n\r\n         ~-         \r\n        ~@@,        \r\n        @@@@        \r\n       ,@@@@.          \r\n      ,@@@@@@,      \r\n  ~@@@@@@@@@@@@@@!, \r\n@@@@@@@@@@@@@@@@@@@@\r\n @@@@@@@@@@@@@@@@@@ \r\n  @@@@@@@@@@@@@@@@  \r\n   @@@@@@@@@@@@@@   \r\n    @@@@@@@@@@@@       \r\n    @@@@@@@@@@@@    \r\n   -@@@@@@@@@@@@:   \r\n   @@@@@@   @@@@\r\n   @@@@      @@@@\r\n    *,        .!    \r\n");
 
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("\r\n ::::::::  :::        ::::::::::     :::     :::::::::  \r\n" +
+                    ":+:    :+: :+:        :+:          :+: :+:   :+:    :+: \r\n" +
+                    "+:+        +:+        +:+         +:+   +:+  +:+    +:+ \r\n" +
+                    "+#+        +#+        +#++:++#   +#++:++#++: +#++:++#:  \r\n" +
+                    "+#+        +#+        +#+        +#+     +#+ +#+    +#+ \r\n" +
+                    "#+#    #+# #+#        #+#        #+#     #+# #+#    #+# \r\n" +
+                    " ########  ########## ########## ###     ### ###    ### \r\n");
+                Thread.Sleep(3000);
 
+                Console.ReadLine();
                 GameObject.clearJudge = false;
             }
             else if (IsCollide(GameObject.player.X, GameObject.exitPoint.X, GameObject.player.Y, GameObject.exitPoint.Y) && 180 < GameObject.move)
             {
                 Console.Clear();
-                Console.WriteLine("★☆☆ Clear!");
+                Console.WriteLine("\r\n\r\n         ~-         \r\n        ~@@,        \r\n        @@@@        \r\n       ,@@@@.          \r\n      ,@@@@@@,      \r\n  ~@@@@@@@@@@@@@@!, \r\n@@@@@@@@@@@@@@@@@@@@\r\n @@@@@@@@@@@@@@@@@@ \r\n  @@@@@@@@@@@@@@@@  \r\n   @@@@@@@@@@@@@@   \r\n    @@@@@@@@@@@@       \r\n    @@@@@@@@@@@@    \r\n   -@@@@@@@@@@@@:   \r\n   @@@@@@   @@@@\r\n   @@@@      @@@@\r\n    *,        .!    \r\n");
+
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("\r\n ::::::::  :::        ::::::::::     :::     :::::::::  \r\n" +
+                    ":+:    :+: :+:        :+:          :+: :+:   :+:    :+: \r\n" +
+                    "+:+        +:+        +:+         +:+   +:+  +:+    +:+ \r\n" +
+                    "+#+        +#+        +#++:++#   +#++:++#++: +#++:++#:  \r\n" +
+                    "+#+        +#+        +#+        +#+     +#+ +#+    +#+ \r\n" +
+                    "#+#    #+# #+#        #+#        #+#     #+# #+#    #+# \r\n" +
+                    " ########  ########## ########## ###     ### ###    ### \r\n");
+                Thread.Sleep(3000);
 
 
+                Console.ReadLine();
                 GameObject.clearJudge = false;
+               
+            }
+            if (GameObject.playerHpNumber == 0)
+            {
+                Console.Clear();
+                Console.WriteLine("빡대가리 시군요");
+                Thread.Sleep(2000);
+
+                Console.ReadLine();
+                GameObject.clearJudge = false;
+            }
+        }
+
+        static public void Losshp()
+        {
+            switch (GameObject.playerHpNumber)
+            {
+                case 4:
+                    GameObject.playerHp[4].Hp = GameObject.playerHp[4].LoseHp;
+                    break;
+                case 3:
+                    GameObject.playerHp[3].Hp = GameObject.playerHp[3].LoseHp;
+                    break;
+                case 2:
+                    GameObject.playerHp[2].Hp = GameObject.playerHp[2].LoseHp;
+                    break;
+                case 1:
+                    GameObject.playerHp[1].Hp = GameObject.playerHp[1].LoseHp;
+                    break;
             }
         }
 
