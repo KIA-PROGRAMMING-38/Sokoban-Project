@@ -19,7 +19,7 @@ namespace Sokoban
 
             // 초기 세팅(설정)
             Console.ResetColor();                                  // 컬러를 초기화한다.
-            Console.CursorVisible = false;                         // 커서를 숨긴다.
+            Console.CursorVisible = false;                        // 커서를 숨긴다.
             Console.Title = "악령 어우석, 이찬혁 퇴치하자.";       // 타이틀 설정한다.
             Console.BackgroundColor = ConsoleColor.Black;       // 배경색을 설정한다.
             Console.ForegroundColor = ConsoleColor.DarkRed;    // 글꼴색을 설정한다.
@@ -330,10 +330,21 @@ namespace Sokoban
                 if (boxOnGoalCount == GOAL_COUNT)
                 {
                     Console.Clear();
-                    System.Console.WriteLine("퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴.퇴");
-                    Console.WriteLine("마.마.마.마.마.마.마.마.마.마.마.마.마.마.마");
-                    Console.WriteLine("성.성.성.성.성.성.성.성.성.성.성.성.성.성.성");
-                    Console.WriteLine("공.공.공.공.공.공.공.공.공.공.공.공.공.공.공");
+                    System.Console.WriteLine("       ____------           __      ----_");
+                    Console.WriteLine("___----             ___------              \\");
+                    Console.WriteLine("   ----________        ----                 \\");
+                    Console.WriteLine("               -----__    |             _____)");
+                    Console.WriteLine("                    __-                /†††††\\");
+                    Console.WriteLine("        _______-----    ___--          \\††††/)\\");
+                    Console.WriteLine("  ------_______      ---____            \\††/  /");
+                    Console.WriteLine("               -----__    \\ --    _          /\\");
+                    Console.WriteLine("                      --__--__     \\_____/   \\_/\\");
+                    Console.WriteLine("                              ----|   /          |");
+                    Console.WriteLine("     퇴                            |  |___________|");
+                    Console.WriteLine("           마                      |  | ((_(_)| )_)");
+                    Console.WriteLine("                 성                |  \\_((_(_)|/(_)");
+                    Console.WriteLine("                        공         \\             (");
+                    Console.WriteLine("                                   \\_____________)");                    
                     return;
                 }
 
