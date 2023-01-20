@@ -113,11 +113,11 @@ namespace Sokoban
             Mine.Mineral[] mineral = new Mine.Mineral[Game.MINERAL_COUNT]
             {
                 new Mine.Mineral { X = 0, Y = 0, Name = "", Weight = 0, Value = 0 },
-                new Mine.Mineral { X = 47, Y = 16, Name = "Ruby", Weight = 800, Value = 1 },
-                new Mine.Mineral { X = 67, Y = 16, Name = "Gold", Weight = 600, Value = 3 },
-                new Mine.Mineral { X = 87, Y = 16, Name = "Emerald", Weight = 400, Value = 7 },
-                new Mine.Mineral { X = 47, Y = 23, Name = "Sapphire", Weight = 200, Value = 15 },
-                new Mine.Mineral { X = 67, Y = 23, Name = "Aquamarine", Weight = 100, Value = 35 },
+                new Mine.Mineral { X = 47, Y = 16, Name = "Ruby", Weight = 900, Value = 2 },
+                new Mine.Mineral { X = 67, Y = 16, Name = "Gold", Weight = 800, Value = 3 },
+                new Mine.Mineral { X = 87, Y = 16, Name = "Emerald", Weight = 600, Value = 7 },
+                new Mine.Mineral { X = 47, Y = 23, Name = "Sapphire", Weight = 400, Value = 15 },
+                new Mine.Mineral { X = 67, Y = 23, Name = "Aquamarine", Weight = 200, Value = 35 },
                 new Mine.Mineral { X = 87, Y = 23, Name = "Amethyst", Weight = 50, Value = 100 }
             };
             
@@ -255,7 +255,13 @@ namespace Sokoban
                 {
                     Game.Function.RenderObject(statusMessage.GrabX, statusMessage.GrabY, "Grab Toggle : Off", ConsoleColor.Black);
                 }
-                if (game.Money >= 0)
+
+                // 돈
+                if (game.Money >= 1000)
+                {
+                    Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY, $"Money : {game.Money}     ", ConsoleColor.Green);
+                }
+                else if (game.Money >= 0)
                 {
                     Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY, $"Money : {game.Money}     ", ConsoleColor.DarkYellow);
                 }
@@ -263,6 +269,8 @@ namespace Sokoban
                 {
                     Game.Function.RenderObject(statusMessage.MoneyX, statusMessage.MoneyY, $"Money : {game.Money}     ", ConsoleColor.Red);
                 }
+
+                // 돈 획득
                 switch (game.GainMineralId)
                 {
                     case (int)Mineral.None:
@@ -292,8 +300,8 @@ namespace Sokoban
 
                 Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY, $"현재 입력 키 :                   ", ConsoleColor.Black);
                 Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY, $"현재 입력 키 : {key}", ConsoleColor.Black);
-                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY + 1, $"플레이어의 현재 좌표 (  ,        ", ConsoleColor.Black);
-                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY + 1, $"플레이어의 현재 좌표 ({player.X}, {player.Y})", ConsoleColor.Black);
+                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY + 1, $"플레이어의 현재 좌표 : (  ,      ", ConsoleColor.Black);
+                Game.Function.RenderObject(statusMessage.CurrentKeyX, statusMessage.CurrentKeyY + 1, $"플레이어의 현재 좌표 : ({player.X}, {player.Y})", ConsoleColor.Black);
 
                 Console.SetCursorPosition(0, 0);
 
@@ -659,7 +667,7 @@ namespace Sokoban
                 }
                 Game.Function.ObjOnTrap(trap, player, box, game);
                 Game.Function.BoxInGoal(box, goal, game);
-                if (game.BoxOnGoalCount == Game.GOAL_COUNT)
+                if (game.BoxOnGoalCount == Game.GOAL_COUNT && game.Money >= 1000)
                 {
                     Game.Function.GameClear();
                 }
