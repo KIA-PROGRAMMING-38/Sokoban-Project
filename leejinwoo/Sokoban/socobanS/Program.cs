@@ -4,7 +4,7 @@ using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
-
+using System.IO;
 namespace socobanS
 {
     enum Direction // 방향을 저장하는 타입
@@ -33,6 +33,24 @@ namespace socobanS
             Console.ForegroundColor = ConsoleColor.Black; // 글꼴색을 설정한다.
             Console.Clear(); // 출력된 내용을 지운다.
 
+
+
+
+            // 전체 게임의 흐름
+            // 1. 스테이지 파일 불러오기
+            string[] lines = Move.LoadStage(1);
+           for (int i = 0; i < lines.Length; ++i)
+            {
+                Console.WriteLine(lines[i]);
+            }
+            // 2. 스테이지 파일 파싱하여 초기 데이터 구성
+            Player player2;
+            Box[] box2;
+            Wall[] wall2;
+            Goal[] goal2;
+            Move.ParseStage(lines, out player2, out box2, out wall2, out goal2);
+            // 3. 게임 진행
+            // 4. 게임이 종료되었다면 다음 스테이지를 불러오기
             // 기호 상수 정의
 
             const int GOAL_COUNT = 4;
@@ -114,7 +132,6 @@ namespace socobanS
                 new Goal {X = 2, Y = 3},
                 new Goal {X = 4, Y = 10}
             };
-
 
 
 
