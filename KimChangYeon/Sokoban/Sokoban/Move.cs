@@ -31,7 +31,7 @@ namespace Sokoban
 
             if (Input.key == ConsoleKey.D && GameObject.moveLimit != 0)
             {
-                GameScene.changer.X = Math.Min(GameScene.changer.X + 1, GameSet.MAP_MAX_X + 5);
+                GameScene.changer.X = Math.Min(GameScene.changer.X + 1, GameScene.colorBoxes[GameScene.colorBoxes.Length - 1].X);
 
                 GameObject.moveLimit--;
             }
@@ -62,7 +62,7 @@ namespace Sokoban
 
             if (Input.key == ConsoleKey.A && GameObject.moveLimit != 0)
             {
-                GameScene.changer.X = Math.Max(GameScene.changer.X - 1, GameSet.MAP_MAX_X + 4);
+                GameScene.changer.X = Math.Max(GameScene.changer.X - 1, GameScene.colorBoxes[0].X);
 
                 GameObject.moveLimit--;
             }
@@ -90,16 +90,6 @@ namespace Sokoban
                 GameObject.move++;
             }
 
-            if (Input.key == ConsoleKey.W && GameObject.moveLimit != 0)
-            {
-                GameScene.changer.Y = Math.Max(GameScene.changer.Y - 1, GameSet.MAP_MAX_Y - 1);
-
-                GameObject.moveLimit--;
-            }
-            else if (Input.key == ConsoleKey.W && GameObject.moveLimit == 0)
-            {
-                GameScene.changer.Y = Math.Min(GameScene.changer.Y, GameScene.changer.Y);
-            }
         }
 
         static public void Down()
@@ -121,16 +111,6 @@ namespace Sokoban
                 GameObject.move++;
             }
 
-            if (Input.key == ConsoleKey.S && GameObject.moveLimit != 0)
-            {
-                GameScene.changer.Y = Math.Min(GameScene.changer.Y + 1, GameSet.MAP_MAX_Y);
-
-                GameObject.moveLimit--;
-            }
-            else if (Input.key == ConsoleKey.S && GameObject.moveLimit == 0)
-            {
-                GameScene.changer.Y = Math.Min(GameScene.changer.Y, GameScene.changer.Y);
-            }
         }
     }
 }

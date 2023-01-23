@@ -117,7 +117,7 @@ namespace Sokoban
         public static int vFunction = 0;
         public static int point = 0;
         public static int move = 0;
-        public static int moveLimit = 10;
+        public static int moveLimit = 0;
         public static int playerHpNumber = 5;
 
 

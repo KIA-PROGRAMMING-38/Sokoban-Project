@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using static Sokoban.GameObject;
@@ -101,8 +102,6 @@ namespace Sokoban
                 Render.RenderChange();
                 Render.RenderColorWall();
                 
-                
-
                 // --------------------------------------------- ProcessInput -------------------------------------------------
 
                 Input.InputKey();
@@ -138,9 +137,8 @@ namespace Sokoban
             string[] stage = File.ReadAllLines(Path.Combine("Assets", "Stage", $"Stage02.txt"));
             int wallLength = int.Parse(stage[stage.Length - 1]);
             clearJudge = true;
-
+            moveLimit = 1;
            
-
             walls = new Wall[wallLength];
 
             player = new Player
@@ -192,6 +190,17 @@ namespace Sokoban
 
             };
 
+            colorBoxes = new ColorBox[]
+            {
+                new ColorBox { X = player.X - 10, Y = player.Y - 1, Color = ConsoleColor.White, Symbol = '■'},
+                new ColorBox { X = player.X - 9, Y = player.Y - 1, Color = ConsoleColor.DarkYellow, Symbol = '■'}
+            };
+
+            changer = new Changer
+            {
+                X = colorBoxes[0].X, Y = colorBoxes[0].Y, Color = ConsoleColor.White, Symbol = '◎'
+            };
+
             while (clearJudge)
             {
                 // --------------------------------------------- Render -------------------------------------------------------
@@ -202,7 +211,8 @@ namespace Sokoban
                 Render.RenderExit();
                 Render.RenderChange();
                 Render.RenderColorWall();
-
+                Render.RenderColorBox();
+                Render.RenderChanger();
 
 
                 // --------------------------------------------- ProcessInput -------------------------------------------------
@@ -218,12 +228,12 @@ namespace Sokoban
                 Move.Down();
 
 
-
                 OnColision.WithPlayerBox();
                 OnColision.WithBoxWall();
                 OnColision.WithBoxBox();
                 OnColision.WithPlayerWall();
                 OnColision.WithColorWall();
+                GameRule.ChangePlayerColor();
 
                 GameRule.GoalInJudge();
                 GameRule.JudgeClear();
