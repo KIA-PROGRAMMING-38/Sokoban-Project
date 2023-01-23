@@ -24,12 +24,12 @@ namespace Sokoban
         public const int MAP_MAX_Y = 12;
 
 
-        static public void SetGame()
+        public static void SetGame()
         {
             Console.ResetColor();                            // 컬러를 초기화 한다
             Console.CursorVisible = false;                   // 커서를 숨긴다
             Console.Title = "홍성재의 썬더펀치";               // 타이틀을 설정한다.
-            Console.SetBufferSize(Console.WindowWidth, Console.WindowHeight);
+            
             Console.BackgroundColor = ConsoleColor.Black;
             Console.Clear();
             

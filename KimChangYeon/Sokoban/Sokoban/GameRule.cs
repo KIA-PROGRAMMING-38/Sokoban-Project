@@ -10,13 +10,13 @@ namespace Sokoban
     {
         public static void SpawnBox()
         {
-            for (int pItemId = 0; pItemId < GameObject.pItemLength; pItemId++)
+            for (int pItemId = 0; pItemId < GameScene.pointItems.Length; pItemId++)
             {
-                if (IsCollide(GameObject.player.X, GameObject.pointItems[pItemId].X, GameObject.player.Y, GameObject.pointItems[pItemId].Y))
+                if (IsCollide(GameScene.player.X, GameScene.pointItems[pItemId].X, GameScene.player.Y, GameScene.pointItems[pItemId].Y))
                 {
-                    GameObject.boxes[pItemId].X = 10;
-                    GameObject.boxes[pItemId].Y = 6;
-                    GameObject.boxes[pItemId].Symbol = '■';
+                    GameScene.boxes[pItemId].X = 10;
+                    GameScene.boxes[pItemId].Y = 6;
+                    GameScene.boxes[pItemId].Symbol = '■';
 
                     break;
                 }
@@ -25,32 +25,32 @@ namespace Sokoban
 
         public static void ChangePlayerColor()
         {
-            for (int boxId = 0; boxId < GameObject.colorBoxLength; boxId++)
+            for (int boxId = 0; boxId < GameScene.colorBoxes.Length; boxId++)
             {
-                if (IsCollide(GameObject.changer.X, GameObject.colorboxes[boxId].X, GameObject.changer.Y, GameObject.colorboxes[boxId].Y))
+                if (IsCollide(GameScene.changer.X, GameScene.colorBoxes[boxId].X, GameScene.changer.Y, GameScene.colorBoxes[boxId].Y))
                 {
-                    GameObject.changer.Color = ConsoleColor.Red;
-                    GameObject.player.Color = GameObject.colorboxes[boxId].Color;
+                    GameScene.changer.Color = ConsoleColor.Red;
+                    GameScene.player.Color = GameScene.colorBoxes[boxId].Color;
 
                     break;
                 }
                 else
                 {
-                    GameObject.changer.Color = ConsoleColor.Black;
+                    GameScene.changer.Color = ConsoleColor.Black;
                 }
             }
         }
 
         public static void AddPoint()
         {
-            for (int pItemId = 0; pItemId < GameObject.pItemLength; pItemId++)
+            for (int pItemId = 0; pItemId < GameScene.pointItems.Length; pItemId++)
             {
-                if (IsCollide(GameObject.player.X, GameObject.pointItems[pItemId].X, GameObject.player.Y, GameObject.pointItems[pItemId].Y))
+                if (IsCollide(GameScene.player.X, GameScene.pointItems[pItemId].X, GameScene.player.Y, GameScene.pointItems[pItemId].Y))
                 {
                     GameObject.point++;
-                    GameObject.pointItems[pItemId].X = GameSet.MAP_MAX_X + 4;
-                    GameObject.pointItems[pItemId].Y = GameSet.MAP_MAX_Y + 4;
-                    GameObject.pointItems[pItemId].Symbol = ' ';
+                    GameScene.pointItems[pItemId].X = GameSet.MAP_MAX_X + 4;
+                    GameScene.pointItems[pItemId].Y = GameSet.MAP_MAX_Y + 4;
+                    GameScene.pointItems[pItemId].Symbol = ' ';
 
                     break;
 
@@ -60,22 +60,22 @@ namespace Sokoban
 
         public static void OpenWall()
         {
-            for (int goalId = 0; goalId < GameObject.goalLength; goalId++)
+            for (int goalId = 0; goalId < GameScene.goals.Length; goalId++)
             {
-                for (int wallId = 0; wallId < GameObject.wallLength; wallId++)
+                for (int wallId = 0; wallId < GameScene.colorWalls.Length; wallId++)
                 {
-                    if (GameObject.boxes[goalId].IsOnGoal == true && SameColor(GameObject.goals[goalId].Color, GameObject.walls[wallId].Color))
+                    if (GameScene.boxes[goalId].IsOnGoal == true && SameColor(GameScene.goals[goalId].Color, GameScene.colorWalls[wallId].color))
                     {
-                        GameObject.walls[wallId].X = 20;
-                        GameObject.walls[wallId].Y = 20;
-                        GameObject.walls[wallId].Symbol = ' ';
+                        GameScene.colorWalls[wallId].X = 20;
+                        GameScene.colorWalls[wallId].Y = 20;
+                        GameScene.colorWalls[wallId].Symbol = ' ';
 
                     }
-                    else if (GameObject.boxes[goalId].IsOnGoal == false && SameColor(GameObject.goals[goalId].Color, GameObject.walls[wallId].Color))
+                    else if (GameScene.boxes[goalId].IsOnGoal == false && SameColor(GameScene.goals[goalId].Color, GameScene.colorWalls[wallId].color))
                     {
-                        GameObject.walls[wallId].X = GameObject.walls[wallId].DefaultX;
-                        GameObject.walls[wallId].Y = GameObject.walls[wallId].DefaultY;
-                        GameObject.walls[wallId].Symbol = '#';
+                        GameScene.colorWalls[wallId].X = GameScene.colorWalls[wallId].DefaultX;
+                        GameScene.colorWalls[wallId].Y = GameScene.colorWalls[wallId].DefaultY;
+                        GameScene.colorWalls[wallId].Symbol = '#';
                     }
 
 
@@ -85,40 +85,40 @@ namespace Sokoban
 
         public static void GoalInJudge()
         {
-            for (int boxId = 0; boxId < GameObject.boxLength; boxId++) // 골인 판정
+            for (int boxId = 0; boxId < GameScene.boxes.Length; boxId++) // 골인 판정
             {
-                GameObject.boxes[boxId].IsOnGoal = false;
+                GameScene.boxes[boxId].IsOnGoal = false;
 
-                for (int goalId = 0; goalId < GameObject.goalLength; goalId++)
+                for (int goalId = 0; goalId < GameScene.goals.Length; goalId++)
                 {
 
-                    if (IsCollide(GameObject.boxes[boxId].X, GameObject.goals[goalId].X, GameObject.boxes[boxId].Y, GameObject.goals[goalId].Y) && SameColor(GameObject.boxes[boxId].Color, GameObject.goals[goalId].Color))
+                    if (IsCollide(GameScene.boxes[boxId].X, GameScene.goals[goalId].X, GameScene.boxes[boxId].Y, GameScene.goals[goalId].Y) && SameColor(GameScene.boxes[boxId].Color, GameScene.goals[goalId].Color))
                     {
 
-                        GameObject.boxes[boxId].IsOnGoal = true;
+                        GameScene.boxes[boxId].IsOnGoal = true;
                     }
 
-                    else if (IsCollide(GameObject.boxes[boxId].X, GameObject.goals[goalId].X, GameObject.boxes[boxId].Y, GameObject.goals[goalId].Y) && !SameColor(GameObject.boxes[boxId].Color, GameObject.goals[goalId].Color))
+                    else if (IsCollide(GameScene.boxes[boxId].X, GameScene.goals[goalId].X, GameScene.boxes[boxId].Y, GameScene.goals[goalId].Y) && !SameColor(GameScene.boxes[boxId].Color, GameScene.goals[goalId].Color))
                     {
 
                         switch (GameSet.playerDir)
                         {
 
                             case GameSet.PLAYER_DIRECTION.RIGHT: //right
-                                GameObject.player.X = GameObject.player.X - 1;
-                                GameObject.boxes[boxId].X = GameObject.boxes[boxId].X - 1;
+                                GameScene.player.X = GameScene.player.X - 1;
+                                GameScene.boxes[boxId].X = GameScene.boxes[boxId].X - 1;
                                 break;
                             case GameSet.PLAYER_DIRECTION.LEFT: //left
-                                GameObject.player.X = GameObject.player.X + 1;
-                                GameObject.boxes[boxId].X = GameObject.boxes[boxId].X + 1;
+                                GameScene.player.X = GameScene.player.X + 1;
+                                GameScene.boxes[boxId].X = GameScene.boxes[boxId].X + 1;
                                 break;
                             case GameSet.PLAYER_DIRECTION.DOWN: //down
-                                GameObject.player.Y = GameObject.player.Y - 1;
-                                GameObject.boxes[boxId].Y = GameObject.boxes[boxId].Y - 1;
+                                GameScene.player.Y = GameScene.player.Y - 1;
+                                GameScene.boxes[boxId].Y = GameScene.boxes[boxId].Y - 1;
                                 break;
                             case GameSet.PLAYER_DIRECTION.UP: //up
-                                GameObject.player.Y = GameObject.player.Y + 1;
-                                GameObject.boxes[boxId].Y = GameObject.boxes[boxId].Y + 1;
+                                GameScene.player.Y = GameScene.player.Y + 1;
+                                GameScene.boxes[boxId].Y = GameScene.boxes[boxId].Y + 1;
                                 break;
                         }
                     }
@@ -129,7 +129,7 @@ namespace Sokoban
 
         public static void JudgeClear()
         {
-            if (IsCollide(GameObject.player.X, GameObject.exitPoint.X, GameObject.player.Y, GameObject.exitPoint.Y) && 0 < GameObject.move && GameObject.move <= 155) // 클리어 판정
+            if (IsCollide(GameScene.player.X, GameScene.exitPoint.X, GameScene.player.Y, GameScene.exitPoint.Y) && 0 < GameObject.move && GameObject.move <= 155) // 클리어 판정
             {
                 Console.Clear();
                 Console.WriteLine("\r\n\r\n         ~-         \r\n        ~@@,        \r\n        @@@@        \r\n       ,@@@@.          \r\n      ,@@@@@@,      \r\n  ~@@@@@@@@@@@@@@!, \r\n@@@@@@@@@@@@@@@@@@@@\r\n @@@@@@@@@@@@@@@@@@ \r\n  @@@@@@@@@@@@@@@@  \r\n   @@@@@@@@@@@@@@   \r\n    @@@@@@@@@@@@       \r\n    @@@@@@@@@@@@    \r\n   -@@@@@@@@@@@@:   \r\n   @@@@@@   @@@@\r\n   @@@@      @@@@\r\n    *,        .!    \r\n");
@@ -147,7 +147,7 @@ namespace Sokoban
                 GameObject.clearJudge = false;
 
             }
-            else if (IsCollide(GameObject.player.X, GameObject.exitPoint.X, GameObject.player.Y, GameObject.exitPoint.Y) && 150 < GameObject.move && GameObject.move <= 180)
+            else if (IsCollide(GameScene.player.X, GameScene.exitPoint.X, GameScene.player.Y, GameScene.exitPoint.Y) && 150 < GameObject.move && GameObject.move <= 180)
             {
                 Console.Clear();
                 Console.WriteLine("\r\n\r\n         ~-         \r\n        ~@@,        \r\n        @@@@        \r\n       ,@@@@.          \r\n      ,@@@@@@,      \r\n  ~@@@@@@@@@@@@@@!, \r\n@@@@@@@@@@@@@@@@@@@@\r\n @@@@@@@@@@@@@@@@@@ \r\n  @@@@@@@@@@@@@@@@  \r\n   @@@@@@@@@@@@@@   \r\n    @@@@@@@@@@@@       \r\n    @@@@@@@@@@@@    \r\n   -@@@@@@@@@@@@:   \r\n   @@@@@@   @@@@\r\n   @@@@      @@@@\r\n    *,        .!    \r\n");
@@ -165,7 +165,7 @@ namespace Sokoban
                 Console.ReadLine();
                 GameObject.clearJudge = false;
             }
-            else if (IsCollide(GameObject.player.X, GameObject.exitPoint.X, GameObject.player.Y, GameObject.exitPoint.Y) && 180 < GameObject.move)
+            else if (IsCollide(GameScene.player.X, GameScene.exitPoint.X, GameScene.player.Y, GameScene.exitPoint.Y) && 180 < GameObject.move)
             {
                 Console.Clear();
                 Console.WriteLine("\r\n\r\n         ~-         \r\n        ~@@,        \r\n        @@@@        \r\n       ,@@@@.          \r\n      ,@@@@@@,      \r\n  ~@@@@@@@@@@@@@@!, \r\n@@@@@@@@@@@@@@@@@@@@\r\n @@@@@@@@@@@@@@@@@@ \r\n  @@@@@@@@@@@@@@@@  \r\n   @@@@@@@@@@@@@@   \r\n    @@@@@@@@@@@@       \r\n    @@@@@@@@@@@@    \r\n   -@@@@@@@@@@@@:   \r\n   @@@@@@   @@@@\r\n   @@@@      @@@@\r\n    *,        .!    \r\n");
@@ -196,26 +196,26 @@ namespace Sokoban
             }
         }
 
-        static public void Losshp()
+        public static void Losshp()
         {
             switch (GameObject.playerHpNumber)
             {
                 case 4:
-                    GameObject.playerHp[4].Hp = GameObject.playerHp[4].LoseHp;
+                    GameScene.playerHps[4].Hp = GameScene.playerHps[4].LoseHp;
                     break;
                 case 3:
-                    GameObject.playerHp[3].Hp = GameObject.playerHp[3].LoseHp;
+                    GameScene.playerHps[3].Hp = GameScene.playerHps[3].LoseHp;
                     break;
                 case 2:
-                    GameObject.playerHp[2].Hp = GameObject.playerHp[2].LoseHp;
+                    GameScene.playerHps[2].Hp = GameScene.playerHps[2].LoseHp;
                     break;
                 case 1:
-                    GameObject.playerHp[1].Hp = GameObject.playerHp[1].LoseHp;
+                    GameScene.playerHps[1].Hp = GameScene.playerHps[1].LoseHp;
                     break;
             }
         }
 
-        static public bool IsCollide(int x1, int x2, int y1, int y2)
+        public static bool IsCollide(int x1, int x2, int y1, int y2)
         {
             if (x1 == x2 && y1 == y2)
                 return true;
@@ -223,7 +223,7 @@ namespace Sokoban
                 return false;
         }
 
-        static public bool SameColor(ConsoleColor color1, ConsoleColor color2)
+        public static bool SameColor(ConsoleColor color1, ConsoleColor color2)
         {
             if (color1 == color2)
                 return true;

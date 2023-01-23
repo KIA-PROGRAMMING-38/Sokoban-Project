@@ -8,54 +8,51 @@ namespace Sokoban
 {
     internal class OnColision
     {
+        
         public static void WithPlayerBox()
         {
-            for (int boxId = 0; boxId < GameObject.boxLength; boxId++)
+            for (int boxId = 0; boxId < GameScene.boxes.Length; boxId++)
             {
-                if (IsCollide(GameObject.player.X, GameObject.boxes[boxId].X, GameObject.player.Y, GameObject.boxes[boxId].Y) && GameRule.SameColor(GameObject.player.Color, GameObject.boxes[boxId].Color)) // 외곽 벽을 만났을 떄
+                if (IsCollide(GameScene.player.X, GameScene.boxes[boxId].X, GameScene.player.Y, GameScene.boxes[boxId].Y) && GameRule.SameColor(GameScene.player.Color, GameScene.boxes[boxId].Color)) // 외곽 벽을 만났을 떄
                 {
-                    GameObject.player.PushedBoxId = boxId;
+                    GameScene.player.PushedBoxId = boxId;
 
                     switch (GameSet.playerDir)
                     {
                         case GameSet.PLAYER_DIRECTION.RIGHT: //right
-                            GameObject.player.X = Math.Min(GameObject.player.X, GameSet.MAP_MAX_X - 1);
-                            GameObject.boxes[boxId].X = Math.Min(GameObject.boxes[boxId].X + 1, GameSet.MAP_MAX_X);
+                            GameScene.boxes[boxId].X = GameScene.boxes[boxId].X + 1;
                             break;
                         case GameSet.PLAYER_DIRECTION.LEFT: //left
-                            GameObject.player.X = Math.Max(GameObject.player.X, GameSet.MAP_MIN_X + 2);
-                            GameObject.boxes[boxId].X = Math.Max(GameObject.boxes[boxId].X - 1, GameSet.MAP_MIN_X + 1);
+                            GameScene.boxes[boxId].X = GameScene.boxes[boxId].X - 1;
                             break;
                         case GameSet.PLAYER_DIRECTION.DOWN: //down
-                            GameObject.player.Y = Math.Min(GameObject.player.Y, GameSet.MAP_MAX_Y - 1);
-                            GameObject.boxes[boxId].Y = Math.Min(GameObject.boxes[boxId].Y + 1, GameSet.MAP_MAX_Y);
+                            GameScene.boxes[boxId].Y = GameScene.boxes[boxId].Y + 1;
                             break;
                         case GameSet.PLAYER_DIRECTION.UP: //up
-                            GameObject.player.Y = Math.Max(GameObject.player.Y, GameSet.MAP_MIN_Y + 2);
-                            GameObject.boxes[boxId].Y = Math.Max(GameObject.boxes[boxId].Y - 1, GameSet.MAP_MIN_Y + 1);
+                            GameScene.boxes[boxId].Y = GameScene.boxes[boxId].Y - 1;
                             break;
                     }
 
                 }
-                if (IsCollide(GameObject.player.X, GameObject.boxes[boxId].X, GameObject.player.Y, GameObject.boxes[boxId].Y) && !GameRule.SameColor(GameObject.player.Color, GameObject.boxes[boxId].Color))
+                if (IsCollide(GameScene.player.X, GameScene.boxes[boxId].X, GameScene.player.Y, GameScene.boxes[boxId].Y) && !GameRule.SameColor(GameScene.player.Color, GameScene.boxes[boxId].Color))
                 {
                     switch (GameSet.playerDir)
                     {
                         case GameSet.PLAYER_DIRECTION.RIGHT: //right
-                            GameObject.player.X = Math.Min(GameObject.boxes[boxId].X - 1, GameObject.boxes[boxId].X - 1);
-                            GameObject.boxes[boxId].X = Math.Min(GameObject.boxes[boxId].X, GameObject.boxes[boxId].X);
+                            GameScene.player.X = GameScene.boxes[boxId].X - 1;
+                            GameScene.boxes[boxId].X = GameScene.boxes[boxId].X;
                             break;
                         case GameSet.PLAYER_DIRECTION.LEFT: //left
-                            GameObject.player.X = Math.Max(GameObject.boxes[boxId].X + 1, GameObject.boxes[boxId].X + 1);
-                            GameObject.boxes[boxId].X = Math.Max(GameObject.boxes[boxId].X, GameObject.boxes[boxId].X);
+                            GameScene.player.X = GameScene.boxes[boxId].X + 1;
+                            GameScene.boxes[boxId].X = GameScene.boxes[boxId].X;
                             break;
                         case GameSet.PLAYER_DIRECTION.DOWN: //down
-                            GameObject.player.Y = Math.Min(GameObject.boxes[boxId].Y - 1, GameObject.boxes[boxId].Y - 1);
-                            GameObject.boxes[boxId].Y = Math.Min(GameObject.boxes[boxId].Y, GameObject.boxes[boxId].Y);
+                            GameScene.player.Y = GameScene.boxes[boxId].Y - 1;
+                            GameScene.boxes[boxId].Y = GameScene.boxes[boxId].Y;
                             break;
                         case GameSet.PLAYER_DIRECTION.UP: //up
-                            GameObject.player.Y = Math.Max(GameObject.boxes[boxId].Y + 1, GameObject.boxes[boxId].Y + 1);
-                            GameObject.boxes[boxId].Y = Math.Max(GameObject.boxes[boxId].Y, GameObject.boxes[boxId].Y);
+                            GameScene.player.Y = GameScene.boxes[boxId].Y + 1;
+                            GameScene.boxes[boxId].Y = GameScene.boxes[boxId].Y;
                             break;
                     }
                 }
@@ -64,26 +61,26 @@ namespace Sokoban
 
         public static void WithPlayerWall()
         {
-            for (int wallId = 0; wallId < GameObject.wallLength; wallId++) //벽과 플레이어
+            for (int wallId = 0; wallId < GameScene.walls.Length; wallId++) //벽과 플레이어
             {
 
-                if (IsCollide(GameObject.player.X, GameObject.walls[wallId].X, GameObject.player.Y, GameObject.walls[wallId].Y))
+                if (IsCollide(GameScene.player.X, GameScene.walls[wallId].X, GameScene.player.Y, GameScene.walls[wallId].Y))
                 {
 
                     switch (GameSet.playerDir)
                     {
 
                         case GameSet.PLAYER_DIRECTION.RIGHT: //right
-                            GameObject.player.X = GameObject.walls[wallId].X - 1;
+                            GameScene.player.X = GameScene.walls[wallId].X - 1;
                             break;
                         case GameSet.PLAYER_DIRECTION.LEFT: //left
-                            GameObject.player.X = GameObject.walls[wallId].X + 1;
+                            GameScene.player.X = GameScene.walls[wallId].X + 1;
                             break;
                         case GameSet.PLAYER_DIRECTION.DOWN: //down
-                            GameObject.player.Y = GameObject.walls[wallId].Y - 1;
+                            GameScene.player.Y = GameScene.walls[wallId].Y - 1;
                             break;
                         case GameSet.PLAYER_DIRECTION.UP: //up
-                            GameObject.player.Y = GameObject.walls[wallId].Y + 1;
+                            GameScene.player.Y = GameScene.walls[wallId].Y + 1;
                             break;
 
                     }
@@ -92,36 +89,67 @@ namespace Sokoban
             } //벽과 플레이어
         }
 
+
+        public static void WithColorWall()
+        {
+            for (int wallId = 0; wallId < GameScene.colorWalls.Length; wallId++) //벽과 플레이어
+            {
+
+                if (IsCollide(GameScene.player.X, GameScene.colorWalls[wallId].X, GameScene.player.Y, GameScene.colorWalls[wallId].Y))
+                {
+
+                    switch (GameSet.playerDir)
+                    {
+
+                        case GameSet.PLAYER_DIRECTION.RIGHT: //right
+                            GameScene.player.X = GameScene.colorWalls[wallId].X - 1;
+                            break;
+                        case GameSet.PLAYER_DIRECTION.LEFT: //left
+                            GameScene.player.X = GameScene.colorWalls[wallId].X + 1;
+                            break;
+                        case GameSet.PLAYER_DIRECTION.DOWN: //down
+                            GameScene.player.Y = GameScene.colorWalls[wallId].Y - 1;
+                            break;
+                        case GameSet.PLAYER_DIRECTION.UP: //up
+                            GameScene.player.Y = GameScene.colorWalls[wallId].Y + 1;
+                            break;
+
+                    }
+                }
+
+            } //벽과 플레이어
+        }
+    
         public static void WithBoxWall()
         {
 
-            for (int boxId = 0; boxId < GameObject.boxLength; boxId++) //벽과 박스
+            for (int boxId = 0; boxId < GameScene.boxes.Length; boxId++) //벽과 박스
             {
 
-                for (int wallId = 0; wallId < GameObject.wallLength; wallId++)
+                for (int wallId = 0; wallId < GameScene.walls.Length; wallId++)
                 {
 
-                    if (IsCollide(GameObject.boxes[boxId].X, GameObject.walls[wallId].X, GameObject.boxes[boxId].Y, GameObject.walls[wallId].Y))
+                    if (IsCollide(GameScene.boxes[boxId].X, GameScene.walls[wallId].X, GameScene.boxes[boxId].Y, GameScene.walls[wallId].Y))
                     {
 
                         switch (GameSet.playerDir)
                         {
 
                             case GameSet.PLAYER_DIRECTION.RIGHT: //right
-                                GameObject.player.X = GameObject.walls[wallId].X - 2;
-                                GameObject.boxes[boxId].X = GameObject.walls[wallId].X - 1;
+                                GameScene.player.X = GameScene.walls[wallId].X - 2;
+                                GameScene.boxes[boxId].X = GameScene.walls[wallId].X - 1;
                                 break;
                             case GameSet.PLAYER_DIRECTION.LEFT: //left
-                                GameObject.player.X = GameObject.walls[wallId].X + 2;
-                                GameObject.boxes[boxId].X = GameObject.walls[wallId].X + 1;
+                                GameScene.player.X = GameScene.walls[wallId].X + 2;
+                                GameScene.boxes[boxId].X = GameScene.walls[wallId].X + 1;
                                 break;
                             case GameSet.PLAYER_DIRECTION.DOWN: //down
-                                GameObject.player.Y = GameObject.walls[wallId].Y - 2;
-                                GameObject.boxes[boxId].Y = GameObject.walls[wallId].Y - 1;
+                                GameScene.player.Y = GameScene.walls[wallId].Y - 2;
+                                GameScene.boxes[boxId].Y = GameScene.walls[wallId].Y - 1;
                                 break;
                             case GameSet.PLAYER_DIRECTION.UP: //up
-                                GameObject.player.Y = GameObject.walls[wallId].Y + 2;
-                                GameObject.boxes[boxId].Y = GameObject.walls[wallId].Y + 1;
+                                GameScene.player.Y = GameScene.walls[wallId].Y + 2;
+                                GameScene.boxes[boxId].Y = GameScene.walls[wallId].Y + 1;
                                 break;
 
                         }
@@ -132,37 +160,37 @@ namespace Sokoban
 
         public static void WithBoxBox()
         {
-            for (int boxId = 0; boxId < GameObject.boxLength; boxId++) //박스와 박스 충돌
+            for (int boxId = 0; boxId < GameScene.boxes.Length; boxId++) //박스와 박스 충돌
             {
-                for (int boxId2 = 0; boxId2 < GameObject.boxLength; boxId2++)
+                for (int boxId2 = 0; boxId2 < GameScene.boxes.Length; boxId2++)
                 {
                     if (boxId == boxId2)
                     {
                         continue;
                     }
-                    if (GameObject.boxes[boxId].X == GameObject.boxes[boxId2].X && GameObject.boxes[boxId].Y == GameObject.boxes[boxId2].Y && GameObject.player.PushedBoxId == boxId)
+                    if (GameScene.boxes[boxId].X == GameScene.boxes[boxId2].X && GameScene.boxes[boxId].Y == GameScene.boxes[boxId2].Y && GameScene.player.PushedBoxId == boxId)
                     {
                         switch (GameSet.playerDir)
                         {
                             case GameSet.PLAYER_DIRECTION.RIGHT: //right
-                                GameObject.player.X = GameObject.player.X - 1;
-                                GameObject.boxes[boxId2].X = GameObject.player.X + 2;
-                                GameObject.boxes[boxId].X = GameObject.player.X + 1;
+                                GameScene.player.X = GameScene.player.X - 1;
+                                GameScene.boxes[boxId2].X = GameScene.player.X + 2;
+                                GameScene.boxes[boxId].X = GameScene.player.X + 1;
                                 break;
                             case GameSet.PLAYER_DIRECTION.LEFT: //left
-                                GameObject.player.X = GameObject.player.X + 1;
-                                GameObject.boxes[boxId2].X = GameObject.player.X - 2;
-                                GameObject.boxes[boxId].X = GameObject.player.X - 1;
+                                GameScene.player.X = GameScene.player.X + 1;
+                                GameScene.boxes[boxId2].X = GameScene.player.X - 2;
+                                GameScene.boxes[boxId].X = GameScene.player.X - 1;
                                 break;
                             case GameSet.PLAYER_DIRECTION.DOWN: //down
-                                GameObject.player.Y = GameObject.player.Y - 1;
-                                GameObject.boxes[boxId2].Y = GameObject.player.Y + 2;
-                                GameObject.boxes[boxId].Y = GameObject.player.Y + 1;
+                                GameScene.player.Y = GameScene.player.Y - 1;
+                                GameScene.boxes[boxId2].Y = GameScene.player.Y + 2;
+                                GameScene.boxes[boxId].Y = GameScene.player.Y + 1;
                                 break;
                             case GameSet.PLAYER_DIRECTION.UP: //up
-                                GameObject.player.Y = GameObject.player.Y + 1;
-                                GameObject.boxes[boxId2].Y = GameObject.player.Y - 2;
-                                GameObject.boxes[boxId].Y = GameObject.player.Y - 1;
+                                GameScene.player.Y = GameScene.player.Y + 1;
+                                GameScene.boxes[boxId2].Y = GameScene.player.Y - 2;
+                                GameScene.boxes[boxId].Y = GameScene.player.Y - 1;
                                 break;
                         }
                     }
@@ -172,14 +200,14 @@ namespace Sokoban
 
         public static void WithPlayerHitem()
         {
-            for (int itemId = 0; itemId < GameObject.itemLength; itemId++)
+            for (int itemId = 0; itemId < GameScene.horizonItems.Length; itemId++)
             {
-                if (IsCollide(GameObject.player.X, GameObject.horizonItem[itemId].X, GameObject.player.Y, GameObject.horizonItem[itemId].Y))
+                if (IsCollide(GameScene.player.X, GameScene.horizonItems[itemId].X, GameScene.player.Y, GameScene.horizonItems[itemId].Y))
                 {
                     GameObject.hFunction += 10;
-                    GameObject.horizonItem[itemId].X = GameSet.MAP_MAX_X + 2;
-                    GameObject.horizonItem[itemId].Y = GameSet.MAP_MAX_Y + 2;
-                    GameObject.horizonItem[itemId].Symbol = ' ';
+                    GameScene.horizonItems[itemId].X = GameSet.MAP_MAX_X + 2;
+                    GameScene.horizonItems[itemId].Y = GameSet.MAP_MAX_Y + 2;
+                    GameScene.horizonItems[itemId].Symbol = ' ';
                     GameObject.hChangeDir = true;
 
                     break;
@@ -195,14 +223,14 @@ namespace Sokoban
 
         public static void WithPlayerVitem()
         {
-            for (int itemId = 0; itemId < GameObject.itemLength; itemId++)
+            for (int itemId = 0; itemId < GameScene.verticalItems.Length; itemId++)
             {
-                if (IsCollide(GameObject.player.X, GameObject.verticalItem[itemId].X, GameObject.player.Y, GameObject.verticalItem[itemId].Y))
+                if (IsCollide(GameScene.player.X, GameScene.verticalItems[itemId].X, GameScene.player.Y, GameScene.verticalItems[itemId].Y))
                 {
                     GameObject.vFunction += 10;  //효과 횟수
-                    GameObject.verticalItem[itemId].X = GameSet.MAP_MAX_X + 2;
-                    GameObject.verticalItem[itemId].Y = GameSet.MAP_MAX_Y + 2;
-                    GameObject.verticalItem[itemId].Symbol = ' ';
+                    GameScene.verticalItems[itemId].X = GameSet.MAP_MAX_X + 2;
+                    GameScene.verticalItems[itemId].Y = GameSet.MAP_MAX_Y + 2;
+                    GameScene.verticalItems[itemId].Symbol = ' ';
                     GameObject.vChangeDir = true;
 
                     break;
@@ -217,7 +245,7 @@ namespace Sokoban
 
         public static void WithPlayerTrap()
         {
-            if (IsCollide(GameObject.player.X, GameObject.traps[0].X, GameObject.player.Y, GameObject.traps[0].Y))
+            if (IsCollide(GameScene.player.X, GameScene.traps[0].X, GameScene.player.Y, GameScene.traps[0].Y))
             {
                 GameObject.playerHpNumber--;
                 

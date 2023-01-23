@@ -14,7 +14,8 @@ namespace sokoban
             GameSet.SetGame();
             Render.RenderTitle();
             
-            GameScene.Scene1();
+           // GameScene.Stage01();
+            GameScene.Stage02();
 
         }
     }

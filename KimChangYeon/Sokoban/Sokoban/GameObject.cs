@@ -8,140 +8,122 @@ namespace Sokoban
 {
     internal class GameObject
     {
-        static public Player player = new Player
+        public class Wall
         {
-            X = 14,
-            Y = 6,
-            PlayerDir = GameSet.playerDir,
-            PushedBoxId = 0,
-            Symbol = '●',
-            Color = ConsoleColor.White
-        };
+            public int X;
+            public int Y;
+        }
 
-        static public Changer changer = new Changer
+        public class Player
         {
-            X = GameSet.MAP_MAX_X + 5,
-            Y = GameSet.MAP_MAX_Y,
-            Symbol = '◎',
-            Color = ConsoleColor.White
-        };
+            public int X;
+            public int Y;
+            public GameSet.PLAYER_DIRECTION PlayerDir;
+            public int PushedBoxId;
+            public char Symbol;
+            public ConsoleColor Color;
+        }
 
-        static public Box[] boxes = new Box[]
+        public class Changer
         {
-                new Box {X = 22, Y = 14, IsOnGoal = false , Symbol = ' ', Color = ConsoleColor.White},
-                new Box {X = 23, Y = 14, IsOnGoal = false , Symbol = ' ', Color = ConsoleColor.DarkGreen},
-                new Box {X = 24, Y = 14, IsOnGoal = false , Symbol = ' ', Color = ConsoleColor.DarkYellow},
-                new Box {X = 25, Y = 14, IsOnGoal = false , Symbol = ' ', Color = ConsoleColor.DarkGray}
-        };
+            public int X;
+            public int Y;
+            public char Symbol;
+            public ConsoleColor Color;
+        }
 
-        static public ColorBox[] colorboxes = new ColorBox[]
+        public class Box
         {
-                new ColorBox {X = GameSet.MAP_MAX_X + 5 , Y = GameSet.MAP_MAX_Y - 1 , Symbol = '■', Color = ConsoleColor.White},
-                new ColorBox {X = GameSet.MAP_MAX_X + 4 , Y = GameSet.MAP_MAX_Y , Symbol = '■', Color = ConsoleColor.DarkGreen},
-                new ColorBox {X = GameSet.MAP_MAX_X + 5 , Y = GameSet.MAP_MAX_Y , Symbol = '■', Color = ConsoleColor.DarkYellow},
-                new ColorBox {X = GameSet.MAP_MAX_X + 4 , Y = GameSet.MAP_MAX_Y - 1, Symbol = '■', Color = ConsoleColor.DarkGray}
-        };
+            public int X;
+            public int Y;
+            public bool IsOnGoal;
+            public char Symbol;
+            public ConsoleColor Color;
+        }
 
-        static public ExitPoint exitPoint = new ExitPoint
+        public class ColorBox
         {
-            X = 5,
-            Y = 6,
-            Symbol = '○'
-        };
+            public int X;
+            public int Y;
+            public char Symbol;
+            public ConsoleColor Color;
+        }
 
-        static public Wall[] walls = new Wall[]
+        public class ExitPoint
         {
-                new Wall {X = 1 , DefaultX = 1, Y = 2 , DefaultY = 2, Symbol = '#', Color = ConsoleColor.DarkGray},
-                new Wall {X = 2 , DefaultX = 2, Y = 2 , DefaultY = 2, Symbol = '#', Color = ConsoleColor.DarkGray},
-                new Wall {X = 2 , DefaultX = 2, Y = 1 , DefaultY = 1, Symbol = '#', Color = ConsoleColor.DarkGray},
+            public int X;
+            public int Y;
+            public char Symbol;
+        }
 
-                new Wall {X = GameSet.MAP_MAX_X - 2 , DefaultX = GameSet.MAP_MAX_X - 2,
-                    Y = 1 , DefaultY = 1, Symbol = '#', Color = ConsoleColor.White},
-                new Wall {X = GameSet.MAP_MAX_X - 1 , DefaultX = GameSet.MAP_MAX_X - 1,
-                    Y = 2 , DefaultY = 2, Symbol = '#', Color = ConsoleColor.White},
-                new Wall {X = GameSet.MAP_MAX_X  , DefaultX = GameSet.MAP_MAX_X, 
-                    Y = 3 , DefaultY = 3, Symbol = '#', Color = ConsoleColor.White},
-
-                new Wall {X = 1 , DefaultX = 1, Y = GameSet.MAP_MAX_Y - 1 , DefaultY = GameSet.MAP_MAX_Y - 1,
-                    Symbol = '#', Color = ConsoleColor.DarkGreen},
-                new Wall {X = 2 ,DefaultX = 2, Y = GameSet.MAP_MAX_Y ,DefaultY = GameSet.MAP_MAX_Y,
-                    Symbol = '#', Color = ConsoleColor.DarkGreen},
-                new Wall {X = 2  ,DefaultX = 2, Y = GameSet.MAP_MAX_Y - 1 ,DefaultY = GameSet.MAP_MAX_Y - 1,
-                    Symbol = '#', Color = ConsoleColor.DarkGreen},
-
-                new Wall {X = exitPoint.X + 1 ,DefaultX = exitPoint.X + 1, Y = exitPoint.Y ,DefaultY =  exitPoint.Y,
-                    Symbol = '#', Color = ConsoleColor.DarkYellow},
-                new Wall {X = exitPoint.X - 1 ,DefaultX = exitPoint.X - 1, Y = exitPoint.Y ,DefaultY =  exitPoint.Y,
-                    Symbol = '#', Color = ConsoleColor.DarkYellow},
-                new Wall {X = exitPoint.X ,DefaultX = exitPoint.X, Y = exitPoint.Y - 1 ,DefaultY = exitPoint.Y - 1,
-                    Symbol = '#', Color = ConsoleColor.DarkYellow},
-                new Wall {X = exitPoint.X ,DefaultX = exitPoint.X, Y = exitPoint.Y + 1 ,DefaultY = exitPoint.Y + 1,
-                    Symbol = '#', Color = ConsoleColor.DarkYellow}
-        };
-
-        static public Goal[] goals = new Goal[]
+        public class Goal
         {
-                new Goal { X = 5 , Y = 2, Symbol = '□' , InSymbol = '▣', Color = ConsoleColor.White},
-                new Goal { X = 16 , Y = 10, Symbol = '□' , InSymbol = '▣', Color = ConsoleColor.DarkGreen},
-                new Goal { X = 5 , Y = 10, Symbol = '□' , InSymbol = '▣', Color = ConsoleColor.DarkYellow},
-                new Goal { X = 16 , Y = 2, Symbol = '□' , InSymbol = '▣', Color = ConsoleColor.DarkGray}
-        };
+            public int X;
+            public int Y;
+            public char Symbol;
+            public char InSymbol;
+            public ConsoleColor Color;
+        }
 
-        static public PointItem[] pointItems = new PointItem[]
+        public class PointItem
         {
-                new PointItem {X = 1, Y = 1, Symbol = '*'},
-                new PointItem {X = GameSet.MAP_MAX_X, Y = 1, Symbol = '*'},
-                new PointItem {X = 1, Y = GameSet.MAP_MAX_Y, Symbol = '*'},
-                new PointItem {X = player.X - 2, Y = player.Y, Symbol = '*'}
-        };
+            public int X;
+            public int Y;
+            public char Symbol;
+        }
 
-        static public HorizonItem[] horizonItem = new HorizonItem[]
+        public class HorizonItem
         {
-               new HorizonItem {X = GameSet.MAP_MAX_X - 1 , Y = 1, Symbol = '↔', Color = ConsoleColor.Red},
-               new HorizonItem {X = 1 , Y = GameSet.MAP_MAX_Y - 2, Symbol = '↔', Color = ConsoleColor.Red},
-               new HorizonItem {X = 3 , Y = GameSet.MAP_MAX_Y, Symbol = '↔', Color = ConsoleColor.Red},
-               new HorizonItem {X = player.X - 1 , Y = player.Y, Symbol = '↔', Color = ConsoleColor.Red}
-        };
+            public int X;
+            public int Y;
+            public char Symbol;
+            public ConsoleColor Color;
+        }
 
-        static public VerticalItem[] verticalItem = new VerticalItem[]
+        public class VerticalItem
         {
-                new VerticalItem {X = GameSet.MAP_MAX_X , Y = 2, Symbol = '↕', Color = ConsoleColor.Red},
-                new VerticalItem {X = 3 , Y = GameSet.MAP_MAX_Y, Symbol = '↕', Color = ConsoleColor.Red},
-                new VerticalItem {X = 3 , Y = GameSet.MAP_MAX_Y - 1, Symbol = '↕', Color = ConsoleColor.Red},
-                new VerticalItem {X = 2 , Y = GameSet.MAP_MAX_Y - 2, Symbol = '↕', Color = ConsoleColor.Red}
-        };
+            public int X;
+            public int Y;
+            public char Symbol;
+            public ConsoleColor Color;
+        }
 
-        static public PlayerHp[] playerHp = new PlayerHp[]
+        public class PlayerHp
         {
-            new PlayerHp {Hp = '♥', LoseHp = ' ' },
-            new PlayerHp {Hp = '♥', LoseHp = ' ' },
-            new PlayerHp {Hp = '♥', LoseHp = ' ' },
-            new PlayerHp {Hp = '♥', LoseHp = ' ' },
-            new PlayerHp {Hp = '♥', LoseHp = ' ' }
-        };
+            public char Hp;
+            public char LoseHp;
+        }
 
-        static public Trap[] traps = new Trap[]
+        public class Trap
         {
-            new Trap {X = 10, Y = 3, Symbol = '※'}
-        };
+            public int X;
+            public int Y;
+            public char Symbol;
+        }
 
-        static public int boxLength = boxes.Length;
-        static public int wallLength = walls.Length;
-        static public int goalLength = goals.Length;
-        static public int itemLength = horizonItem.Length;
-        static public int colorBoxLength = colorboxes.Length;
-        static public int pItemLength = pointItems.Length;
-        static public int hFunction = 0;
-        static public int vFunction = 0;
-        static public int point = 0;
-        static public int move = 0;
-        static public int moveLimit = 10;
-        static public int playerHpNumber = 5;
+        public class ColorWall
+        {
+            public int X;
+            public int DefaultX;
+            public int Y;
+            public int DefaultY;
+            public char Symbol;
+            public ConsoleColor color;
+        }
 
 
-        static public bool[] isBoxOnGoal = new bool[boxLength];
-        static public bool clearJudge = true;
-        static public bool hChangeDir = false;
-        static public bool vChangeDir = false;
+
+        public static int hFunction = 0;
+        public static int vFunction = 0;
+        public static int point = 0;
+        public static int move = 0;
+        public static int moveLimit = 10;
+        public static int playerHpNumber = 5;
+
+
+        public static bool[] isBoxOnGoal = new bool[GameScene.boxes.Length];
+        public static bool clearJudge = true;
+        public static bool hChangeDir = false;
+        public static bool vChangeDir = false;
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,163 +10,194 @@ namespace Sokoban
 {
     internal class Render
     {
-        static public void IsRender(ConsoleColor color, int x, int y, char symbol)
+        public static void IsRender(ConsoleColor color, int x, int y, char symbol)
         {
             Console.ForegroundColor = color;
             Console.SetCursorPosition(x, y);
             Console.Write(symbol);
         }
 
-        static public void RenderExit()
+
+        public static void RenderExit()
         {
-            IsRender(ConsoleColor.Cyan, GameObject.exitPoint.X, GameObject.exitPoint.Y, GameObject.exitPoint.Symbol);
+            IsRender(ConsoleColor.Cyan, GameScene.exitPoint.X, GameScene.exitPoint.Y, GameScene.exitPoint.Symbol);
         }
 
-        static public void RenderMap()
+
+        
+        public static int LoadStage(int stageNumber)
         {
+            string[] stage = File.ReadAllLines(Path.Combine("Assets", "Stage", $"Stage{stageNumber:D2}.txt"));
+            int wallLength = int.Parse(stage[stage.Length - 1]);
+
+            return wallLength;
+        }
+
+
+        
+
+        public static void RenderStage(int stageNumber)
+        {
+
+            string[] stage = File.ReadAllLines(Path.Combine("Assets", "Stage", $"Stage{stageNumber:D2}.txt"));
+            int wallLength = int.Parse(stage[stage.Length - 1]);
+            
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("######################");
-
-            for (int i = 0; i <= GameSet.MAP_MAX_Y - 1; i++)
+            
+           
+            
+            int wallsIndex = 0;
+            
+            for (int i = 0; i < stage.Length - 1; i++)
             {
-                Console.WriteLine("#                    #");
+                Console.WriteLine(stage[i]);
             }
-            for (int j = 0; j <= GameSet.MAP_MAX_X + 1; j++)
-            {
-                Console.Write("#");
-            }
-        }
 
-        static public void RenderGoal()
-        {
-            for (int goalId = 0; goalId < GameObject.goalLength; goalId++)
+            for (int y = 0; y < stage.Length; y++)
             {
-                IsRender(GameObject.goals[goalId].Color, GameObject.goals[goalId].X, GameObject.goals[goalId].Y, GameObject.goals[goalId].Symbol);
-            }
-        }
-
-        static public void RenderWall()
-        {
-            for (int wallId = 0; wallId < GameObject.wallLength; wallId++)
-            {
-                IsRender(GameObject.walls[wallId].Color, GameObject.walls[wallId].X, GameObject.walls[wallId].Y, GameObject.walls[wallId].Symbol);
-            }
-        }
-
-        static public void RenderChange()
-        {
-            for (int boxId = 0; boxId < GameObject.boxLength; boxId++)
-            {
-                if (GameObject.boxes[boxId].IsOnGoal)
+                for (int x = 0; x < stage[y].Length; x++)
                 {
-                    IsRender(GameObject.boxes[boxId].Color, GameObject.boxes[boxId].X, GameObject.boxes[boxId].Y, GameObject.goals[boxId].InSymbol);
+                    if (stage[y][x] == '#')
+                    {
+                        GameScene.walls[wallsIndex] = new GameObject.Wall { X = x, Y = y };
+                        wallsIndex++;
+                    }
+                }
+            }
+        }
+
+        
+
+        public static void RenderGoal()
+        {
+            for (int goalId = 0; goalId < GameScene.goals.Length; goalId++)
+            {
+                IsRender(GameScene.goals[goalId].Color, GameScene.goals[goalId].X, GameScene.goals[goalId].Y, GameScene.goals[goalId].Symbol);
+            }
+        }
+
+        public static void RenderColorWall()
+        {
+            for (int wallId = 0; wallId < GameScene.colorWalls.Length; wallId++)
+            {
+                IsRender(GameScene.colorWalls[wallId].color, GameScene.colorWalls[wallId].X, GameScene.colorWalls[wallId].Y, GameScene.colorWalls[wallId].Symbol);
+            }
+        }
+
+        public static void RenderChange()
+        {
+            for (int boxId = 0; boxId < GameScene.boxes.Length; boxId++)
+            {
+                if (GameScene.boxes[boxId].IsOnGoal)
+                {
+                    IsRender(GameScene.boxes[boxId].Color, GameScene.boxes[boxId].X, GameScene.boxes[boxId].Y, GameScene.goals[boxId].InSymbol);
                 }
                 else
                 {
-                    IsRender(GameObject.boxes[boxId].Color, GameObject.boxes[boxId].X, GameObject.boxes[boxId].Y, GameObject.boxes[boxId].Symbol);
+                    IsRender(GameScene.boxes[boxId].Color, GameScene.boxes[boxId].X, GameScene.boxes[boxId].Y, GameScene.boxes[boxId].Symbol);
                 }
             }
 
         }
 
-        static public void RenderPlayer()
+        public static void RenderPlayer()
         {
-            IsRender(GameObject.player.Color, GameObject.player.X, GameObject.player.Y, GameObject.player.Symbol);
+            IsRender(GameScene.player.Color, GameScene.player.X, GameScene.player.Y, GameScene.player.Symbol);
         }
 
-        static public void RenderItem()
+        public static void RenderItem()
         {
-            for (int itemId = 0; itemId < GameObject.itemLength; itemId++)
+            for (int itemId = 0; itemId < GameScene.verticalItems.Length; itemId++)
             {
-                IsRender(GameObject.horizonItem[itemId].Color, GameObject.horizonItem[itemId].X, GameObject.horizonItem[itemId].Y, GameObject.horizonItem[itemId].Symbol);
+                IsRender(GameScene.horizonItems[itemId].Color, GameScene.horizonItems[itemId].X, GameScene.horizonItems[itemId].Y, GameScene.horizonItems[itemId].Symbol);
 
-                IsRender(GameObject.verticalItem[itemId].Color, GameObject.verticalItem[itemId].X, GameObject.verticalItem[itemId].Y, GameObject.verticalItem[itemId].Symbol);
+                IsRender(GameScene.verticalItems[itemId].Color, GameScene.verticalItems[itemId].X, GameScene.verticalItems[itemId].Y, GameScene.verticalItems[itemId].Symbol);
             }
         }
 
-        static public void RenderString()
+        public static void RenderString()
         {
             Console.ForegroundColor = ConsoleColor.White;
 
-            Console.SetCursorPosition(GameSet.MAP_MAX_X + 4, 5);
+            Console.SetCursorPosition(GameSet.MAP_MAX_X + 10, 5);
             Console.Write($"↔ : {GameObject.hFunction}");
 
-            Console.SetCursorPosition(GameSet.MAP_MAX_X + 4, 6);
+            Console.SetCursorPosition(GameSet.MAP_MAX_X + 10, 6);
             Console.Write($"↕ : {GameObject.vFunction}");
 
-            Console.SetCursorPosition(GameSet.MAP_MAX_X + 4, GameSet.MAP_MAX_Y - 2);
+            Console.SetCursorPosition(GameSet.MAP_MAX_X + 10, GameSet.MAP_MAX_Y - 2);
             Console.Write($"CHANGER(WASD) : {GameObject.moveLimit}");
 
-            Console.SetCursorPosition(GameSet.MAP_MAX_X + 4, 3);
-            Console.Write($"* : {GameObject.point} / {GameObject.pItemLength}");
+            Console.SetCursorPosition(GameSet.MAP_MAX_X + 10, 3);
+            Console.Write($"* : {GameObject.point} / {GameScene.pointItems.Length}");
 
-            Console.SetCursorPosition(GameSet.MAP_MAX_X + 4, GameSet.MAP_MAX_Y - 4);
+            Console.SetCursorPosition(GameSet.MAP_MAX_X + 10, GameSet.MAP_MAX_Y - 4);
             Console.Write($"MOVE : {GameObject.move}");
 
-            Console.SetCursorPosition(GameSet.MAP_MAX_X + 4, GameSet.MAP_MIN_Y + 1);
+            Console.SetCursorPosition(GameSet.MAP_MAX_X + 10, GameSet.MAP_MIN_Y + 1);
             Console.Write("HP : ");
             
         }
 
-        static public void RenderChanger()
+        public static void RenderChanger()
         {
-            IsRender(GameObject.changer.Color, GameObject.changer.X, GameObject.changer.Y, GameObject.changer.Symbol);
+            IsRender(GameScene.changer.Color, GameScene.changer.X, GameScene.changer.Y, GameScene.changer.Symbol);
         }
         
-        static public void RenderColorBox()
+        public static void RenderColorBox()
         {
-            for (int boxId = 0; boxId < GameObject.colorBoxLength; boxId++)
+            for (int boxId = 0; boxId < GameScene.colorBoxes.Length; boxId++)
             {
-                IsRender(GameObject.colorboxes[boxId].Color, GameObject.colorboxes[boxId].X, GameObject.colorboxes[boxId].Y, GameObject.colorboxes[boxId].Symbol);
+                IsRender(GameScene.colorBoxes[boxId].Color, GameScene.colorBoxes[boxId].X, GameScene.colorBoxes[boxId].Y, GameScene.colorBoxes[boxId].Symbol);
             }
         }
 
-        static public void RenderPointItem()
+        public static void RenderPointItem()
         {
-            for (int itemId = 0; itemId < GameObject.pItemLength; itemId++)
+            for (int itemId = 0; itemId < GameScene.pointItems.Length; itemId++)
             {
-                IsRender(ConsoleColor.Cyan, GameObject.pointItems[itemId].X, GameObject.pointItems[itemId].Y, GameObject.pointItems[itemId].Symbol);
+                IsRender(ConsoleColor.Cyan, GameScene.pointItems[itemId].X, GameScene.pointItems[itemId].Y, GameScene.pointItems[itemId].Symbol);
             }
         }
 
-        static public void RenderTrap()
+        public static void RenderTrap()
         {
-            for (int i = 0; i < GameObject.traps.Length; i++)
+            for (int i = 0; i < GameScene.traps.Length; i++)
             {
-                IsRender(ConsoleColor.DarkRed, GameObject.traps[i].X, GameObject.traps[i].Y, GameObject.traps[i].Symbol);
+                IsRender(ConsoleColor.DarkRed, GameScene.traps[i].X, GameScene.traps[i].Y, GameScene.traps[i].Symbol);
             }
         }
 
-        static public void RenderHp()
+        public static void RenderHp()
         {
-            for (int i = 0; i < GameObject.playerHpNumber; i++)
+            for (int i = 0; i < GameScene.pointItems.Length; i++)
             {
-                IsRender(ConsoleColor.DarkRed, GameSet.MAP_MAX_X + 9 + i, GameSet.MAP_MIN_Y + 1, GameObject.playerHp[i].Hp);  
+                IsRender(ConsoleColor.DarkRed, GameSet.MAP_MAX_X + 9 + i, GameSet.MAP_MIN_Y + 1, GameScene.playerHps[i].Hp);  
             }
             
         }
 
-        static public void RenderLosshp()
+        public static void RenderLosshp()
         {
             switch (GameObject.playerHpNumber)
             {
                 case 4:
-                    GameObject.playerHp[4].Hp = GameObject.playerHp[4].LoseHp;
+                    GameScene.playerHps[4].Hp = GameScene.playerHps[4].LoseHp;
                     break;
                 case 3:
-                    GameObject.playerHp[3].Hp = GameObject.playerHp[3].LoseHp;
+                    GameScene.playerHps[3].Hp = GameScene.playerHps[3].LoseHp;
                     break;
                 case 2:
-                    GameObject.playerHp[2].Hp = GameObject.playerHp[2].LoseHp;
+                    GameScene.playerHps[2].Hp = GameScene.playerHps[2].LoseHp;
                     break;
                 case 1:
-                    GameObject.playerHp[1].Hp = GameObject.playerHp[1].LoseHp;
+                    GameScene.playerHps[1].Hp = GameScene.playerHps[1].LoseHp;
                     break;
             }
         }
 
-        static public void RenderTitle()
+        public static void RenderTitle()
         {
             
            
