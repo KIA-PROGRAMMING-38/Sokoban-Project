@@ -19,16 +19,5 @@ namespace new_rekoban
         
         public const int GOAL_X = 14;
         public const int GOAL_Y = 7;
-
-        public void Initialize()
-        {
-            // 기초 세팅
-            Console.ResetColor();
-            Console.CursorVisible = false;
-            Console.Title = "미로";
-            Console.BackgroundColor = ConsoleColor.Gray;
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.Clear();
-        }
     }
 }

@@ -19,37 +19,43 @@ namespace new_rekoban
             Down
         }
 
-        private int _x = 14;
-        private int _y = 12;
-        private string _symbol = "A";
-        private Direction _moveDirection = Direction.None;
+        public int _x = 14;
+        public int _y = 12;
+        public string _symbol = "H";
+        public Direction _moveDirection = Direction.None;
 
+        // 접근자
         public int GetX() => _x;
         public int GetY() => _y;
-
         public string GetSymbol() => _symbol;
+        public Direction GetMoveDirection() => _moveDirection;
 
+        // 설정자
+        public void SetX(int newX) => _x = newX;
+        public void SetY(int newY) => _y = newY;
+
+        // 플레이어가 골이 아닌 오브젝트들 위에 있는지 판별
+        bool isPlayerOnObj = false;
         public void Move(ConsoleKey key)
         {
             if (key == ConsoleKey.LeftArrow)
             {
-                int _y;
                 isPlayerOnObj = true;
 
                 while (isPlayerOnObj)
                 {
                     for (int i = 0; i < Wall.count; ++i)
                     {
-                        if (this._x == Wall._x[i] && this._y == Wall._y[i])
+                        if (_x == Wall._x[i] && _y == Wall._y[i])
                         {
                             isPlayerOnObj = false;
                             break;
                         }
                     }
 
-                    for (int i = 0; i < fenceCount; ++i)
+                    for (int i = 0; i < Fence.count; ++i)
                     {
-                        if (this._x == fenceX[i] && this._y == fenceY[i])
+                        if (_x == Fence._x[i] && _y == Fence._y[i])
                         {
                             isPlayerOnObj = false;
                             break;
@@ -58,11 +64,11 @@ namespace new_rekoban
 
                     if (false == isPlayerOnObj)
                     {
-                        this._x += 1;
+                        _x += 1;
                         break;
                     }
 
-                    this._x -= 1;
+                    _x -= 1;
                 }
 
             }
@@ -82,9 +88,9 @@ namespace new_rekoban
                         }
                     }
 
-                    for (int i = 0; i < fenceCount; ++i)
+                    for (int i = 0; i < Fence.count; ++i)
                     {
-                        if (_x == fenceX[i] && _y == fenceY[i])
+                        if (_x == Fence._x[i] && _y == Fence._y[i])
                         {
                             isPlayerOnObj = false;
                             break;
@@ -93,11 +99,11 @@ namespace new_rekoban
 
                     if (false == isPlayerOnObj)
                     {
-                        playerX -= 1;
+                        _x -= 1;
                         break;
                     }
 
-                    playerX += 1;
+                    _x += 1;
                 }
             }
 
@@ -107,18 +113,18 @@ namespace new_rekoban
 
                 while (isPlayerOnObj)
                 {
-                    for (int i = 0; i < wallCount; ++i)
+                    for (int i = 0; i < Wall.count; ++i)
                     {
-                        if (playerX == wallPositionsX[i] && playerY == wallPositionsY[i])
+                        if (_x == Wall._x[i] && _y == Wall._y[i])
                         {
                             isPlayerOnObj = false;
                             break;
                         }
                     }
 
-                    for (int i = 0; i < fenceCount; ++i)
+                    for (int i = 0; i < Fence.count; ++i)
                     {
-                        if (playerX == fenceX[i] && playerY == fenceY[i])
+                        if (_x == Fence._x[i] && _y == Fence._y[i])
                         {
                             isPlayerOnObj = false;
                             break;
@@ -127,11 +133,11 @@ namespace new_rekoban
 
                     if (false == isPlayerOnObj)
                     {
-                        playerY += 1;
+                        _y += 1;
                         break;
                     }
 
-                    playerY -= 1;
+                    _y -= 1;
                 }
             }
 
@@ -141,18 +147,18 @@ namespace new_rekoban
 
                 while (isPlayerOnObj)
                 {
-                    for (int i = 0; i < wallCount; ++i)
+                    for (int i = 0; i < Wall.count; ++i)
                     {
-                        if (playerX == wallPositionsX[i] && playerY == wallPositionsY[i])
+                        if (_x == Wall._x[i] && _y == Wall._y[i])
                         {
                             isPlayerOnObj = false;
                             break;
                         }
                     }
 
-                    for (int i = 0; i < fenceCount; ++i)
+                    for (int i = 0; i < Fence.count; ++i)
                     {
-                        if (playerX == fenceX[i] && playerY == fenceY[i])
+                        if (_x == Fence._x[i] && _y == Fence._y[i])
                         {
                             isPlayerOnObj = false;
                             break;
@@ -161,22 +167,11 @@ namespace new_rekoban
 
                     if (false == isPlayerOnObj)
                     {
-                        playerY -= 1;
+                        _y -= 1;
                         break;
                     }
 
-                    playerY += 1;
-                }
-            }
-        }
-        static void RepeatCheckPlayerOnObject(Player, Wall, Wall, bool someBool)
-        {
-            for (int i = 0; i < Wall.count; ++i)
-            {
-                if (_x == Wall._x[i] && Player.GetY == Wall._y[i])
-                {
-                    someBool = false;
-                    break;
+                    _y += 1;
                 }
             }
         }
