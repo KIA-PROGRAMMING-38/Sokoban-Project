@@ -116,7 +116,7 @@ namespace Sokoban
         public static int point = 0;
         public static int move = 0;
         public static int moveLimit = 0;
-        public static int playerHpNumber = 5;
+        public static int playerHpNumber = 3;
 
 
         public static bool[] isBoxOnGoal = new bool[GameScene.boxes.Length];

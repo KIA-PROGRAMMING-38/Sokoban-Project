@@ -132,15 +132,11 @@ namespace Sokoban
             if (IsCollide(GameScene.player.X, GameScene.exitPoint.X, GameScene.player.Y, GameScene.exitPoint.Y) && 0 < GameObject.move && GameObject.move <= 155) // 클리어 판정
             {
                 Console.Clear();
-                Console.WriteLine("\r\n\r\n         ~-         \r\n        ~@@,        \r\n        @@@@        \r\n       ,@@@@.          \r\n      ,@@@@@@,      \r\n  ~@@@@@@@@@@@@@@!, \r\n@@@@@@@@@@@@@@@@@@@@\r\n @@@@@@@@@@@@@@@@@@ \r\n  @@@@@@@@@@@@@@@@  \r\n   @@@@@@@@@@@@@@   \r\n    @@@@@@@@@@@@       \r\n    @@@@@@@@@@@@    \r\n   -@@@@@@@@@@@@:   \r\n   @@@@@@   @@@@\r\n   @@@@      @@@@\r\n    *,        .!    \r\n");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("\r\n ::::::::  :::        ::::::::::     :::     :::::::::  \r\n" +
-                    ":+:    :+: :+:        :+:          :+: :+:   :+:    :+: \r\n" +
-                    "+:+        +:+        +:+         +:+   +:+  +:+    +:+ \r\n" +
-                    "+#+        +#+        +#++:++#   +#++:++#++: +#++:++#:  \r\n" +
-                    "+#+        +#+        +#+        +#+     +#+ +#+    +#+ \r\n" +
-                    "#+#    #+# #+#        #+#        #+#     #+# #+#    #+# \r\n" +
-                    " ########  ########## ########## ###     ### ###    ### \r\n");
+                string[] clearScene = File.ReadAllLines(Path.Combine("Assets", "Scene", "clear.txt"));
+                for (int i = 0; i < clearScene.Length; i++)
+                {
+                    Console.WriteLine(clearScene[i]);
+                }
                 Thread.Sleep(3000);
 
                 Console.ReadLine();
@@ -150,16 +146,13 @@ namespace Sokoban
             else if (IsCollide(GameScene.player.X, GameScene.exitPoint.X, GameScene.player.Y, GameScene.exitPoint.Y) && 150 < GameObject.move && GameObject.move <= 180)
             {
                 Console.Clear();
-                Console.WriteLine("\r\n\r\n         ~-         \r\n        ~@@,        \r\n        @@@@        \r\n       ,@@@@.          \r\n      ,@@@@@@,      \r\n  ~@@@@@@@@@@@@@@!, \r\n@@@@@@@@@@@@@@@@@@@@\r\n @@@@@@@@@@@@@@@@@@ \r\n  @@@@@@@@@@@@@@@@  \r\n   @@@@@@@@@@@@@@   \r\n    @@@@@@@@@@@@       \r\n    @@@@@@@@@@@@    \r\n   -@@@@@@@@@@@@:   \r\n   @@@@@@   @@@@\r\n   @@@@      @@@@\r\n    *,        .!    \r\n");
+                string[] clearScene = File.ReadAllLines(Path.Combine("Assets", "Scene", "clear.txt"));
 
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("\r\n ::::::::  :::        ::::::::::     :::     :::::::::  \r\n" +
-                    ":+:    :+: :+:        :+:          :+: :+:   :+:    :+: \r\n" +
-                    "+:+        +:+        +:+         +:+   +:+  +:+    +:+ \r\n" +
-                    "+#+        +#+        +#++:++#   +#++:++#++: +#++:++#:  \r\n" +
-                    "+#+        +#+        +#+        +#+     +#+ +#+    +#+ \r\n" +
-                    "#+#    #+# #+#        #+#        #+#     #+# #+#    #+# \r\n" +
-                    " ########  ########## ########## ###     ### ###    ### \r\n");
+                for (int i = 0; i < clearScene.Length; i++)
+                {
+                    Console.WriteLine(clearScene[i]);
+                }
+
                 Thread.Sleep(3000);
 
                 Console.ReadLine();
@@ -168,16 +161,13 @@ namespace Sokoban
             else if (IsCollide(GameScene.player.X, GameScene.exitPoint.X, GameScene.player.Y, GameScene.exitPoint.Y) && 180 < GameObject.move)
             {
                 Console.Clear();
-                Console.WriteLine("\r\n\r\n         ~-         \r\n        ~@@,        \r\n        @@@@        \r\n       ,@@@@.          \r\n      ,@@@@@@,      \r\n  ~@@@@@@@@@@@@@@!, \r\n@@@@@@@@@@@@@@@@@@@@\r\n @@@@@@@@@@@@@@@@@@ \r\n  @@@@@@@@@@@@@@@@  \r\n   @@@@@@@@@@@@@@   \r\n    @@@@@@@@@@@@       \r\n    @@@@@@@@@@@@    \r\n   -@@@@@@@@@@@@:   \r\n   @@@@@@   @@@@\r\n   @@@@      @@@@\r\n    *,        .!    \r\n");
 
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("\r\n ::::::::  :::        ::::::::::     :::     :::::::::  \r\n" +
-                    ":+:    :+: :+:        :+:          :+: :+:   :+:    :+: \r\n" +
-                    "+:+        +:+        +:+         +:+   +:+  +:+    +:+ \r\n" +
-                    "+#+        +#+        +#++:++#   +#++:++#++: +#++:++#:  \r\n" +
-                    "+#+        +#+        +#+        +#+     +#+ +#+    +#+ \r\n" +
-                    "#+#    #+# #+#        #+#        #+#     #+# #+#    #+# \r\n" +
-                    " ########  ########## ########## ###     ### ###    ### \r\n");
+                string[] clearScene = File.ReadAllLines(Path.Combine("Assets", "Scene", "clear.txt"));
+                for (int i = 0; i < clearScene.Length; i++)
+                {
+                    Console.WriteLine(clearScene[i]);
+                }
+
                 Thread.Sleep(3000);
 
 

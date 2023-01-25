@@ -18,18 +18,10 @@ namespace Sokoban
             Console.Write(symbol);
         }
 
-
         public static void RenderExit()
         {
             IsRender(ConsoleColor.Cyan, GameScene.exitPoint.X, GameScene.exitPoint.Y, GameScene.exitPoint.Symbol);
         }
-
-
-        
-        
-
-
-        
 
         public static void RenderStage(int stageNumber)
         {
@@ -72,8 +64,6 @@ namespace Sokoban
                 }
             }
         }
-
-        
 
         public static void RenderGoal()
         {
@@ -128,8 +118,6 @@ namespace Sokoban
             }
         }
 
-        
-
         public static void RenderChanger()
         {
             IsRender(GameScene.changer.Color, GameScene.changer.X, GameScene.changer.Y, GameScene.changer.Symbol);
@@ -150,8 +138,6 @@ namespace Sokoban
                 IsRender(ConsoleColor.Cyan, GameScene.pointItems[itemId].X, GameScene.pointItems[itemId].Y, GameScene.pointItems[itemId].Symbol);
             }
         }
-
-        
 
         public static void RenderHp()
         {
@@ -183,7 +169,6 @@ namespace Sokoban
 
         public static void RenderTitle()
         {
-            
            
             Console.SetCursorPosition(93, 4);
 

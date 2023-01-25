@@ -128,6 +128,7 @@ namespace Sokoban
 
         public static void Stage02()
         {
+            Console.Clear();
             string[] stage = File.ReadAllLines(Path.Combine("Assets", "Stage", $"Stage02.txt"));
             string[] Length = stage[stage.Length - 1].Split(" ");
             clearJudge = true;
@@ -234,6 +235,7 @@ namespace Sokoban
 
         public static void Stage03()
         {
+            Console.Clear();
             string[] stage = File.ReadAllLines(Path.Combine("Assets", "Stage", $"Stage03.txt"));
             string[] Length = stage[stage.Length - 1].Split(" ");
             clearJudge = true;
@@ -285,8 +287,6 @@ namespace Sokoban
                 new PlayerHp {Hp = '♥' , LoseHp = ' '},
                 new PlayerHp {Hp = '♥' , LoseHp = ' '},
                 new PlayerHp {Hp = '♥' , LoseHp = ' '},
-                new PlayerHp {Hp = '♥' , LoseHp = ' '},
-                new PlayerHp {Hp = '♥' , LoseHp = ' '},
            };
 
 
@@ -327,6 +327,7 @@ namespace Sokoban
 
         public static void Stage04()
         {
+            Console.Clear();
             string[] stage = File.ReadAllLines(Path.Combine("Assets", "Stage", $"Stage04.txt"));
             string[] Length = stage[stage.Length - 1].Split(" ");
             clearJudge = true;
