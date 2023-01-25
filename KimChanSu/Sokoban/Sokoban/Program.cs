@@ -59,92 +59,13 @@ namespace Sokoban
             // 게임 루프 구성
             while (true)
             {
-                // --------------------------------- Render -----------------------------------------
-                // 이전 프레임을 지운다.
-                Console.Clear();
-
-                // 플레이어를 그린다.
-                Console.SetCursorPosition(playerX, playerY);
-                Console.Write("P");
-
-                // 골을 그린다.
-                for (int i = 0; i < GOAL_COUNT; ++i)
-                {
-                    int goalX = goalPositionsX[i];
-                    int goalY = goalPositionsY[i];
-
-                    Console.SetCursorPosition(goalX, goalY);
-                    Console.Write("G");
-                }
-
-                // 박스를 그린다.
-                for (int boxId = 0; boxId < BOX_COUNT; ++boxId)
-                {
-                    int boxX = boxPositionsX[boxId];
-                    int boxY = boxPositionsY[boxId];
-
-                    Console.SetCursorPosition(boxX, boxY);
-
-                    // 박스가 골 위에 있는지 판단
-                    isBoxOnGoal[boxId] = false;
-
-                    for (int goalId = 0; goalId < GOAL_COUNT; ++goalId) // 모든 골에 대해서 조사
-                    {
-                        // 박스가 골 위에 있는지
-                        if (boxX == goalPositionsX[goalId] && boxY == goalPositionsY[goalId])
-                        {
-                            // 찾았다면 true로 바꿈
-                            isBoxOnGoal[boxId] = true;
-
-                            // 더이상 조사할 필요가 없으니 탈출
-                            break;
-                        }
-                    }
-
-                    if (isBoxOnGoal[boxId])
-                    {
-                        Console.Write("C");
-                    }
-                    else
-                    {
-                        Console.Write("B");
-                    }
-                }
-
-
-                // 벽을 그린다.
-                Console.SetCursorPosition(wallX, wallY);
-                Console.Write("W");
+                Render();
 
                 // --------------------------------- ProcessInput -----------------------------------------
                 ConsoleKey key = Console.ReadKey().Key;
 
                 // --------------------------------- Update -----------------------------------------
-
-                // 플레이어 이동 처리
-                if (key == ConsoleKey.LeftArrow)
-                {
-                    playerX = Max(0, playerX - 1);
-                    playerMoveDirection = Direction.Left;
-                }
-
-                if (key == ConsoleKey.RightArrow)
-                {
-                    playerX = Min(playerX + 1, 20);
-                    playerMoveDirection = Direction.Right;
-                }
-
-                if (key == ConsoleKey.UpArrow)
-                {
-                    playerY = Max(0, playerY - 1);
-                    playerMoveDirection = Direction.Up;
-                }
-
-                if (key == ConsoleKey.DownArrow)
-                {
-                    playerY = Min(playerY + 1, 10);
-                    playerMoveDirection = Direction.Down;
-                }
+                MovePlayer(key, ref playerX, ref playerY, out playerMoveDirection);     
 
                 // 플레이어와 벽의 충돌 처리
                 if (playerX == wallX && playerY == wallY)
@@ -184,19 +105,19 @@ namespace Sokoban
                         switch (playerMoveDirection)
                         {
                             case Direction.Left:
-                                boxX = Max(0, boxX - 1);
+                                boxX = Math.Max(0, boxX - 1);
                                 playerX = boxX + 1;
                                 break;
                             case Direction.Right:
-                                boxX = Min(boxX + 1, 20);
+                                boxX = Math.Min(boxX + 1, 20);
                                 playerX = boxX - 1;
                                 break;
                             case Direction.Up:
-                                boxY = Max(0, boxY - 1);
+                                boxY = Math.Max(0, boxY - 1);
                                 playerY = boxY + 1;
                                 break;
                             case Direction.Down:
-                                boxY = Min(boxY + 1, 10);
+                                boxY = Math.Min(boxY + 1, 10);
                                 playerY = boxY - 1;
                                 break;
                             default:
@@ -356,24 +277,99 @@ namespace Sokoban
 
                     break;
                 }
-                int Max(int a , int b)
+            }
+
+            // 플레이어를 이동시킨다.
+            void MovePlayer(ConsoleKey key, ref int x, ref int y, out Direction moveDirection)
+            {
+                if (key == ConsoleKey.LeftArrow)
                 {
-                    int result = 0;
-                    if (a > b)
+                    x = Math.Max(0, x - 1);
+                    moveDirection = Direction.Left;
+                }
+
+                if (key == ConsoleKey.RightArrow)
+                {
+                    x = Math.Min(x + 1, 20);
+                    moveDirection = Direction.Right;
+                }
+
+                if (key == ConsoleKey.UpArrow)
+                {
+                    y = Math.Max(0, y - 1);
+                    moveDirection = Direction.Up;
+                }
+
+                if (key == ConsoleKey.DownArrow)
+                {
+                    y = Math.Min(y + 1, 10);
+                    moveDirection = Direction.Down;
+                }
+            }
+
+            // 프레임을 그립니다.
+            void Render()
+            {
+                // --------------------------------- Render -----------------------------------------
+                // 이전 프레임을 지운다.
+                Console.Clear();
+
+                // 플레이어를 그린다.
+                RenderObject(playerX, playerY, "P");
+
+                // 골을 그린다.
+                for (int i = 0; i < GOAL_COUNT; ++i)
+                {
+                    int goalX = goalPositionsX[i];
+                    int goalY = goalPositionsY[i];
+
+                    RenderObject(goalX, goalY, "G");
+                }
+
+                // 박스를 그린다.
+                for (int boxId = 0; boxId < BOX_COUNT; ++boxId)
+                {
+                    int boxX = boxPositionsX[boxId];
+                    int boxY = boxPositionsY[boxId];
+
+                    Console.SetCursorPosition(boxX, boxY);
+
+                    // 박스가 골 위에 있는지 판단
+                    isBoxOnGoal[boxId] = false;
+
+                    for (int goalId = 0; goalId < GOAL_COUNT; ++goalId) // 모든 골에 대해서 조사
                     {
-                        result = a;
+                        // 박스가 골 위에 있는지
+                        if (boxX == goalPositionsX[goalId] && boxY == goalPositionsY[goalId])
+                        {
+                            // 찾았다면 true로 바꿈
+                            isBoxOnGoal[boxId] = true;
+
+                            // 더이상 조사할 필요가 없으니 탈출
+                            break;
+                        }
+                    }
+
+                    if (isBoxOnGoal[boxId])
+                    {
+                        Console.Write("C");
                     }
                     else
                     {
-                        result = b;
+                        Console.Write("B");
                     }
-                    return result;
                 }
-                int Min(int a , int b)
-                {
-                    return a < b ? a : b;
-                }
+
+
+                // 벽을 그린다.
+                RenderObject(wallX, wallY, "W");
             }
+            // 오브젝트를 그립니다.
+            void RenderObject(int x, int y, string obj)
+            {
+                Console.SetCursorPosition(x, y);
+                Console.Write(obj);
+            }  
         }
     }
 }
