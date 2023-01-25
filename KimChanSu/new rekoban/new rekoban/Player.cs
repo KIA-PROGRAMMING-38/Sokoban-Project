@@ -21,7 +21,7 @@ namespace new_rekoban
 
         public int _x = 14;
         public int _y = 12;
-        public string _symbol = "H";
+        public string _symbol = "P";
         public Direction _moveDirection = Direction.None;
 
         // 접근자

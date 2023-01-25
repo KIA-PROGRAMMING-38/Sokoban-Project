@@ -109,7 +109,7 @@ namespace Rekonban
                     Console.ForegroundColor = ConsoleColor.Magenta;
                 }
             }
-
+            
             void Update(ConsoleKey key)
             {
                 // 플레이어의 이동 처리
