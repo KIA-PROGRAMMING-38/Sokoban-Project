@@ -8,19 +8,19 @@ namespace Sokoban
 {
     internal class GameRule
     {
-        public static void SpawnBox()
+        public static void SpawnBox(int Id, int spawnX, int spawnY)
         {
-            for (int pItemId = 0; pItemId < GameScene.pointItems.Length; pItemId++)
-            {
-                if (IsCollide(GameScene.player.X, GameScene.pointItems[pItemId].X, GameScene.player.Y, GameScene.pointItems[pItemId].Y))
+                if (IsCollide(GameScene.player.X, GameScene.pointItems[Id].X, GameScene.player.Y, GameScene.pointItems[Id].Y))
                 {
-                    GameScene.boxes[pItemId].X = 10;
-                    GameScene.boxes[pItemId].Y = 6;
-                    GameScene.boxes[pItemId].Symbol = '■';
+                    GameScene.pointItems[Id].X = GameSet.hidePointX;
+                    GameScene.pointItems[Id].Y = GameSet.hidePointY;
+                    GameScene.pointItems[Id].Symbol = ' ';
 
-                    break;
+
+                    GameScene.boxes[Id].X = spawnX;
+                    GameScene.boxes[Id].Y = spawnY;
+                    GameScene.boxes[Id].Symbol = '■';
                 }
-            }
         }
 
         public static void ChangePlayerColor()
@@ -48,8 +48,8 @@ namespace Sokoban
                 if (IsCollide(GameScene.player.X, GameScene.pointItems[pItemId].X, GameScene.player.Y, GameScene.pointItems[pItemId].Y))
                 {
                     GameObject.point++;
-                    GameScene.pointItems[pItemId].X = GameSet.MAP_MAX_X + 4;
-                    GameScene.pointItems[pItemId].Y = GameSet.MAP_MAX_Y + 4;
+                    GameScene.pointItems[pItemId].X = GameSet.hidePointX;
+                    GameScene.pointItems[pItemId].Y = GameSet.hidePointY;
                     GameScene.pointItems[pItemId].Symbol = ' ';
 
                     break;

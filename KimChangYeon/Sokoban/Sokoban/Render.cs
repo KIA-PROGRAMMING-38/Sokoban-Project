@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,13 +26,7 @@ namespace Sokoban
 
 
         
-        public static int LoadStage(int stageNumber)
-        {
-            string[] stage = File.ReadAllLines(Path.Combine("Assets", "Stage", $"Stage{stageNumber:D2}.txt"));
-            int wallLength = int.Parse(stage[stage.Length - 1]);
-
-            return wallLength;
-        }
+        
 
 
         
@@ -40,15 +35,16 @@ namespace Sokoban
         {
 
             string[] stage = File.ReadAllLines(Path.Combine("Assets", "Stage", $"Stage{stageNumber:D2}.txt"));
-            int wallLength = int.Parse(stage[stage.Length - 1]);
+            string[] Length = stage[stage.Length - 1].Split(" ");
             
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.White;
-            
            
             
-            int wallsIndex = 0;
+            int wallIndex = 0;
+            int trapIndex = 0;
             
+
+            Console.ForegroundColor = ConsoleColor.White;
             for (int i = 0; i < stage.Length - 1; i++)
             {
                 Console.WriteLine(stage[i]);
@@ -58,10 +54,20 @@ namespace Sokoban
             {
                 for (int x = 0; x < stage[y].Length; x++)
                 {
-                    if (stage[y][x] == '#')
+                    switch (stage[y][x])
                     {
-                        GameScene.walls[wallsIndex] = new GameObject.Wall { X = x, Y = y };
-                        wallsIndex++;
+                        case '#':
+                            Console.ForegroundColor = ConsoleColor.White;
+                            GameScene.walls[wallIndex] = new GameObject.Wall { X = x, Y = y };
+                            wallIndex++;
+                            break;
+
+                        case '♨':
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            GameScene.traps[trapIndex] = new GameObject.Trap { X = x, Y = y };
+                            trapIndex++;
+                            break;
+
                     }
                 }
             }
@@ -106,39 +112,23 @@ namespace Sokoban
             IsRender(GameScene.player.Color, GameScene.player.X, GameScene.player.Y, GameScene.player.Symbol);
         }
 
-        public static void RenderItem()
+        public static void RenderHitem()
+        {
+            for (int itemId = 0; itemId < GameScene.horizonItems.Length; itemId++)
+            {
+                IsRender(GameScene.horizonItems[itemId].Color, GameScene.horizonItems[itemId].X, GameScene.horizonItems[itemId].Y, GameScene.horizonItems[itemId].Symbol);
+            }
+        }
+
+        public static void RenderVitem()
         {
             for (int itemId = 0; itemId < GameScene.verticalItems.Length; itemId++)
             {
-                IsRender(GameScene.horizonItems[itemId].Color, GameScene.horizonItems[itemId].X, GameScene.horizonItems[itemId].Y, GameScene.horizonItems[itemId].Symbol);
-
                 IsRender(GameScene.verticalItems[itemId].Color, GameScene.verticalItems[itemId].X, GameScene.verticalItems[itemId].Y, GameScene.verticalItems[itemId].Symbol);
             }
         }
 
-        public static void RenderString()
-        {
-            Console.ForegroundColor = ConsoleColor.White;
-
-            Console.SetCursorPosition(GameSet.MAP_MAX_X + 10, 5);
-            Console.Write($"↔ : {GameObject.hFunction}");
-
-            Console.SetCursorPosition(GameSet.MAP_MAX_X + 10, 6);
-            Console.Write($"↕ : {GameObject.vFunction}");
-
-            Console.SetCursorPosition(GameSet.MAP_MAX_X + 10, GameSet.MAP_MAX_Y - 2);
-            Console.Write($"CHANGER(WASD) : {GameObject.moveLimit}");
-
-            Console.SetCursorPosition(GameSet.MAP_MAX_X + 10, 3);
-            Console.Write($"* : {GameObject.point} / {GameScene.pointItems.Length}");
-
-            Console.SetCursorPosition(GameSet.MAP_MAX_X + 10, GameSet.MAP_MAX_Y - 4);
-            Console.Write($"MOVE : {GameObject.move}");
-
-            Console.SetCursorPosition(GameSet.MAP_MAX_X + 10, GameSet.MAP_MIN_Y + 1);
-            Console.Write("HP : ");
-            
-        }
+        
 
         public static void RenderChanger()
         {
@@ -161,19 +151,13 @@ namespace Sokoban
             }
         }
 
-        public static void RenderTrap()
-        {
-            for (int i = 0; i < GameScene.traps.Length; i++)
-            {
-                IsRender(ConsoleColor.DarkRed, GameScene.traps[i].X, GameScene.traps[i].Y, GameScene.traps[i].Symbol);
-            }
-        }
+        
 
         public static void RenderHp()
         {
-            for (int i = 0; i < GameScene.pointItems.Length; i++)
+            for (int i = 0; i < GameScene.playerHps.Length; i++)
             {
-                IsRender(ConsoleColor.DarkRed, GameSet.MAP_MAX_X + 9 + i, GameSet.MAP_MIN_Y + 1, GameScene.playerHps[i].Hp);  
+                IsRender(ConsoleColor.DarkRed, 40+ i, 23, GameScene.playerHps[i].Hp);  
             }
             
         }

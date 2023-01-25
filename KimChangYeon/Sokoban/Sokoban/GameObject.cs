@@ -98,7 +98,6 @@ namespace Sokoban
         {
             public int X;
             public int Y;
-            public char Symbol;
         }
 
         public class ColorWall
@@ -113,8 +112,7 @@ namespace Sokoban
 
 
 
-        public static int hFunction = 0;
-        public static int vFunction = 0;
+       
         public static int point = 0;
         public static int move = 0;
         public static int moveLimit = 0;

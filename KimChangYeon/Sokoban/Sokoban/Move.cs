@@ -25,7 +25,7 @@ namespace Sokoban
                 GameScene.player.X = GameScene.player.X - 1;
                 GameSet.playerDir = GameSet.PLAYER_DIRECTION.LEFT;
 
-                GameObject.hFunction--;
+               
                 GameObject.move++;
             }
 
@@ -56,7 +56,7 @@ namespace Sokoban
                 GameScene.player.X = GameScene.player.X + 1;
                 GameSet.playerDir = GameSet.PLAYER_DIRECTION.RIGHT;
 
-                GameObject.hFunction--;
+                
                 GameObject.move++;
             }
 
@@ -86,7 +86,7 @@ namespace Sokoban
             {
                 GameScene.player.Y = GameScene.player.Y + 1;
 
-                GameObject.vFunction--;
+               
                 GameObject.move++;
             }
 
@@ -107,7 +107,7 @@ namespace Sokoban
                 GameScene.player.Y = GameScene.player.Y - 1;
                 GameSet.playerDir = GameSet.PLAYER_DIRECTION.UP;
 
-                GameObject.vFunction--;
+               
                 GameObject.move++;
             }
 

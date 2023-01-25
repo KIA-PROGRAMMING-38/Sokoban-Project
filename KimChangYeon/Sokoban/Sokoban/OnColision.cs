@@ -89,7 +89,6 @@ namespace Sokoban
             } //벽과 플레이어
         }
 
-
         public static void WithColorWall()
         {
             for (int wallId = 0; wallId < GameScene.colorWalls.Length; wallId++) //벽과 플레이어
@@ -202,54 +201,70 @@ namespace Sokoban
         {
             for (int itemId = 0; itemId < GameScene.horizonItems.Length; itemId++)
             {
-                if (IsCollide(GameScene.player.X, GameScene.horizonItems[itemId].X, GameScene.player.Y, GameScene.horizonItems[itemId].Y))
+                if (IsCollide(GameScene.player.X, GameScene.horizonItems[itemId].X, GameScene.player.Y, GameScene.horizonItems[itemId].Y) && GameObject.hChangeDir == false)
                 {
-                    GameObject.hFunction += 10;
-                    GameScene.horizonItems[itemId].X = GameSet.MAP_MAX_X + 2;
-                    GameScene.horizonItems[itemId].Y = GameSet.MAP_MAX_Y + 2;
+                    GameScene.horizonItems[itemId].X = GameSet.hidePointX;
+                    GameScene.horizonItems[itemId].Y = GameSet.hidePointY;
                     GameScene.horizonItems[itemId].Symbol = ' ';
                     GameObject.hChangeDir = true;
 
                     break;
                 }
-
-                if (GameObject.hFunction == 0)
-                {
-                    GameObject.hChangeDir = false;
-                }
             }
 
+            for (int itemId = 0; itemId < GameScene.horizonItems.Length; itemId++)
+            {
+                if (IsCollide(GameScene.player.X, GameScene.horizonItems[itemId].X, GameScene.player.Y, GameScene.horizonItems[itemId].Y) && GameObject.hChangeDir == true)
+                {
+                    GameScene.horizonItems[itemId].X = GameSet.hidePointX;
+                    GameScene.horizonItems[itemId].Y = GameSet.hidePointY;
+                    GameScene.horizonItems[itemId].Symbol = ' ';
+                    GameObject.hChangeDir = false;
+
+                    break;
+                }
+            }
         }
 
         public static void WithPlayerVitem()
         {
             for (int itemId = 0; itemId < GameScene.verticalItems.Length; itemId++)
             {
-                if (IsCollide(GameScene.player.X, GameScene.verticalItems[itemId].X, GameScene.player.Y, GameScene.verticalItems[itemId].Y))
+                if (IsCollide(GameScene.player.X, GameScene.verticalItems[itemId].X, GameScene.player.Y, GameScene.verticalItems[itemId].Y) && GameObject.vChangeDir == false)
                 {
-                    GameObject.vFunction += 10;  //효과 횟수
-                    GameScene.verticalItems[itemId].X = GameSet.MAP_MAX_X + 2;
-                    GameScene.verticalItems[itemId].Y = GameSet.MAP_MAX_Y + 2;
+                    GameScene.verticalItems[itemId].X = GameSet.hidePointX;
+                    GameScene.verticalItems[itemId].Y = GameSet.hidePointY;
                     GameScene.verticalItems[itemId].Symbol = ' ';
                     GameObject.vChangeDir = true;
 
                     break;
                 }
-
-                if (GameObject.vFunction == 0)
+            }
+            for (int itemId = 0; itemId < GameScene.verticalItems.Length; itemId++)
+            {
+                if (IsCollide(GameScene.player.X, GameScene.verticalItems[itemId].X, GameScene.player.Y, GameScene.verticalItems[itemId].Y) && GameObject.vChangeDir == true)
                 {
+                    GameScene.verticalItems[itemId].X = GameSet.hidePointX;
+                    GameScene.verticalItems[itemId].Y = GameSet.hidePointY;
+                    GameScene.verticalItems[itemId].Symbol = ' ';
                     GameObject.vChangeDir = false;
+
+                    break;
                 }
             }
+
+
         }
 
         public static void WithPlayerTrap()
         {
-            if (IsCollide(GameScene.player.X, GameScene.traps[0].X, GameScene.player.Y, GameScene.traps[0].Y))
+
+            for (int trapId = 0; trapId < GameScene.traps.Length; trapId++)
             {
-                GameObject.playerHpNumber--;
-                
-                
+                if (IsCollide(GameScene.player.X, GameScene.traps[trapId].X, GameScene.player.Y, GameScene.traps[trapId].Y))
+                {
+                    GameObject.playerHpNumber--;
+                }
             }
         }
 

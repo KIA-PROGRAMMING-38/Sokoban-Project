@@ -18,10 +18,8 @@ namespace Sokoban
 
         static public PLAYER_DIRECTION playerDir = new PLAYER_DIRECTION();
 
-        public const int MAP_MIN_X = 0;
-        public const int MAP_MIN_Y = 0;
-        public const int MAP_MAX_X = 20;
-        public const int MAP_MAX_Y = 12;
+        public static int hidePointX = 0;
+        public static int hidePointY = 0;
 
 
         public static void SetGame()

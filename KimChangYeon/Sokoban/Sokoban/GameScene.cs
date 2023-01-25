@@ -40,9 +40,9 @@ namespace Sokoban
         public static void Stage01()
         {
             string[] stage = File.ReadAllLines(Path.Combine("Assets", "Stage", $"Stage01.txt"));
-            int wallLength = int.Parse(stage[stage.Length - 1]);
+            string[] Length = stage[stage.Length - 1].Split(" ");
 
-            walls = new Wall[wallLength];
+            walls = new Wall[int.Parse(Length[0])];
 
             player = new Player
             {
@@ -108,13 +108,10 @@ namespace Sokoban
 
                 // --------------------------------------------- Update -------------------------------------------------------
 
-
                 Move.Right();
                 Move.Left();
                 Move.Up();
                 Move.Down();
-
-
                 
                 OnColision.WithPlayerBox();
                 OnColision.WithBoxWall();
@@ -127,19 +124,16 @@ namespace Sokoban
                 GameRule.OpenWall();
 
             }
-
-
-
         }
 
         public static void Stage02()
         {
             string[] stage = File.ReadAllLines(Path.Combine("Assets", "Stage", $"Stage02.txt"));
-            int wallLength = int.Parse(stage[stage.Length - 1]);
+            string[] Length = stage[stage.Length - 1].Split(" ");
             clearJudge = true;
             moveLimit = 1;
            
-            walls = new Wall[wallLength];
+            walls = new Wall[int.Parse(Length[0])];
 
             player = new Player
             {
@@ -214,6 +208,100 @@ namespace Sokoban
                 Render.RenderColorBox();
                 Render.RenderChanger();
 
+                // --------------------------------------------- ProcessInput -------------------------------------------------
+
+                Input.InputKey();
+
+                // --------------------------------------------- Update -------------------------------------------------------
+
+                Move.Right();
+                Move.Left();
+                Move.Up();
+                Move.Down();
+
+                OnColision.WithPlayerBox();
+                OnColision.WithBoxWall();
+                OnColision.WithBoxBox();
+                OnColision.WithPlayerWall();
+                OnColision.WithColorWall();
+
+                GameRule.ChangePlayerColor();
+                GameRule.GoalInJudge();
+                GameRule.JudgeClear();
+                GameRule.OpenWall();
+            }
+        }
+
+        public static void Stage03()
+        {
+            string[] stage = File.ReadAllLines(Path.Combine("Assets", "Stage", $"Stage03.txt"));
+            string[] Length = stage[stage.Length - 1].Split(" ");
+            clearJudge = true;
+
+            walls = new Wall[int.Parse(Length[0])];
+
+            player = new Player
+            {
+                X = 20,
+                Y = 12,
+                Color = ConsoleColor.White,
+                PlayerDir = GameSet.playerDir,
+                PushedBoxId = 0,
+                Symbol = '●'
+            };
+
+            traps = new Trap[int.Parse(Length[1])];
+
+            exitPoint = new ExitPoint
+            {
+                X = 45,
+                Y = 13,
+                Symbol = '○'
+            };
+
+            horizonItems = new HorizonItem[]
+            {
+                new HorizonItem {X = 21, Y = 13, Color = ConsoleColor.DarkMagenta, Symbol = '↔'},
+                new HorizonItem {X = 26, Y = 10, Color = ConsoleColor.DarkMagenta, Symbol = '↔'},
+                new HorizonItem {X = 43, Y = 8, Color = ConsoleColor.DarkMagenta, Symbol = '↔'},
+                new HorizonItem {X = 39, Y = 6, Color = ConsoleColor.DarkMagenta, Symbol = '↔'},
+                new HorizonItem {X = 34, Y = 11, Color = ConsoleColor.DarkMagenta, Symbol = '↔'},
+
+
+            };
+
+            verticalItems = new VerticalItem[]
+            {
+                new VerticalItem {X = 22, Y = 11, Color = ConsoleColor.DarkMagenta, Symbol = '↕'},
+                new VerticalItem {X = 38, Y = 11, Color = ConsoleColor.DarkMagenta, Symbol = '↕'},
+                new VerticalItem {X = 47, Y = 11, Color = ConsoleColor.DarkMagenta, Symbol = '↕'},
+                new VerticalItem {X = 33, Y = 10, Color = ConsoleColor.DarkMagenta, Symbol = '↕'},
+                new VerticalItem {X = 48, Y = 8, Color = ConsoleColor.DarkMagenta, Symbol = '↕'},
+                new VerticalItem {X = 46, Y = 6, Color = ConsoleColor.DarkMagenta, Symbol = '↕'}
+            };
+
+            playerHps = new PlayerHp[]
+           {
+                new PlayerHp {Hp = '♥' , LoseHp = ' '},
+                new PlayerHp {Hp = '♥' , LoseHp = ' '},
+                new PlayerHp {Hp = '♥' , LoseHp = ' '},
+                new PlayerHp {Hp = '♥' , LoseHp = ' '},
+                new PlayerHp {Hp = '♥' , LoseHp = ' '},
+           };
+
+
+            while (clearJudge)
+            {
+              
+                // --------------------------------------------- Render -------------------------------------------------------
+
+                Render.RenderStage(3);
+                Render.RenderPlayer();
+                Render.RenderExit();
+                Render.RenderHitem();
+                Render.RenderVitem();
+                Render.RenderHp();
+                
 
                 // --------------------------------------------- ProcessInput -------------------------------------------------
 
@@ -221,20 +309,105 @@ namespace Sokoban
 
                 // --------------------------------------------- Update -------------------------------------------------------
 
+                Move.Right();
+                Move.Left();
+                Move.Up();
+                Move.Down();
+
+                OnColision.WithPlayerTrap();
+                OnColision.WithPlayerWall();
+                OnColision.WithPlayerHitem();
+                OnColision.WithPlayerVitem();
+
+                GameRule.Losshp();
+                GameRule.JudgeClear();
+               
+            }
+        }
+
+        public static void Stage04()
+        {
+            string[] stage = File.ReadAllLines(Path.Combine("Assets", "Stage", $"Stage04.txt"));
+            string[] Length = stage[stage.Length - 1].Split(" ");
+            clearJudge = true;
+            hChangeDir = false;
+            vChangeDir = false;
+
+
+            walls = new Wall[int.Parse(Length[0])];
+
+            player = new Player
+            {
+                X = 22,
+                Y = 12,
+                Color = ConsoleColor.White,
+                PlayerDir = GameSet.playerDir,
+                PushedBoxId = 0,
+                Symbol = '●'
+            };
+
+            goals = new Goal[]
+            {
+                new Goal {X = 33, Y = 7, Color = ConsoleColor.White, InSymbol = '▣', Symbol = '□'}
+            };
+
+            exitPoint = new ExitPoint
+            {
+                X = 45,
+                Y = 13,
+                Symbol = '○'
+            };
+
+            boxes = new Box[]
+            {
+                new Box {X = GameSet.hidePointX, Y = GameSet.hidePointY, Color = ConsoleColor.White, IsOnGoal = false, Symbol = ' ' }
+            };
+
+            colorWalls = new ColorWall[]
+            {
+                new ColorWall {X = exitPoint.X + 1, Y = exitPoint.Y, DefaultX = exitPoint.X + 1, DefaultY = exitPoint.Y, color = ConsoleColor.White, Symbol = '#'},
+                new ColorWall {X = exitPoint.X - 1, Y = exitPoint.Y, DefaultX = exitPoint.X - 1, DefaultY = exitPoint.Y, color = ConsoleColor.White, Symbol = '#'},
+                new ColorWall {X = exitPoint.X, Y = exitPoint.Y - 1, DefaultX = exitPoint.X, DefaultY = exitPoint.Y - 1, color = ConsoleColor.White, Symbol = '#'}
+            };
+
+            pointItems = new PointItem[]
+            {
+                new PointItem {X = player.X + 2, Y = player.Y  - 2, Symbol = '*'}
+            };
+
+
+            while (clearJudge)
+            {
+
+                // --------------------------------------------- Render -------------------------------------------------------
+
+                Render.RenderStage(4);
+                Render.RenderExit();
+                Render.RenderGoal();
+                Render.RenderPointItem();
+                Render.RenderChange();
+                Render.RenderColorWall();
+                Render.RenderPlayer();
+
+                // --------------------------------------------- ProcessInput -------------------------------------------------
+
+                Input.InputKey();
+
+                // --------------------------------------------- Update -------------------------------------------------------
 
                 Move.Right();
                 Move.Left();
                 Move.Up();
                 Move.Down();
 
-
+                
+                OnColision.WithPlayerWall();
                 OnColision.WithPlayerBox();
                 OnColision.WithBoxWall();
-                OnColision.WithBoxBox();
-                OnColision.WithPlayerWall();
                 OnColision.WithColorWall();
-                GameRule.ChangePlayerColor();
 
+               
+                GameRule.SpawnBox(0, player.X + 9, player.Y + 1);
                 GameRule.GoalInJudge();
                 GameRule.JudgeClear();
                 GameRule.OpenWall();
