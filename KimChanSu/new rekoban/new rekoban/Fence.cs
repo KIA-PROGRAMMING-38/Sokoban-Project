@@ -12,9 +12,6 @@ namespace new_rekoban
     internal class Fence
     {
         // 울타리의 좌표
-        // int[] fenceX = new int[(Game.MAX_X + 1) * 2 + (Game.MAX_Y + 1) * 2];
-        // int[] fenceY = new int[(Game.MAX_X + 1) * 2 + (Game.MAX_Y + 1) * 2];
-
         public static int[] _x = new int[(Game.MAX_X + 1) * 2 + (Game.MAX_Y + 1) * 2];
         public static int[] _y = new int[(Game.MAX_X + 1) * 2 + (Game.MAX_Y + 1) * 2];
         public static string _symbol = "@";

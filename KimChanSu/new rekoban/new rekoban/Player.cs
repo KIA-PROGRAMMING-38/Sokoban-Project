@@ -19,20 +19,10 @@ namespace new_rekoban
             Down
         }
 
-        public int _x = 14;
+        public int _x = 14; 
         public int _y = 12;
         public string _symbol = "P";
         public Direction _moveDirection = Direction.None;
-
-        // 접근자
-        public int GetX() => _x;
-        public int GetY() => _y;
-        public string GetSymbol() => _symbol;
-        public Direction GetMoveDirection() => _moveDirection;
-
-        // 설정자
-        public void SetX(int newX) => _x = newX;
-        public void SetY(int newY) => _y = newY;
 
         // 플레이어가 골이 아닌 오브젝트들 위에 있는지 판별
         bool isPlayerOnObj = false;
