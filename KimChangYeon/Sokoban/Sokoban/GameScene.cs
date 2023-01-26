@@ -446,6 +446,11 @@ namespace Sokoban
                 }
             }
         }
+
+        public static void Stage05()
+        {
+
+        }
     }
 }
 

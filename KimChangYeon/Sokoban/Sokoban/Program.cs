@@ -14,11 +14,10 @@ namespace sokoban
             GameSet.SetGame();
             Render.RenderTitle();
 
-
-           // GameScene.Stage01();
-           // GameScene.Stage02();
-            GameScene.Stage03();
-            GameScene.Stage04();
+            GameScene.Stage01();
+         //   GameScene.Stage02();
+         //  GameScene.Stage03();
+          //  GameScene.Stage04();
 
         }
     }
