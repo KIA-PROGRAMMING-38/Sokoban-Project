@@ -140,7 +140,7 @@ namespace Sokoban
                 {
                     Console.WriteLine(clearScene[i]);
                 }
-                Thread.Sleep(3000);
+                Thread.Sleep(2000);
 
                 Console.ReadLine();
                 GameObject.clearJudge = false;
@@ -156,7 +156,7 @@ namespace Sokoban
                     Console.WriteLine(clearScene[i]);
                 }
 
-                Thread.Sleep(3000);
+                Thread.Sleep(2000);
 
                 Console.ReadLine();
                 GameObject.clearJudge = false;
@@ -171,7 +171,7 @@ namespace Sokoban
                     Console.WriteLine(clearScene[i]);
                 }
 
-                Thread.Sleep(3000);
+                Thread.Sleep(2000);
 
 
                 Console.ReadLine();
@@ -190,6 +190,7 @@ namespace Sokoban
 
                 Console.ReadLine();
                 GameObject.clearJudge = false;
+                
             }
         }
 

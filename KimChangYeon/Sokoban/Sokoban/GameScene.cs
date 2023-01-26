@@ -255,7 +255,11 @@ namespace Sokoban
             Console.Clear();
             string[] stage = File.ReadAllLines(Path.Combine("Assets", "Stage", $"Stage03.txt"));
             string[] Length = stage[stage.Length - 1].Split(" ");
+            playerHpNumber = 3;
             clearJudge = true;
+            hChangeDir = false;
+            vChangeDir = false;
+
 
             walls = new Wall[int.Parse(Length[0])];
 
@@ -339,7 +343,7 @@ namespace Sokoban
                 GameRule.Losshp();
                 GameRule.JudgeClear();
 
-                if (Input.key == ConsoleKey.R)
+                if (Input.key == ConsoleKey.R || GameObject.playerHpNumber == 0)
                 {
                     goto RESET_GAME;
                 }

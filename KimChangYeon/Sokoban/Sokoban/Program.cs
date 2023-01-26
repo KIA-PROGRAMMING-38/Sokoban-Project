@@ -15,8 +15,8 @@ namespace sokoban
             Render.RenderTitle();
 
 
-            GameScene.Stage01();
-            GameScene.Stage02();
+           // GameScene.Stage01();
+           // GameScene.Stage02();
             GameScene.Stage03();
             GameScene.Stage04();
 
