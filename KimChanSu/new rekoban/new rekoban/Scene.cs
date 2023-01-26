@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace new_rekoban
 {
+    /// <summary>
+    /// 게임 스테이지 구현 씬 전환
+    /// </summary>
     enum Scene
     {
         None,
@@ -19,12 +22,10 @@ namespace new_rekoban
         public static Scene _sceneType;
         // 인스턴스(Instance)
         public static Player player = new Player();
-
         public static Renderer renderer = new Renderer();
 
         // 플레이어가 골 위에 있는지 판별할 수 있는 데이터 생성
         public static bool isPlayerOnGoal = false;
-
         public static bool isGameClear = false;
 
         public static void InitStage1()

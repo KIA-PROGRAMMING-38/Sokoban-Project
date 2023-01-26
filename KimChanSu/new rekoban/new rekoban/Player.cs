@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace new_rekoban
 {
+    /// <summary>
+    /// 플레이어의 이동과 충돌 관리
+    /// </summary>
     internal class Player
     {
         internal enum Direction
