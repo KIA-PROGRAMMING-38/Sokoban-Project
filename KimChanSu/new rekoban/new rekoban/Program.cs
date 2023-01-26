@@ -14,7 +14,7 @@ namespace Rekonban
             // 기초 세팅
             Console.ResetColor();
             Console.CursorVisible = false;
-            Console.Title = "능지패턴";
+            Console.Title = "능지미로";
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.Clear();
