@@ -54,7 +54,7 @@ namespace Sokoban
                 Color = ConsoleColor.White,
                 PlayerDir = GameSet.playerDir,
                 PushedBoxId = 0,
-                Symbol = '●'
+                Symbol = 'O'
             };
 
             boxes = new Box[]
@@ -62,7 +62,7 @@ namespace Sokoban
                 new Box {X = 30,
                 Y = 8,
                 Color = ConsoleColor.White,
-                Symbol = '■',
+                Symbol = 'P',
                 IsOnGoal = false }
             };
 
@@ -71,15 +71,15 @@ namespace Sokoban
                 new Goal {X = 42,
                 Y = 7,
                 Color = ConsoleColor.White,
-                InSymbol = '▣',
-                Symbol = '□' }
+                InSymbol = 'B',
+                Symbol = 'b' }
             };
 
             exitPoint = new ExitPoint
             {
                 X = 42,
                 Y = 11,
-                Symbol = '○'
+                Symbol = 'E'
             };
 
             colorWalls = new ColorWall[8]
@@ -150,28 +150,28 @@ namespace Sokoban
                 Color = ConsoleColor.White,
                 PlayerDir = GameSet.playerDir,
                 PushedBoxId = 0,
-                Symbol = '●'
+                Symbol = 'O'
             };
 
             boxes = new Box[]
             {
-                new Box {X = 22, Y = 12, Color = ConsoleColor.White, Symbol = '■', IsOnGoal = false },
-                new Box {X = 26, Y = 7, Color = ConsoleColor.DarkYellow, Symbol = '■', IsOnGoal = false }
+                new Box {X = 22, Y = 12, Color = ConsoleColor.White, Symbol = 'P', IsOnGoal = false },
+                new Box {X = 26, Y = 7, Color = ConsoleColor.DarkYellow, Symbol = 'P', IsOnGoal = false }
 
             };
 
             goals = new Goal[]
             {
-                new Goal {X = 42, Y = 7, Color = ConsoleColor.White, InSymbol = '▣', Symbol = '□' },
+                new Goal {X = 42, Y = 7, Color = ConsoleColor.White, InSymbol = 'B', Symbol = 'b' },
 
-                new Goal {X = 13, Y = 13, Color = ConsoleColor.DarkYellow, InSymbol = '▣', Symbol = '□' }
+                new Goal {X = 13, Y = 13, Color = ConsoleColor.DarkYellow, InSymbol = 'B', Symbol = 'b' }
             };
 
             exitPoint = new ExitPoint
             {
                 X = 32,
                 Y = 10,
-                Symbol = '○'
+                Symbol = 'E'
             };
 
             colorWalls = new ColorWall[]
@@ -194,13 +194,13 @@ namespace Sokoban
 
             colorBoxes = new ColorBox[]
             {
-                new ColorBox { X = player.X - 10, Y = player.Y - 1, Color = ConsoleColor.White, Symbol = '■'},
-                new ColorBox { X = player.X - 9, Y = player.Y - 1, Color = ConsoleColor.DarkYellow, Symbol = '■'}
+                new ColorBox { X = player.X - 10, Y = player.Y - 1, Color = ConsoleColor.White, Symbol = 'p'},
+                new ColorBox { X = player.X - 9, Y = player.Y - 1, Color = ConsoleColor.DarkYellow, Symbol = 'p'}
             };
 
             changer = new Changer
             {
-                X = colorBoxes[0].X, Y = colorBoxes[0].Y, Color = ConsoleColor.White, Symbol = '◎'
+                X = colorBoxes[0].X, Y = colorBoxes[0].Y, Color = ConsoleColor.White, Symbol = 'b'
             };
 
             while (clearJudge)
@@ -267,10 +267,10 @@ namespace Sokoban
             {
                 X = 20,
                 Y = 12,
-                Color = ConsoleColor.White,
+                Color = ConsoleColor.Red,
                 PlayerDir = GameSet.playerDir,
                 PushedBoxId = 0,
-                Symbol = '●'
+                Symbol = 'O'
             };
 
             traps = new Trap[int.Parse(Length[1])];
@@ -279,28 +279,28 @@ namespace Sokoban
             {
                 X = 45,
                 Y = 13,
-                Symbol = '○'
+                Symbol = 'E'
             };
 
             horizonItems = new HorizonItem[]
             {
-                new HorizonItem {X = 21, Y = 13, Color = ConsoleColor.DarkMagenta, Symbol = '↔'},
-                new HorizonItem {X = 27, Y = 10, Color = ConsoleColor.DarkMagenta, Symbol = '↔'},
-                new HorizonItem {X = 43, Y = 8, Color = ConsoleColor.DarkMagenta, Symbol = '↔'},
-                new HorizonItem {X = 39, Y = 6, Color = ConsoleColor.DarkMagenta, Symbol = '↔'},
-                new HorizonItem {X = 34, Y = 11, Color = ConsoleColor.DarkMagenta, Symbol = '↔'},
+                new HorizonItem {X = 21, Y = 13, Color = ConsoleColor.DarkMagenta, Symbol = 'H'},
+                new HorizonItem {X = 27, Y = 10, Color = ConsoleColor.DarkMagenta, Symbol = 'H'},
+                new HorizonItem {X = 43, Y = 8, Color = ConsoleColor.DarkMagenta, Symbol = 'H'},
+                new HorizonItem {X = 39, Y = 6, Color = ConsoleColor.DarkMagenta, Symbol = 'H'},
+                new HorizonItem {X = 34, Y = 11, Color = ConsoleColor.DarkMagenta, Symbol = 'H'},
 
 
             };
 
             verticalItems = new VerticalItem[]
             {
-                new VerticalItem {X = 22, Y = 11, Color = ConsoleColor.DarkMagenta, Symbol = '↕'},
-                new VerticalItem {X = 38, Y = 11, Color = ConsoleColor.DarkMagenta, Symbol = '↕'},
-                new VerticalItem {X = 47, Y = 11, Color = ConsoleColor.DarkMagenta, Symbol = '↕'},
-                new VerticalItem {X = 33, Y = 10, Color = ConsoleColor.DarkMagenta, Symbol = '↕'},
-                new VerticalItem {X = 48, Y = 8, Color = ConsoleColor.DarkMagenta, Symbol = '↕'},
-                new VerticalItem {X = 46, Y = 6, Color = ConsoleColor.DarkMagenta, Symbol = '↕'}
+                new VerticalItem {X = 22, Y = 11, Color = ConsoleColor.DarkMagenta, Symbol = 'V'},
+                new VerticalItem {X = 38, Y = 11, Color = ConsoleColor.DarkMagenta, Symbol = 'V'},
+                new VerticalItem {X = 47, Y = 11, Color = ConsoleColor.DarkMagenta, Symbol = 'V'},
+                new VerticalItem {X = 33, Y = 10, Color = ConsoleColor.DarkMagenta, Symbol = 'V'},
+                new VerticalItem {X = 48, Y = 8, Color = ConsoleColor.DarkMagenta, Symbol = 'V'},
+                new VerticalItem {X = 46, Y = 6, Color = ConsoleColor.DarkMagenta, Symbol = 'V'}
             };
 
             playerHps = new PlayerHp[]
@@ -371,19 +371,19 @@ namespace Sokoban
                 Color = ConsoleColor.White,
                 PlayerDir = GameSet.playerDir,
                 PushedBoxId = 0,
-                Symbol = '●'
+                Symbol = 'O'
             };
 
             goals = new Goal[]
             {
-                new Goal {X = 33, Y = 7, Color = ConsoleColor.White, InSymbol = '▣', Symbol = '□'}
+                new Goal {X = 33, Y = 7, Color = ConsoleColor.White, InSymbol = 'B', Symbol = 'b'}
             };
 
             exitPoint = new ExitPoint
             {
                 X = 45,
                 Y = 13,
-                Symbol = '○'
+                Symbol = 'E'
             };
 
             boxes = new Box[]
@@ -447,10 +447,7 @@ namespace Sokoban
             }
         }
 
-        public static void Stage05()
-        {
-
-        }
+       
     }
 }
 

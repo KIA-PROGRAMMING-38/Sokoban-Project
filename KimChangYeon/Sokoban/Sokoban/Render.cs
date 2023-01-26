@@ -49,13 +49,13 @@ namespace Sokoban
                     switch (stage[y][x])
                     {
                         case '#':
-                            Console.ForegroundColor = ConsoleColor.White;
+                            
                             GameScene.walls[wallIndex] = new GameObject.Wall { X = x, Y = y };
                             wallIndex++;
                             break;
 
-                        case '♨':
-                            Console.ForegroundColor = ConsoleColor.Red;
+                        case 'T':
+                           
                             GameScene.traps[trapIndex] = new GameObject.Trap { X = x, Y = y };
                             trapIndex++;
                             break;
@@ -173,7 +173,7 @@ namespace Sokoban
             Console.SetCursorPosition(93, 4);
 
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("                                                                                    :::::::::");
+            Console.WriteLine("                                                                                                     :::::::::");
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine("   ::::::::   ::::::::  :::    :::  ::::::::  :::::::::      :::     ::::    :::  :::     :::");
             Console.ForegroundColor = ConsoleColor.DarkYellow;

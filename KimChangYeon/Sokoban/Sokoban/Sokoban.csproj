@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="Xcopy &quot;$(OutDir)Assets&quot; &quot;$(ProjectDir)Assets&quot; /f /i /s /e /y" />
+    <Exec Command="Xcopy &quot;$(ProjectDir)Assets&quot; &quot;$(OutDir)Assets&quot; /f /i /s /e /y" />
   </Target>
 
 </Project>

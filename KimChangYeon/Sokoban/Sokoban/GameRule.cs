@@ -20,7 +20,7 @@ namespace Sokoban
 
                     GameScene.boxes[Id].X = spawnX;
                     GameScene.boxes[Id].Y = spawnY;
-                    GameScene.boxes[Id].Symbol = '■';
+                    GameScene.boxes[Id].Symbol = 'P';
                 }
         }
 
