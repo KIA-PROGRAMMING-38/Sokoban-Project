@@ -139,11 +139,11 @@ namespace Sokoban
             }
         }
 
-        public static void RenderHp()
+        public static void RenderHp(int x, int y)
         {
             for (int i = 0; i < GameScene.playerHps.Length; i++)
             {
-                IsRender(ConsoleColor.DarkRed, 40+ i, 23, GameScene.playerHps[i].Hp);  
+                IsRender(ConsoleColor.DarkRed, x + i, y, GameScene.playerHps[i].Hp);  
             }
             
         }
@@ -200,7 +200,12 @@ namespace Sokoban
             ConsoleKey key = Console.ReadKey().Key;
         }
         
-
+        public static void RenderString(ConsoleColor color, int x, int y, string text)
+        {
+            Console.ForegroundColor = color;
+            Console.SetCursorPosition(x, y);
+            Console.Write(text);
+        }
         
     }
 }

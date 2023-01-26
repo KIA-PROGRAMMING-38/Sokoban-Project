@@ -157,6 +157,51 @@ namespace Sokoban
             } //벽과 박스
         }
 
+        public static void WithBoxColorWall()
+        {
+
+            for (int boxId = 0; boxId < GameScene.boxes.Length; boxId++) //벽과 박스
+            {
+
+                for (int wallId = 0; wallId < GameScene.colorWalls.Length; wallId++)
+                {
+
+                    if (IsCollide(GameScene.boxes[boxId].X, GameScene.colorWalls[wallId].X, GameScene.boxes[boxId].Y, GameScene.colorWalls[wallId].Y))
+                    {
+
+                        switch (GameSet.playerDir)
+                        {
+
+                            case GameSet.PLAYER_DIRECTION.RIGHT: //right
+
+                                GameScene.player.X = GameScene.colorWalls[wallId].X - 2;
+                                GameScene.boxes[boxId].X = GameScene.colorWalls[wallId].X - 1;
+                                break;
+
+                            case GameSet.PLAYER_DIRECTION.LEFT: //left
+
+                                GameScene.player.X = GameScene.colorWalls[wallId].X + 2;
+                                GameScene.boxes[boxId].X = GameScene.colorWalls[wallId].X + 1;
+                                break;
+
+                            case GameSet.PLAYER_DIRECTION.DOWN: //down
+
+                                GameScene.player.Y = GameScene.colorWalls[wallId].Y - 2;
+                                GameScene.boxes[boxId].Y = GameScene.colorWalls[wallId].Y - 1;
+                                break;
+
+                            case GameSet.PLAYER_DIRECTION.UP: //up
+
+                                GameScene.player.Y = GameScene.colorWalls[wallId].Y + 2;
+                                GameScene.boxes[boxId].Y = GameScene.colorWalls[wallId].Y + 1;
+                                break;
+
+                        }
+                    }
+                }
+            } //벽과 박스
+        }
+
         public static void WithBoxBox()
         {
             for (int boxId = 0; boxId < GameScene.boxes.Length; boxId++) //박스와 박스 충돌

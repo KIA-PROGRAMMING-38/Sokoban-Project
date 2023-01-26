@@ -16,9 +16,9 @@ namespace sokoban
 
 
             GameScene.Stage01();
-          //  GameScene.Stage02();
-           // GameScene.Stage03();
-           // GameScene.Stage04();
+            GameScene.Stage02();
+            GameScene.Stage03();
+            GameScene.Stage04();
 
         }
     }

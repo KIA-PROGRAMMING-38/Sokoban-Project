@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -66,8 +67,8 @@ namespace Sokoban
                 {
                     if (GameScene.boxes[goalId].IsOnGoal == true && SameColor(GameScene.goals[goalId].Color, GameScene.colorWalls[wallId].color))
                     {
-                        GameScene.colorWalls[wallId].X = 20;
-                        GameScene.colorWalls[wallId].Y = 20;
+                        GameScene.colorWalls[wallId].X = GameSet.hidePointX;
+                        GameScene.colorWalls[wallId].Y = GameSet.hidePointY;
                         GameScene.colorWalls[wallId].Symbol = ' ';
 
                     }
@@ -129,6 +130,8 @@ namespace Sokoban
 
         public static void JudgeClear()
         {
+            Console.ForegroundColor = ConsoleColor.White;
+
             if (IsCollide(GameScene.player.X, GameScene.exitPoint.X, GameScene.player.Y, GameScene.exitPoint.Y) && 0 < GameObject.move && GameObject.move <= 155) // 클리어 판정
             {
                 Console.Clear();
@@ -178,7 +181,11 @@ namespace Sokoban
             if (GameObject.playerHpNumber == 0)
             {
                 Console.Clear();
-                Console.WriteLine("빡대가리 시군요");
+                string[] failScene = File.ReadAllLines(Path.Combine("Assets", "Scene", "fail.txt"));
+                for (int i = 0; i < failScene.Length; i++)
+                {
+                    Console.WriteLine(failScene[i]);
+                }
                 Thread.Sleep(2000);
 
                 Console.ReadLine();
@@ -186,21 +193,20 @@ namespace Sokoban
             }
         }
 
+       
+
         public static void Losshp()
         {
             switch (GameObject.playerHpNumber)
             {
-                case 4:
-                    GameScene.playerHps[4].Hp = GameScene.playerHps[4].LoseHp;
-                    break;
-                case 3:
-                    GameScene.playerHps[3].Hp = GameScene.playerHps[3].LoseHp;
-                    break;
                 case 2:
                     GameScene.playerHps[2].Hp = GameScene.playerHps[2].LoseHp;
                     break;
                 case 1:
                     GameScene.playerHps[1].Hp = GameScene.playerHps[1].LoseHp;
+                    break;
+                case 0:
+                    GameScene.playerHps[0].Hp = GameScene.playerHps[0].LoseHp;
                     break;
             }
         }

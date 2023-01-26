@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,10 +36,12 @@ namespace Sokoban
         public static PointItem[] pointItems = new PointItem[default];
 
         public static ColorWall[] colorWalls = new ColorWall[default];
-     
+
+        
 
         public static void Stage01()
         {
+            RESET_GAME:
             string[] stage = File.ReadAllLines(Path.Combine("Assets", "Stage", $"Stage01.txt"));
             string[] Length = stage[stage.Length - 1].Split(" ");
 
@@ -122,12 +125,16 @@ namespace Sokoban
                 GameRule.GoalInJudge();
                 GameRule.JudgeClear();
                 GameRule.OpenWall();
-
+                if (Input.key == ConsoleKey.R)
+                {
+                    goto RESET_GAME;
+                }
             }
         }
 
         public static void Stage02()
         {
+            RESET_GAME:
             Console.Clear();
             string[] stage = File.ReadAllLines(Path.Combine("Assets", "Stage", $"Stage02.txt"));
             string[] Length = stage[stage.Length - 1].Split(" ");
@@ -208,6 +215,8 @@ namespace Sokoban
                 Render.RenderColorWall();
                 Render.RenderColorBox();
                 Render.RenderChanger();
+                Render.RenderString(ConsoleColor.White, 12, 8, "CHNGER");
+                Render.RenderString(ConsoleColor.Red, 63, 7, Convert.ToString(GameObject.moveLimit));
 
                 // --------------------------------------------- ProcessInput -------------------------------------------------
 
@@ -224,17 +233,25 @@ namespace Sokoban
                 OnColision.WithBoxWall();
                 OnColision.WithBoxBox();
                 OnColision.WithPlayerWall();
+                OnColision.WithBoxColorWall();
                 OnColision.WithColorWall();
+
 
                 GameRule.ChangePlayerColor();
                 GameRule.GoalInJudge();
                 GameRule.JudgeClear();
                 GameRule.OpenWall();
+
+                if (Input.key == ConsoleKey.R)
+                {
+                    goto RESET_GAME;
+                }
             }
         }
 
         public static void Stage03()
         {
+            RESET_GAME:
             Console.Clear();
             string[] stage = File.ReadAllLines(Path.Combine("Assets", "Stage", $"Stage03.txt"));
             string[] Length = stage[stage.Length - 1].Split(" ");
@@ -264,7 +281,7 @@ namespace Sokoban
             horizonItems = new HorizonItem[]
             {
                 new HorizonItem {X = 21, Y = 13, Color = ConsoleColor.DarkMagenta, Symbol = '↔'},
-                new HorizonItem {X = 26, Y = 10, Color = ConsoleColor.DarkMagenta, Symbol = '↔'},
+                new HorizonItem {X = 27, Y = 10, Color = ConsoleColor.DarkMagenta, Symbol = '↔'},
                 new HorizonItem {X = 43, Y = 8, Color = ConsoleColor.DarkMagenta, Symbol = '↔'},
                 new HorizonItem {X = 39, Y = 6, Color = ConsoleColor.DarkMagenta, Symbol = '↔'},
                 new HorizonItem {X = 34, Y = 11, Color = ConsoleColor.DarkMagenta, Symbol = '↔'},
@@ -300,7 +317,7 @@ namespace Sokoban
                 Render.RenderExit();
                 Render.RenderHitem();
                 Render.RenderVitem();
-                Render.RenderHp();
+                Render.RenderHp(65, 7);
                 
 
                 // --------------------------------------------- ProcessInput -------------------------------------------------
@@ -321,12 +338,18 @@ namespace Sokoban
 
                 GameRule.Losshp();
                 GameRule.JudgeClear();
-               
+
+                if (Input.key == ConsoleKey.R)
+                {
+                    goto RESET_GAME;
+                }
+
             }
         }
 
         public static void Stage04()
         {
+            RESET_GAME:
             Console.Clear();
             string[] stage = File.ReadAllLines(Path.Combine("Assets", "Stage", $"Stage04.txt"));
             string[] Length = stage[stage.Length - 1].Split(" ");
@@ -389,7 +412,7 @@ namespace Sokoban
                 Render.RenderChange();
                 Render.RenderColorWall();
                 Render.RenderPlayer();
-
+                
                 // --------------------------------------------- ProcessInput -------------------------------------------------
 
                 Input.InputKey();
@@ -413,6 +436,10 @@ namespace Sokoban
                 GameRule.JudgeClear();
                 GameRule.OpenWall();
 
+                if (Input.key == ConsoleKey.R)
+                {
+                    goto RESET_GAME;
+                }
             }
         }
     }
