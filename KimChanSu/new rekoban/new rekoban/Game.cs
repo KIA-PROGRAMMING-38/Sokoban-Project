@@ -11,7 +11,6 @@ namespace new_rekoban
     /// </summary>
     internal class Game
     {
-        // 기호 상수 정의
         public const int MIN_X = 0;
         public const int MAX_X = 15;
         public const int MIN_Y = 0;

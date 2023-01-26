@@ -12,7 +12,6 @@ namespace new_rekoban
     enum Scene
     {
         None,
-        Lobby,
         Stage1,
         Stage2,
         Stage3
@@ -30,8 +29,8 @@ namespace new_rekoban
 
         public static void InitStage1()
         {
-            Wall._x = new int[9] { 6, 11, 1, 14, 10, 3, 5, 14, 7 };
-            Wall._y = new int[9] { 1, 4, 5, 5, 8, 9, 10, 10, 11 };
+            Wall._x = new int[11] { 6, 11, 1, 14, 10, 3, 5, 14, 7, 14, 14 };
+            Wall._y = new int[11] { 1, 4, 5, 5, 8, 9, 10, 10, 11, 6, 9 };
             Wall.count = Wall._x.Length;
         }
 
@@ -99,23 +98,21 @@ namespace new_rekoban
                 isGameClear = true;
             }
         }
- 
+
         public static void Render()
         {
             // 이전 프레임 지우기
             Console.Clear();
 
-            // 플레이어 그리기
+            // 플레이어
             Console.ForegroundColor = ConsoleColor.White;
             renderer.Render(player._x, player._y, player._symbol);
-            Console.ForegroundColor = ConsoleColor.Magenta;
 
-            // 출구 그리기
-            Console.ForegroundColor = ConsoleColor.White;
+            // 출구
             renderer.Render(Game.GOAL_X, Game.GOAL_Y, "E");
             Console.ForegroundColor = ConsoleColor.Magenta;
 
-            // 벽 그리기
+            // 벽
             for (int i = 0; i < Wall.count; ++i)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
@@ -123,7 +120,7 @@ namespace new_rekoban
                 Console.ForegroundColor = ConsoleColor.Magenta;
             }
 
-            // 울타리 그리기
+            // 울타리
             for (int i = 0; i < Fence.count; ++i)
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
@@ -137,7 +134,7 @@ namespace new_rekoban
             // 플레이어의 이동 처리
             player.Move(key);
 
-            // 플레이어가 골 위에 올라왔는지 확인
+            // 플레이어가 골(출구) 위에 올라왔는지 확인
             if (player._x == Game.GOAL_X && player._y == Game.GOAL_Y)
             {
                 isPlayerOnGoal = true;
