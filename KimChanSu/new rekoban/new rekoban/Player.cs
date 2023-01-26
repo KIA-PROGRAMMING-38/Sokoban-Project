@@ -1,0 +1,179 @@
+﻿using Rekonban;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.Metrics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace new_rekoban
+{
+    internal class Player
+    {
+        internal enum Direction
+        {
+            None,
+            Left,
+            Right,
+            Up,
+            Down
+        }
+
+        public int _x = 14;
+        public int _y = 12;
+        public string _symbol = "P";
+        public Direction _moveDirection = Direction.None;
+
+        // 접근자
+        public int GetX() => _x;
+        public int GetY() => _y;
+        public string GetSymbol() => _symbol;
+        public Direction GetMoveDirection() => _moveDirection;
+
+        // 설정자
+        public void SetX(int newX) => _x = newX;
+        public void SetY(int newY) => _y = newY;
+
+        // 플레이어가 골이 아닌 오브젝트들 위에 있는지 판별
+        bool isPlayerOnObj = false;
+        public void Move(ConsoleKey key)
+        {
+            if (key == ConsoleKey.LeftArrow)
+            {
+                isPlayerOnObj = true;
+
+                while (isPlayerOnObj)
+                {
+                    for (int i = 0; i < Wall.count; ++i)
+                    {
+                        if (_x == Wall._x[i] && _y == Wall._y[i])
+                        {
+                            isPlayerOnObj = false;
+                            break;
+                        }
+                    }
+
+                    for (int i = 0; i < Fence.count; ++i)
+                    {
+                        if (_x == Fence._x[i] && _y == Fence._y[i])
+                        {
+                            isPlayerOnObj = false;
+                            break;
+                        }
+                    }
+
+                    if (false == isPlayerOnObj)
+                    {
+                        _x += 1;
+                        break;
+                    }
+
+                    _x -= 1;
+                }
+
+            }
+
+            if (key == ConsoleKey.RightArrow)
+            {
+                isPlayerOnObj = true;
+
+                while (isPlayerOnObj)
+                {
+                    for (int i = 0; i < Wall.count; ++i)
+                    {
+                        if (_x == Wall._x[i] && _y == Wall._y[i])
+                        {
+                            isPlayerOnObj = false;
+                            break;
+                        }
+                    }
+
+                    for (int i = 0; i < Fence.count; ++i)
+                    {
+                        if (_x == Fence._x[i] && _y == Fence._y[i])
+                        {
+                            isPlayerOnObj = false;
+                            break;
+                        }
+                    }
+
+                    if (false == isPlayerOnObj)
+                    {
+                        _x -= 1;
+                        break;
+                    }
+
+                    _x += 1;
+                }
+            }
+
+            if (key == ConsoleKey.UpArrow)
+            {
+                isPlayerOnObj = true;
+
+                while (isPlayerOnObj)
+                {
+                    for (int i = 0; i < Wall.count; ++i)
+                    {
+                        if (_x == Wall._x[i] && _y == Wall._y[i])
+                        {
+                            isPlayerOnObj = false;
+                            break;
+                        }
+                    }
+
+                    for (int i = 0; i < Fence.count; ++i)
+                    {
+                        if (_x == Fence._x[i] && _y == Fence._y[i])
+                        {
+                            isPlayerOnObj = false;
+                            break;
+                        }
+                    }
+
+                    if (false == isPlayerOnObj)
+                    {
+                        _y += 1;
+                        break;
+                    }
+
+                    _y -= 1;
+                }
+            }
+
+            if (key == ConsoleKey.DownArrow)
+            {
+                isPlayerOnObj = true;
+
+                while (isPlayerOnObj)
+                {
+                    for (int i = 0; i < Wall.count; ++i)
+                    {
+                        if (_x == Wall._x[i] && _y == Wall._y[i])
+                        {
+                            isPlayerOnObj = false;
+                            break;
+                        }
+                    }
+
+                    for (int i = 0; i < Fence.count; ++i)
+                    {
+                        if (_x == Fence._x[i] && _y == Fence._y[i])
+                        {
+                            isPlayerOnObj = false;
+                            break;
+                        }
+                    }
+
+                    if (false == isPlayerOnObj)
+                    {
+                        _y -= 1;
+                        break;
+                    }
+
+                    _y += 1;
+                }
+            }
+        }
+    }
+}
